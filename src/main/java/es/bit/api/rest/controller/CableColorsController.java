@@ -28,7 +28,7 @@ public class CableColorsController {
     }
 
     @GetMapping("")
-    @Operation(summary = "Get all wire colors paged")
+    @Operation(summary = "Get all cable colors paged")
     @ApiResponse(responseCode = "200", description = "Cable colors obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CableColorDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
@@ -47,6 +47,7 @@ public class CableColorsController {
     @Operation(summary = "Get a cable color by ID")
     @ApiResponse(responseCode = "200", description = "Cable color found.")
     @ApiResponse(responseCode = "404", description = "Cable color not found.")
+    @ApiResponse(responseCode = "500", description = "Cable color cannot be deleted due to foreign keys.")
     public CableColorDTO findById(@PathVariable int id) {
         CableColorDTO cableColor = this.cableColorService.findById(id);
 

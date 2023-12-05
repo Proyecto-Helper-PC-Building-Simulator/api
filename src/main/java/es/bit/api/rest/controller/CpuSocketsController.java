@@ -29,7 +29,7 @@ public class CpuSocketsController {
 
     @GetMapping("")
     @Operation(summary = "Get all cpu sockets paged")
-    @ApiResponse(responseCode = "200", description = "Case sizes obtained correctly.")
+    @ApiResponse(responseCode = "200", description = "Cpu sockets obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CpuSocketDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         List<CpuSocketDTO> content = this.cpuSocketService.findAll(page, size);
@@ -45,8 +45,8 @@ public class CpuSocketsController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a cpu socket by ID")
-    @ApiResponse(responseCode = "200", description = "Case size found.")
-    @ApiResponse(responseCode = "404", description = "Case size not found.")
+    @ApiResponse(responseCode = "200", description = "Cpu socket found.")
+    @ApiResponse(responseCode = "404", description = "Cpu socket not found.")
     public CpuSocketDTO findById(@PathVariable int id) {
         CpuSocketDTO cpuSocket = this.cpuSocketService.findById(id);
 
@@ -60,8 +60,8 @@ public class CpuSocketsController {
     @PostMapping("")
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new cpu socket")
-    @ApiResponse(responseCode = "201", description = "Case size created.")
-    @ApiResponse(responseCode = "500", description = "Case size name is duplicated.")
+    @ApiResponse(responseCode = "201", description = "Cpu socket created.")
+    @ApiResponse(responseCode = "500", description = "Cpu socket name is duplicated.")
     public CpuSocketDTO create(@RequestBody CpuSocketDTO cpuSocket) {
         return this.cpuSocketService.create(cpuSocket);
     }
@@ -69,9 +69,9 @@ public class CpuSocketsController {
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update a cpu socket by ID")
-    @ApiResponse(responseCode = "204", description = "Case size updated correctly.")
+    @ApiResponse(responseCode = "204", description = "Cpu socket updated correctly.")
     @ApiResponse(responseCode = "412", description = "Error in update query.")
-    @ApiResponse(responseCode = "500", description = "Case size name is duplicated.")
+    @ApiResponse(responseCode = "500", description = "Cpu socket name is duplicated.")
     public void updateCpuSocket(@PathVariable int id, @RequestBody CpuSocketDTO cpuSocket) {
         if (id != cpuSocket.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
@@ -83,9 +83,9 @@ public class CpuSocketsController {
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete a cpu socket by ID")
-    @ApiResponse(responseCode = "204", description = "Case size deleted correctly.")
+    @ApiResponse(responseCode = "204", description = "Cpu socket deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Case size cannot be deleted due to foreign keys.")
+    @ApiResponse(responseCode = "500", description = "Cpu socket cannot be deleted due to foreign keys.")
     public void delete(@PathVariable int id, @RequestBody CpuSocketDTO cpuSocket) {
         if (id != cpuSocket.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");

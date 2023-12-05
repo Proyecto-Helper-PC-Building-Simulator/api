@@ -29,7 +29,7 @@ public class CpuSeriesController {
 
     @GetMapping("")
     @Operation(summary = "Get all cpu series paged")
-    @ApiResponse(responseCode = "200", description = "Case sizes obtained correctly.")
+    @ApiResponse(responseCode = "200", description = "Cpu series obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CpuSerieDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         List<CpuSerieDTO> content = this.cpuSerieService.findAll(page, size);
@@ -45,8 +45,8 @@ public class CpuSeriesController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a cpu serie by ID")
-    @ApiResponse(responseCode = "200", description = "Case size found.")
-    @ApiResponse(responseCode = "404", description = "Case size not found.")
+    @ApiResponse(responseCode = "200", description = "Cpu serie found.")
+    @ApiResponse(responseCode = "404", description = "Cpu serie not found.")
     public CpuSerieDTO findById(@PathVariable int id) {
         CpuSerieDTO cpuSerie = this.cpuSerieService.findById(id);
 
@@ -60,8 +60,8 @@ public class CpuSeriesController {
     @PostMapping("")
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new cpu serie")
-    @ApiResponse(responseCode = "201", description = "Case size created.")
-    @ApiResponse(responseCode = "500", description = "Case size name is duplicated.")
+    @ApiResponse(responseCode = "201", description = "Cpu serie created.")
+    @ApiResponse(responseCode = "500", description = "Cpu serie name is duplicated.")
     public CpuSerieDTO create(@RequestBody CpuSerieDTO cpuSerie) {
         return this.cpuSerieService.create(cpuSerie);
     }
@@ -69,9 +69,9 @@ public class CpuSeriesController {
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update a cpu serie by ID")
-    @ApiResponse(responseCode = "204", description = "Case size updated correctly.")
+    @ApiResponse(responseCode = "204", description = "Cpu serie updated correctly.")
     @ApiResponse(responseCode = "412", description = "Error in update query.")
-    @ApiResponse(responseCode = "500", description = "Case size name is duplicated.")
+    @ApiResponse(responseCode = "500", description = "Cpu serie name is duplicated.")
     public void updateCpuSerie(@PathVariable int id, @RequestBody CpuSerieDTO cpuSerie) {
         if (id != cpuSerie.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
@@ -83,9 +83,9 @@ public class CpuSeriesController {
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete a cpu serie by ID")
-    @ApiResponse(responseCode = "204", description = "Case size deleted correctly.")
+    @ApiResponse(responseCode = "204", description = "Cpu serie deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Case size cannot be deleted due to foreign keys.")
+    @ApiResponse(responseCode = "500", description = "Cpu serie cannot be deleted due to foreign keys.")
     public void delete(@PathVariable int id, @RequestBody CpuSerieDTO cpuSerie) {
         if (id != cpuSerie.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");

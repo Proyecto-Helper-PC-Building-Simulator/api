@@ -29,7 +29,7 @@ public class GpuChipsetSeriesController {
 
     @GetMapping("")
     @Operation(summary = "Get all gpu chipset series paged")
-    @ApiResponse(responseCode = "200", description = "Case sizes obtained correctly.")
+    @ApiResponse(responseCode = "200", description = "Gpu chipset series obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<GpuChipsetSerieDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         List<GpuChipsetSerieDTO> content = this.gpuChipsetSerieService.findAll(page, size);
@@ -45,8 +45,8 @@ public class GpuChipsetSeriesController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a gpu chipset serie by ID")
-    @ApiResponse(responseCode = "200", description = "Case size found.")
-    @ApiResponse(responseCode = "404", description = "Case size not found.")
+    @ApiResponse(responseCode = "200", description = "Gpu chipset serie found.")
+    @ApiResponse(responseCode = "404", description = "Gpu chipset serie not found.")
     public GpuChipsetSerieDTO findById(@PathVariable int id) {
         GpuChipsetSerieDTO gpuChipsetSerie = this.gpuChipsetSerieService.findById(id);
 
@@ -60,8 +60,8 @@ public class GpuChipsetSeriesController {
     @PostMapping("")
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new gpu chipset serie")
-    @ApiResponse(responseCode = "201", description = "Case size created.")
-    @ApiResponse(responseCode = "500", description = "Case size name is duplicated.")
+    @ApiResponse(responseCode = "201", description = "Gpu chipset serie created.")
+    @ApiResponse(responseCode = "500", description = "Gpu chipset serie name is duplicated.")
     public GpuChipsetSerieDTO create(@RequestBody GpuChipsetSerieDTO gpuChipsetSerie) {
         return this.gpuChipsetSerieService.create(gpuChipsetSerie);
     }
@@ -69,9 +69,9 @@ public class GpuChipsetSeriesController {
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update a gpu chipset serie by ID")
-    @ApiResponse(responseCode = "204", description = "Case size updated correctly.")
+    @ApiResponse(responseCode = "204", description = "Gpu chipset serie updated correctly.")
     @ApiResponse(responseCode = "412", description = "Error in update query.")
-    @ApiResponse(responseCode = "500", description = "Case size name is duplicated.")
+    @ApiResponse(responseCode = "500", description = "Gpu chipset serie name is duplicated.")
     public void updateGpuChipsetSerie(@PathVariable int id, @RequestBody GpuChipsetSerieDTO gpuChipsetSerie) {
         if (id != gpuChipsetSerie.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
@@ -83,9 +83,9 @@ public class GpuChipsetSeriesController {
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete a gpu chipset serie by ID")
-    @ApiResponse(responseCode = "204", description = "Case size deleted correctly.")
+    @ApiResponse(responseCode = "204", description = "Gpu chipset serie deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Case size cannot be deleted due to foreign keys.")
+    @ApiResponse(responseCode = "500", description = "Gpu chipset serie cannot be deleted due to foreign keys.")
     public void delete(@PathVariable int id, @RequestBody GpuChipsetSerieDTO gpuChipsetSerie) {
         if (id != gpuChipsetSerie.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");

@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/motherboard_form_factors")
 @Tag(name = "Motherboard Form Factor Controller", description = "Related operations with motherboard form factors")
-public class MotherboardFormFactorController {
+public class MotherboardFormFactorsController {
     @Autowired
     MotherboardFormFactorService motherboardFormFactorService;
 

@@ -1,10 +1,12 @@
 package es.bit.api.persistence.model.componenttables;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "case_fans")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CaseFan extends Component {
     private Float airFlow;
     private Integer size;

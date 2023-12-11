@@ -1,5 +1,8 @@
 package es.bit.api.rest.dto.componenttables;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CaseFanDTO extends ComponentDTO {
     private Float airFlow;
     private Integer size;

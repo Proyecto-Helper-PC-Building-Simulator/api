@@ -1,7 +1,9 @@
 package es.bit.api.rest.dto.componenttables;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.rest.dto.basictables.CableTypeDTO;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CableDTO extends ComponentDTO {
     private CableTypeDTO cableType;
 

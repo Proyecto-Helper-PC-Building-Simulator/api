@@ -18,12 +18,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/case_fans")
 @Tag(name = "Case Fans Controller", description = "Related operations with case fans")
-public class CaseFanController {
+public class CaseFansController {
     private final CaseFanService caseFanService;
     private final ComponentTypeService componentTypeService;
 
     @Autowired
-    public CaseFanController(CaseFanService caseFanService, ComponentTypeService componentTypeService) {
+    public CaseFansController(CaseFanService caseFanService, ComponentTypeService componentTypeService) {
         this.caseFanService = caseFanService;
         this.componentTypeService = componentTypeService;
     }

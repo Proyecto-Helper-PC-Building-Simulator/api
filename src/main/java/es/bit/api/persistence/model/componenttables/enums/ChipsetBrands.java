@@ -1,5 +1,5 @@
 package es.bit.api.persistence.model.componenttables.enums;
 
-public enum CoolerType {
-    Air, Liquid
+public enum ChipsetBrands {
+    AMD_Radeon, NVIDIA_GeForce
 }

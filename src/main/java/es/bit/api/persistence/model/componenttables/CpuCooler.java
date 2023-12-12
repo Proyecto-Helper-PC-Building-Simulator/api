@@ -1,7 +1,7 @@
 package es.bit.api.persistence.model.componenttables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import es.bit.api.persistence.model.componenttables.enums.CoolerType;
+import es.bit.api.persistence.model.componenttables.enums.CoolerTypes;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,7 +16,7 @@ public class CpuCooler extends Component {
     private Integer size;
 
     @Enumerated(EnumType.STRING)
-    private CoolerType type;
+    private CoolerTypes type;
 
 
     public CpuCooler() {
@@ -47,11 +47,11 @@ public class CpuCooler extends Component {
         this.size = size;
     }
 
-    public CoolerType getType() {
+    public CoolerTypes getType() {
         return type;
     }
 
-    public void setType(CoolerType type) {
+    public void setType(CoolerTypes type) {
         this.type = type;
     }
 

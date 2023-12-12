@@ -1,14 +1,14 @@
 package es.bit.api.rest.dto.componenttables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import es.bit.api.persistence.model.componenttables.enums.CoolerType;
+import es.bit.api.persistence.model.componenttables.enums.CoolerTypes;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CpuCoolerDTO extends ComponentDTO {
     private Float airFlow;
     private Integer height;
     private Integer size;
-    private CoolerType type;
+    private CoolerTypes type;
 
 
     public CpuCoolerDTO() {
@@ -39,11 +39,11 @@ public class CpuCoolerDTO extends ComponentDTO {
         this.size = size;
     }
 
-    public CoolerType getType() {
+    public CoolerTypes getType() {
         return type;
     }
 
-    public void setType(CoolerType type) {
+    public void setType(CoolerTypes type) {
         this.type = type;
     }
 

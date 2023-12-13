@@ -1,9 +1,6 @@
 package es.bit.api.rest.dto.componenttables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import es.bit.api.persistence.model.componenttables.Component;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RamMemoryDTO extends ComponentDTO {

@@ -21,41 +21,39 @@ public class CableService {
         return this.cableJPARepository.count();
     }
 
-    public List<CableDTO> findAll(int page, int size) {
+    public List<CableDTO> findAll(int page, int size, Boolean withCableColors) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Cable> cablePage = this.cableJPARepository.findAll(pageRequest);
 
-        return CableMapper.toDTO(cablePage.getContent());
+        return CableMapper.toDTO(cablePage.getContent(), withCableColors);
     }
 
-    public CableDTO findById(Integer id) {
+    public CableDTO findById(Integer id, Boolean withCableColors) {
         Optional<Cable> cable = this.cableJPARepository.findById(id);
 
         if (cable.isEmpty()) {
             return null;
         }
 
-        return CableMapper.toDTO(cable);
+        return CableMapper.toDTO(cable, withCableColors);
     }
 
 
 
-    public CableDTO create(CableDTO cableDTO) {
-        Cable cable = CableMapper.toBD(cableDTO);
+    public CableDTO create(CableDTO cableDTO, Boolean withCableColors) {
+        Cable cable = CableMapper.toBD(cableDTO, withCableColors);
         cable = this.cableJPARepository.save(cable);
 
-        return CableMapper.toDTO(cable);
+        return CableMapper.toDTO(cable, withCableColors);
     }
 
-    public void update(CableDTO cableDTO) {
-        Cable cable = CableMapper.toBD(cableDTO);
+    public void update(CableDTO cableDTO, Boolean withCableColors) {
+        Cable cable = CableMapper.toBD(cableDTO, withCableColors);
         this.cableJPARepository.save(cable);
-
-        CableMapper.toDTO(cable);
     }
 
-    public void delete(CableDTO cableDTO) {
-        Cable cable = CableMapper.toBD(cableDTO);
+    public void delete(CableDTO cableDTO, Boolean withCableColors) {
+        Cable cable = CableMapper.toBD(cableDTO, withCableColors);
         this.cableJPARepository.delete(cable);
     }
 }

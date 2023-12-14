@@ -1,9 +1,10 @@
 package es.bit.api.persistence.model.basictables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.bit.api.persistence.model.componenttables.Cable;
 import jakarta.persistence.*;
 
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "cable_colors")
@@ -13,6 +14,9 @@ public class CableColor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    @ManyToMany(mappedBy = "cableColors")
+    private List<Cable> cables = new ArrayList<>();
 
 
     public CableColor() {}
@@ -32,6 +36,14 @@ public class CableColor {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Cable> getCables() {
+        return cables;
+    }
+
+    public void setCables(List<Cable> cables) {
+        this.cables = cables;
     }
 
 

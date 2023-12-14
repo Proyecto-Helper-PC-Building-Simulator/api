@@ -21,39 +21,37 @@ public class CableColorService {
         return this.cableColorJPARepository.count();
     }
 
-    public List<CableColorDTO> findAll(int page, int size) {
+    public List<CableColorDTO> findAll(int page, int size, Boolean withCables) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<CableColor> cableColorPage = this.cableColorJPARepository.findAll(pageRequest);
 
-        return CableColorMapper.toDTO(cableColorPage.getContent());
+        return CableColorMapper.toDTO(cableColorPage.getContent(), withCables);
     }
 
-    public CableColorDTO findById(Integer id) {
+    public CableColorDTO findById(Integer id, Boolean withCables) {
         Optional<CableColor> cableColor = this.cableColorJPARepository.findById(id);
 
         if (cableColor.isEmpty()) {
             return null;
         }
 
-        return CableColorMapper.toDTO(cableColor);
+        return CableColorMapper.toDTO(cableColor, withCables);
     }
 
-    public CableColorDTO create(CableColorDTO cableColorDTO) {
-        CableColor cableColor = CableColorMapper.toBD(cableColorDTO);
+    public CableColorDTO create(CableColorDTO cableColorDTO, Boolean withCables) {
+        CableColor cableColor = CableColorMapper.toBD(cableColorDTO, withCables);
         cableColor = this.cableColorJPARepository.save(cableColor);
 
-        return CableColorMapper.toDTO(cableColor);
+        return CableColorMapper.toDTO(cableColor, withCables);
     }
 
-    public void update(CableColorDTO cableColorDTO) {
-        CableColor cableColor = CableColorMapper.toBD(cableColorDTO);
+    public void update(CableColorDTO cableColorDTO, Boolean withCables) {
+        CableColor cableColor = CableColorMapper.toBD(cableColorDTO, withCables);
         this.cableColorJPARepository.save(cableColor);
-
-        CableColorMapper.toDTO(cableColor);
     }
 
-    public void delete(CableColorDTO cableColorDTO) {
-        CableColor cableColor = CableColorMapper.toBD(cableColorDTO);
+    public void delete(CableColorDTO cableColorDTO, Boolean withCables) {
+        CableColor cableColor = CableColorMapper.toBD(cableColorDTO, withCables);
         this.cableColorJPARepository.delete(cableColor);
     }
 }

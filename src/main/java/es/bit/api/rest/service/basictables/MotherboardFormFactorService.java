@@ -21,39 +21,39 @@ public class MotherboardFormFactorService {
         return this.motherboardFormFactorJPARepository.count();
     }
 
-    public List<MotherboardFormFactorDTO> findAll(int page, int size) {
+    public List<MotherboardFormFactorDTO> findAll(int page, int size, Boolean withCases) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<MotherboardFormFactor> motherboardFormFactorPage = this.motherboardFormFactorJPARepository.findAll(pageRequest);
 
-        return MotherboardFormFactorMapper.toDTO(motherboardFormFactorPage.getContent());
+        return MotherboardFormFactorMapper.toDTO(motherboardFormFactorPage.getContent(), withCases);
     }
 
-    public MotherboardFormFactorDTO findById(Integer id) {
+    public MotherboardFormFactorDTO findById(Integer id, Boolean withCases) {
         Optional<MotherboardFormFactor> motherboardFormFactor = this.motherboardFormFactorJPARepository.findById(id);
 
         if (motherboardFormFactor.isEmpty()) {
             return null;
         }
 
-        return MotherboardFormFactorMapper.toDTO(motherboardFormFactor);
+        return MotherboardFormFactorMapper.toDTO(motherboardFormFactor, withCases);
     }
 
-    public MotherboardFormFactorDTO create(MotherboardFormFactorDTO motherboardFormFactorDTO) {
-        MotherboardFormFactor motherboardFormFactor = MotherboardFormFactorMapper.toBD(motherboardFormFactorDTO);
+    public MotherboardFormFactorDTO create(MotherboardFormFactorDTO motherboardFormFactorDTO, Boolean withCases) {
+        MotherboardFormFactor motherboardFormFactor = MotherboardFormFactorMapper.toBD(motherboardFormFactorDTO, withCases);
         motherboardFormFactor = this.motherboardFormFactorJPARepository.save(motherboardFormFactor);
 
-        return MotherboardFormFactorMapper.toDTO(motherboardFormFactor);
+        return MotherboardFormFactorMapper.toDTO(motherboardFormFactor, withCases);
     }
 
-    public void update(MotherboardFormFactorDTO motherboardFormFactorDTO) {
-        MotherboardFormFactor motherboardFormFactor = MotherboardFormFactorMapper.toBD(motherboardFormFactorDTO);
+    public void update(MotherboardFormFactorDTO motherboardFormFactorDTO, Boolean withCases) {
+        MotherboardFormFactor motherboardFormFactor = MotherboardFormFactorMapper.toBD(motherboardFormFactorDTO, withCases);
         this.motherboardFormFactorJPARepository.save(motherboardFormFactor);
 
-        MotherboardFormFactorMapper.toDTO(motherboardFormFactor);
+        MotherboardFormFactorMapper.toDTO(motherboardFormFactor, withCases);
     }
 
-    public void delete(MotherboardFormFactorDTO motherboardFormFactorDTO) {
-        MotherboardFormFactor motherboardFormFactor = MotherboardFormFactorMapper.toBD(motherboardFormFactorDTO);
+    public void delete(MotherboardFormFactorDTO motherboardFormFactorDTO, Boolean withCases) {
+        MotherboardFormFactor motherboardFormFactor = MotherboardFormFactorMapper.toBD(motherboardFormFactorDTO, withCases);
         this.motherboardFormFactorJPARepository.delete(motherboardFormFactor);
     }
 }

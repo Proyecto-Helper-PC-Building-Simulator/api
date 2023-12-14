@@ -79,12 +79,11 @@ public class CablesController {
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Cable name is duplicated.")
     public CableDTO create(
-            @RequestBody CableDTO cable,
-            @RequestParam(required = false, defaultValue = "false") Boolean withCableColors
+            @RequestBody CableDTO cable
     ) {
         validateComponentType(cable);
 
-        return this.cableService.create(cable, withCableColors);
+        return this.cableService.create(cable, true);
     }
 
     @PutMapping("/{id}")
@@ -95,8 +94,7 @@ public class CablesController {
     @ApiResponse(responseCode = "500", description = "Cable name is duplicated.")
     public void updateCable(
             @PathVariable int id,
-            @RequestBody CableDTO cable,
-            @RequestParam(required = false, defaultValue = "false") Boolean withCableColors
+            @RequestBody CableDTO cable
     ) {
         if (id != cable.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
@@ -104,7 +102,7 @@ public class CablesController {
 
         validateComponentType(cable);
 
-        this.cableService.update(cable, withCableColors);
+        this.cableService.update(cable, true);
     }
 
     @DeleteMapping("/{id}")
@@ -115,14 +113,13 @@ public class CablesController {
     @ApiResponse(responseCode = "500", description = "Cable cannot be deleted due to foreign keys.")
     public void delete(
             @PathVariable int id,
-            @RequestBody CableDTO cable,
-            @RequestParam(required = false, defaultValue = "false") Boolean withCableColors
+            @RequestBody CableDTO cable
     ) {
         if (id != cable.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.cableService.delete(cable, withCableColors);
+        this.cableService.delete(cable, false);
     }
 
     private void validateComponentType(CableDTO cable) {

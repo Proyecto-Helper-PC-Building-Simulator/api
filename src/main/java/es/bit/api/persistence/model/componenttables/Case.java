@@ -3,7 +3,11 @@ package es.bit.api.persistence.model.componenttables;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.persistence.model.basictables.CaseFanSize;
 import es.bit.api.persistence.model.basictables.CaseSize;
+import es.bit.api.persistence.model.basictables.MotherboardFormFactor;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cases")
@@ -20,6 +24,14 @@ public class Case extends Component {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_fan_size_id", referencedColumnName = "id")
     private CaseFanSize caseFanSize;
+
+    @ManyToMany
+    @JoinTable(
+            name = "case_motherboard_form_factor_relations",
+            joinColumns = @JoinColumn(name = "case_id"),
+            inverseJoinColumns = @JoinColumn(name = "motherboard_form_factor_id")
+    )
+    private List<MotherboardFormFactor> motherboardFormFactors = new ArrayList<>();
 
 
     public Case() {
@@ -64,6 +76,14 @@ public class Case extends Component {
 
     public void setCaseFanSize(CaseFanSize caseFanSize) {
         this.caseFanSize = caseFanSize;
+    }
+
+    public List<MotherboardFormFactor> getMotherboardFormFactors() {
+        return motherboardFormFactors;
+    }
+
+    public void setMotherboardFormFactors(List<MotherboardFormFactor> motherboardFormFactors) {
+        this.motherboardFormFactors = motherboardFormFactors;
     }
 
 

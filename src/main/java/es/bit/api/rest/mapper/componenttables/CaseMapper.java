@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CaseMapper {
-    public static CaseDTO toDTO(Case caseObject) {
+    public static CaseDTO toDTO(Case caseObject, Boolean withMotherboardFormFactors) {
         CaseDTO caseObjectDTO = new CaseDTO();
         caseObjectDTO.setComponentId(caseObject.getComponentId());
         caseObjectDTO.setName(caseObject.getName());
@@ -24,27 +24,31 @@ public class CaseMapper {
         caseObjectDTO.setCaseSize(CaseSizeMapper.toDTO(caseObject.getCaseSize()));
         caseObjectDTO.setCaseFanSize(CaseFanSizeMapper.toDTO(caseObject.getCaseFanSize()));
 
+        if (withMotherboardFormFactors) {
+            caseObjectDTO.setMotherboardFormFactors(MotherboardFormFactorMapper.toDTO(caseObject.getMotherboardFormFactors(), false));
+        }
+
         return caseObjectDTO;
     }
 
-    public static CaseDTO toDTO(Optional<Case> caseObjectOptional) {
-        return caseObjectOptional.map(CaseMapper::toDTO).orElse(null);
+    public static CaseDTO toDTO(Optional<Case> caseObjectOptional, Boolean withMotherboardFormFactors) {
+        return caseObjectOptional.map(caseObject -> toDTO(caseObject, withMotherboardFormFactors)).orElse(null);
     }
 
-    public static List<CaseDTO> toDTO(List<Case> caseObjects) {
+    public static List<CaseDTO> toDTO(List<Case> caseObjects, Boolean withMotherboardFormFactors) {
         List<CaseDTO> caseObjectsDTO = new ArrayList<>();
 
         if (caseObjects == null)
             return caseObjectsDTO;
 
         for (Case caseObject : caseObjects) {
-            caseObjectsDTO.add(CaseMapper.toDTO(caseObject));
+            caseObjectsDTO.add(CaseMapper.toDTO(caseObject, withMotherboardFormFactors));
         }
 
         return caseObjectsDTO;
     }
 
-    public static Case toBD(CaseDTO caseObjectDTO) {
+    public static Case toBD(CaseDTO caseObjectDTO, Boolean withMotherboardFormFactors) {
         Case caseObject = new Case();
         caseObject.setComponentId(caseObjectDTO.getComponentId());
         caseObject.setName(caseObjectDTO.getName());
@@ -59,6 +63,20 @@ public class CaseMapper {
         caseObject.setCaseSize(CaseSizeMapper.toBD(caseObjectDTO.getCaseSize()));
         caseObject.setCaseFanSize(CaseFanSizeMapper.toBD(caseObjectDTO.getCaseFanSize()));
 
+        if (withMotherboardFormFactors) {
+            caseObject.setMotherboardFormFactors(MotherboardFormFactorMapper.toBD(caseObjectDTO.getMotherboardFormFactors(), false));
+        }
+
         return caseObject;
+    }
+
+    public static List<Case> toBD(List<CaseDTO> casesDTO, Boolean withMotherboardFormFactors) {
+        List<Case> cases = new ArrayList<>();
+
+        for (CaseDTO caseDTO : casesDTO) {
+            cases.add(CaseMapper.toBD(caseDTO, withMotherboardFormFactors));
+        }
+
+        return cases;
     }
 }

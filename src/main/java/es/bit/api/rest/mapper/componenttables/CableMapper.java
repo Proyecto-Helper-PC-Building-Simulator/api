@@ -62,10 +62,10 @@ public class CableMapper {
         return cable;
     }
 
-    public static List<Cable> toBD(List<CableDTO> cableColorsDTO, Boolean withCableColors) {
+    public static List<Cable> toBD(List<CableDTO> cablesDTO, Boolean withCableColors) {
         List<Cable> cableColors = new ArrayList<>();
 
-        for (CableDTO cableColorDTO : cableColorsDTO) {
+        for (CableDTO cableColorDTO : cablesDTO) {
             cableColors.add(CableMapper.toBD(cableColorDTO, withCableColors));
         }
 

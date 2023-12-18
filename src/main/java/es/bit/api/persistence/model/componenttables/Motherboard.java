@@ -1,10 +1,11 @@
 package es.bit.api.persistence.model.componenttables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import es.bit.api.persistence.model.basictables.CpuSocket;
-import es.bit.api.persistence.model.basictables.MotherboardChipset;
-import es.bit.api.persistence.model.basictables.MotherboardFormFactor;
+import es.bit.api.persistence.model.basictables.*;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "motherboards")
@@ -23,6 +24,14 @@ public class Motherboard extends Component {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpu_socket_id", referencedColumnName = "id")
     private CpuSocket cpuSocket;
+
+    @ManyToMany
+    @JoinTable(
+            name = "motherboard_multi_gpu_relations",
+            joinColumns = @JoinColumn(name = "motherboard_id"),
+            inverseJoinColumns = @JoinColumn(name = "multi_gpu_id")
+    )
+    private List<MultiGpuType> multiGpuTypes = new ArrayList<>();
 
 
     public Motherboard() {
@@ -59,6 +68,14 @@ public class Motherboard extends Component {
 
     public void setCpuSocket(CpuSocket cpuSocket) {
         this.cpuSocket = cpuSocket;
+    }
+
+    public List<MultiGpuType> getMultiGpuTypes() {
+        return multiGpuTypes;
+    }
+
+    public void setMultiGpuTypes(List<MultiGpuType> multiGpuTypes) {
+        this.multiGpuTypes = multiGpuTypes;
     }
 
 

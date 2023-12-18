@@ -25,7 +25,7 @@ public class GpuMapper {
         gpuDTO.setWattage(gpu.getWattage());
         gpuDTO.setChipsetBrand(gpu.getChipsetBrand());
         gpuDTO.setGpuChipsetSerie(GpuChipsetSerieMapper.toDTO(gpu.getGpuChipsetSerie()));
-        gpuDTO.setMultiGpuType(MultiGpuTypeMapper.toDTO(gpu.getMultiGpuType()));
+        gpuDTO.setMultiGpuType(MultiGpuTypeMapper.toDTO(gpu.getMultiGpuType(), false));
 
         return gpuDTO;
     }
@@ -63,7 +63,7 @@ public class GpuMapper {
         gpu.setWattage(gpuDTO.getWattage());
         gpu.setChipsetBrand(gpuDTO.getChipsetBrand());
         gpu.setGpuChipsetSerie(GpuChipsetSerieMapper.toBD(gpuDTO.getGpuChipsetSerie()));
-        gpu.setMultiGpuType(MultiGpuTypeMapper.toBD(gpuDTO.getMultiGpuType()));
+        gpu.setMultiGpuType(MultiGpuTypeMapper.toBD(gpuDTO.getMultiGpuType(), false));
 
         return gpu;
     }

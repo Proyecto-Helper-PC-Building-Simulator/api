@@ -21,41 +21,39 @@ public class MotherboardService {
         return this.motherboardJPARepository.count();
     }
 
-    public List<MotherboardDTO> findAll(int page, int size) {
+    public List<MotherboardDTO> findAll(int page, int size, Boolean withMultiGpuTypes) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Motherboard> motherboardPage = this.motherboardJPARepository.findAll(pageRequest);
 
-        return MotherboardMapper.toDTO(motherboardPage.getContent());
+        return MotherboardMapper.toDTO(motherboardPage.getContent(), withMultiGpuTypes);
     }
 
-    public MotherboardDTO findById(Integer id) {
+    public MotherboardDTO findById(Integer id, Boolean withMultiGpuTypes) {
         Optional<Motherboard> motherboard = this.motherboardJPARepository.findById(id);
 
         if (motherboard.isEmpty()) {
             return null;
         }
 
-        return MotherboardMapper.toDTO(motherboard);
+        return MotherboardMapper.toDTO(motherboard, withMultiGpuTypes);
     }
 
 
 
-    public MotherboardDTO create(MotherboardDTO motherboardDTO) {
-        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO);
+    public MotherboardDTO create(MotherboardDTO motherboardDTO, Boolean withMultiGpuTypes) {
+        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO, withMultiGpuTypes);
         motherboard = this.motherboardJPARepository.save(motherboard);
 
-        return MotherboardMapper.toDTO(motherboard);
+        return MotherboardMapper.toDTO(motherboard, withMultiGpuTypes);
     }
 
-    public void update(MotherboardDTO motherboardDTO) {
-        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO);
+    public void update(MotherboardDTO motherboardDTO, Boolean withMultiGpuTypes) {
+        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO, withMultiGpuTypes);
         this.motherboardJPARepository.save(motherboard);
-
-        MotherboardMapper.toDTO(motherboard);
     }
 
-    public void delete(MotherboardDTO motherboardDTO) {
-        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO);
+    public void delete(MotherboardDTO motherboardDTO, Boolean withMultiGpuTypes) {
+        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO, withMultiGpuTypes);
         this.motherboardJPARepository.delete(motherboard);
     }
 }

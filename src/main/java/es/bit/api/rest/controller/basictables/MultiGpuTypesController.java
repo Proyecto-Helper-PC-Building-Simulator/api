@@ -31,8 +31,12 @@ public class MultiGpuTypesController {
     @Operation(summary = "Get all multi gpu types paged")
     @ApiResponse(responseCode = "200", description = "Multi gpu types obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<MultiGpuTypeDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        List<MultiGpuTypeDTO> content = this.multiGpuTypeService.findAll(page, size);
+    public PagedResponse<MultiGpuTypeDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboards
+    ) {
+        List<MultiGpuTypeDTO> content = this.multiGpuTypeService.findAll(page, size, withMotherboards);
         long totalElements = this.multiGpuTypeService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -47,8 +51,11 @@ public class MultiGpuTypesController {
     @Operation(summary = "Get a multi gpu type by ID")
     @ApiResponse(responseCode = "200", description = "Multi gpu type found.")
     @ApiResponse(responseCode = "404", description = "Multi gpu type not found.")
-    public MultiGpuTypeDTO findById(@PathVariable int id) {
-        MultiGpuTypeDTO multiGpuType = this.multiGpuTypeService.findById(id);
+    public MultiGpuTypeDTO findById(
+            @PathVariable int id,
+            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboards
+    ) {
+        MultiGpuTypeDTO multiGpuType = this.multiGpuTypeService.findById(id, withMotherboards);
 
         if (multiGpuType == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -63,7 +70,7 @@ public class MultiGpuTypesController {
     @ApiResponse(responseCode = "201", description = "Multi gpu type created.")
     @ApiResponse(responseCode = "500", description = "Multi gpu type name is duplicated.")
     public MultiGpuTypeDTO create(@RequestBody MultiGpuTypeDTO multiGpuType) {
-        return this.multiGpuTypeService.create(multiGpuType);
+        return this.multiGpuTypeService.create(multiGpuType, true);
     }
 
     @PutMapping("/{id}")
@@ -72,12 +79,15 @@ public class MultiGpuTypesController {
     @ApiResponse(responseCode = "204", description = "Multi gpu type updated correctly.")
     @ApiResponse(responseCode = "412", description = "Error in update query.")
     @ApiResponse(responseCode = "500", description = "Multi gpu type name is duplicated.")
-    public void updateMultiGpuType(@PathVariable int id, @RequestBody MultiGpuTypeDTO multiGpuType) {
+    public void updateMultiGpuType(
+            @PathVariable int id,
+            @RequestBody MultiGpuTypeDTO multiGpuType
+    ) {
         if (id != multiGpuType.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
-        this.multiGpuTypeService.update(multiGpuType);
+        this.multiGpuTypeService.update(multiGpuType, true);
     }
 
     @DeleteMapping("/{id}")
@@ -86,11 +96,14 @@ public class MultiGpuTypesController {
     @ApiResponse(responseCode = "204", description = "Multi gpu type deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
     @ApiResponse(responseCode = "500", description = "Multi gpu type cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody MultiGpuTypeDTO multiGpuType) {
+    public void delete(
+            @PathVariable int id,
+            @RequestBody MultiGpuTypeDTO multiGpuType
+    ) {
         if (id != multiGpuType.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.multiGpuTypeService.delete(multiGpuType);
+        this.multiGpuTypeService.delete(multiGpuType, false);
     }
 }

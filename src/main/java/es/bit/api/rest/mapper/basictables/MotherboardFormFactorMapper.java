@@ -17,7 +17,7 @@ public class MotherboardFormFactorMapper {
             motherboardFormFactorDTO.setName(motherboardFormFactor.getName());
 
             if (withCases) {
-                motherboardFormFactorDTO.setCases(CaseMapper.toDTO(motherboardFormFactor.getCases(), false));
+                motherboardFormFactorDTO.setCases(CaseMapper.toDTO(motherboardFormFactor.getCases(), false, false));
             }
         }
 
@@ -53,7 +53,7 @@ public class MotherboardFormFactorMapper {
             motherboardFormFactor.setName(motherboardFormFactorDTO.getName());
 
             if (withCases) {
-                motherboardFormFactor.setCases(CaseMapper.toBD(motherboardFormFactorDTO.getCases(), false));
+                motherboardFormFactor.setCases(CaseMapper.toBD(motherboardFormFactorDTO.getCases(), false, false));
             }
         }
 

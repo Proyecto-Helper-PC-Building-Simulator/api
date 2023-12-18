@@ -42,9 +42,10 @@ public class CasesController {
     public PagedResponse<CaseDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboardFormFactors
+            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboardFormFactors,
+            @RequestParam(required = false, defaultValue = "false") Boolean withPsuFormFactors
     ) {
-        List<CaseDTO> content = this.caseService.findAll(page, size, withMotherboardFormFactors);
+        List<CaseDTO> content = this.caseService.findAll(page, size, withMotherboardFormFactors, withPsuFormFactors);
         long totalElements = this.caseService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -61,9 +62,10 @@ public class CasesController {
     @ApiResponse(responseCode = "404", description = "Case not found.")
     public CaseDTO findById(
             @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboardFormFactors
+            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboardFormFactors,
+            @RequestParam(required = false, defaultValue = "false") Boolean withPsuFormFactors
     ) {
-        CaseDTO caseObject = this.caseService.findById(id, withMotherboardFormFactors);
+        CaseDTO caseObject = this.caseService.findById(id, withMotherboardFormFactors, withPsuFormFactors);
 
         if (caseObject == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -83,7 +85,7 @@ public class CasesController {
     ) {
         validateComponentType(caseObject);
 
-        return this.caseService.create(caseObject, true);
+        return this.caseService.create(caseObject, true, true);
     }
 
     @PutMapping("/{id}")
@@ -102,7 +104,7 @@ public class CasesController {
 
         validateComponentType(caseObject);
 
-        this.caseService.update(caseObject, true);
+        this.caseService.update(caseObject, true, true);
     }
 
     @DeleteMapping("/{id}")
@@ -119,7 +121,7 @@ public class CasesController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.caseService.delete(caseObject, false);
+        this.caseService.delete(caseObject, false, false);
     }
 
     private void validateComponentType(CaseDTO caseObject) {

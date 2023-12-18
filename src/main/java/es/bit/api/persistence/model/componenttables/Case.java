@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.persistence.model.basictables.CaseFanSize;
 import es.bit.api.persistence.model.basictables.CaseSize;
 import es.bit.api.persistence.model.basictables.MotherboardFormFactor;
+import es.bit.api.persistence.model.basictables.PowerSupplyFormFactor;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -32,6 +33,14 @@ public class Case extends Component {
             inverseJoinColumns = @JoinColumn(name = "motherboard_form_factor_id")
     )
     private List<MotherboardFormFactor> motherboardFormFactors = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "case_psu_form_factor_relations",
+            joinColumns = @JoinColumn(name = "case_id"),
+            inverseJoinColumns = @JoinColumn(name = "power_supply_form_factor_id")
+    )
+    private List<PowerSupplyFormFactor> powerSupplyFormFactors = new ArrayList<>();
 
 
     public Case() {
@@ -84,6 +93,14 @@ public class Case extends Component {
 
     public void setMotherboardFormFactors(List<MotherboardFormFactor> motherboardFormFactors) {
         this.motherboardFormFactors = motherboardFormFactors;
+    }
+
+    public List<PowerSupplyFormFactor> getPowerSupplyFormFactors() {
+        return powerSupplyFormFactors;
+    }
+
+    public void setPowerSupplyFormFactors(List<PowerSupplyFormFactor> powerSupplyFormFactors) {
+        this.powerSupplyFormFactors = powerSupplyFormFactors;
     }
 
 

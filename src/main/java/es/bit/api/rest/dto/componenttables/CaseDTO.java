@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.rest.dto.basictables.CaseFanSizeDTO;
 import es.bit.api.rest.dto.basictables.CaseSizeDTO;
 import es.bit.api.rest.dto.basictables.MotherboardFormFactorDTO;
+import es.bit.api.rest.dto.basictables.PowerSupplyFormFactorDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class CaseDTO extends ComponentDTO {
     private CaseSizeDTO caseSize;
     private CaseFanSizeDTO caseFanSize;
     private List<MotherboardFormFactorDTO> motherboardFormFactors = new ArrayList<>();
+    private List<PowerSupplyFormFactorDTO> powerSupplyFormFactors = new ArrayList<>();
 
 
     public CaseDTO() {
@@ -68,6 +70,14 @@ public class CaseDTO extends ComponentDTO {
 
     public void setMotherboardFormFactors(List<MotherboardFormFactorDTO> motherboardFormFactors) {
         this.motherboardFormFactors = motherboardFormFactors;
+    }
+
+    public List<PowerSupplyFormFactorDTO> getPowerSupplyFormFactors() {
+        return powerSupplyFormFactors;
+    }
+
+    public void setPowerSupplyFormFactors(List<PowerSupplyFormFactorDTO> powerSupplyFormFactors) {
+        this.powerSupplyFormFactors = powerSupplyFormFactors;
     }
 
 

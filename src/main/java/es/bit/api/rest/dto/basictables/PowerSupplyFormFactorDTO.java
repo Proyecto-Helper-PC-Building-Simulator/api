@@ -1,13 +1,17 @@
 package es.bit.api.rest.dto.basictables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.bit.api.rest.dto.componenttables.CaseDTO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PowerSupplyFormFactorDTO {
     private int id;
     private String name;
+    private List<CaseDTO> cases = new ArrayList<>();
 
 
     public PowerSupplyFormFactorDTO() {}
@@ -27,6 +31,14 @@ public class PowerSupplyFormFactorDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<CaseDTO> getCases() {
+        return cases;
+    }
+
+    public void setCases(List<CaseDTO> cases) {
+        this.cases = cases;
     }
 
 

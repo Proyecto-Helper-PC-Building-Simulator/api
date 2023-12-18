@@ -31,8 +31,12 @@ public class PowerSupplyFormFactorsController {
     @Operation(summary = "Get all power supply form factors paged")
     @ApiResponse(responseCode = "200", description = "Power supply form factors obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<PowerSupplyFormFactorDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        List<PowerSupplyFormFactorDTO> content = this.powerSupplyFormFactorService.findAll(page, size);
+    public PagedResponse<PowerSupplyFormFactorDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCases
+    ) {
+        List<PowerSupplyFormFactorDTO> content = this.powerSupplyFormFactorService.findAll(page, size, withCases);
         long totalElements = this.powerSupplyFormFactorService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -47,8 +51,11 @@ public class PowerSupplyFormFactorsController {
     @Operation(summary = "Get a power supply form factor by ID")
     @ApiResponse(responseCode = "200", description = "Power supply form factor found.")
     @ApiResponse(responseCode = "404", description = "Power supply form factor not found.")
-    public PowerSupplyFormFactorDTO findById(@PathVariable int id) {
-        PowerSupplyFormFactorDTO powerSupplyFormFactor = this.powerSupplyFormFactorService.findById(id);
+    public PowerSupplyFormFactorDTO findById(
+            @PathVariable int id,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCases
+    ) {
+        PowerSupplyFormFactorDTO powerSupplyFormFactor = this.powerSupplyFormFactorService.findById(id, withCases);
 
         if (powerSupplyFormFactor == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -62,8 +69,11 @@ public class PowerSupplyFormFactorsController {
     @Operation(summary = "Create a new power supply form factor")
     @ApiResponse(responseCode = "201", description = "Power supply form factor created.")
     @ApiResponse(responseCode = "500", description = "Power supply form factor name is duplicated.")
-    public PowerSupplyFormFactorDTO create(@RequestBody PowerSupplyFormFactorDTO powerSupplyFormFactor) {
-        return this.powerSupplyFormFactorService.create(powerSupplyFormFactor);
+    public PowerSupplyFormFactorDTO create(
+            @RequestBody PowerSupplyFormFactorDTO powerSupplyFormFactor,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCases
+    ) {
+        return this.powerSupplyFormFactorService.create(powerSupplyFormFactor, withCases);
     }
 
     @PutMapping("/{id}")
@@ -72,12 +82,16 @@ public class PowerSupplyFormFactorsController {
     @ApiResponse(responseCode = "204", description = "Power supply form factor updated correctly.")
     @ApiResponse(responseCode = "412", description = "Error in update query.")
     @ApiResponse(responseCode = "500", description = "Power supply form factor name is duplicated.")
-    public void updatePowerSupplyFormFactor(@PathVariable int id, @RequestBody PowerSupplyFormFactorDTO powerSupplyFormFactor) {
+    public void updatePowerSupplyFormFactor(
+            @PathVariable int id,
+            @RequestBody PowerSupplyFormFactorDTO powerSupplyFormFactor,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCases
+    ) {
         if (id != powerSupplyFormFactor.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
-        this.powerSupplyFormFactorService.update(powerSupplyFormFactor);
+        this.powerSupplyFormFactorService.update(powerSupplyFormFactor, withCases);
     }
 
     @DeleteMapping("/{id}")
@@ -86,11 +100,15 @@ public class PowerSupplyFormFactorsController {
     @ApiResponse(responseCode = "204", description = "Power supply form factor deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
     @ApiResponse(responseCode = "500", description = "Power supply form factor cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody PowerSupplyFormFactorDTO powerSupplyFormFactor) {
+    public void delete(
+            @PathVariable int id,
+            @RequestBody PowerSupplyFormFactorDTO powerSupplyFormFactor,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCases
+    ) {
         if (id != powerSupplyFormFactor.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.powerSupplyFormFactorService.delete(powerSupplyFormFactor);
+        this.powerSupplyFormFactorService.delete(powerSupplyFormFactor, withCases);
     }
 }

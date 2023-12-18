@@ -21,39 +21,37 @@ public class PowerSupplyFormFactorService {
         return this.powerSupplyFormFactorJPARepository.count();
     }
 
-    public List<PowerSupplyFormFactorDTO> findAll(int page, int size) {
+    public List<PowerSupplyFormFactorDTO> findAll(int page, int size, Boolean withCases) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<PowerSupplyFormFactor> powerSupplyFormFactorPage = this.powerSupplyFormFactorJPARepository.findAll(pageRequest);
 
-        return PowerSupplyFormFactorMapper.toDTO(powerSupplyFormFactorPage.getContent());
+        return PowerSupplyFormFactorMapper.toDTO(powerSupplyFormFactorPage.getContent(), withCases);
     }
 
-    public PowerSupplyFormFactorDTO findById(Integer id) {
+    public PowerSupplyFormFactorDTO findById(Integer id, Boolean withCases) {
         Optional<PowerSupplyFormFactor> powerSupplyFormFactor = this.powerSupplyFormFactorJPARepository.findById(id);
 
         if (powerSupplyFormFactor.isEmpty()) {
             return null;
         }
 
-        return PowerSupplyFormFactorMapper.toDTO(powerSupplyFormFactor);
+        return PowerSupplyFormFactorMapper.toDTO(powerSupplyFormFactor, withCases);
     }
 
-    public PowerSupplyFormFactorDTO create(PowerSupplyFormFactorDTO powerSupplyFormFactorDTO) {
-        PowerSupplyFormFactor powerSupplyFormFactor = PowerSupplyFormFactorMapper.toBD(powerSupplyFormFactorDTO);
+    public PowerSupplyFormFactorDTO create(PowerSupplyFormFactorDTO powerSupplyFormFactorDTO, Boolean withCases) {
+        PowerSupplyFormFactor powerSupplyFormFactor = PowerSupplyFormFactorMapper.toBD(powerSupplyFormFactorDTO, withCases);
         powerSupplyFormFactor = this.powerSupplyFormFactorJPARepository.save(powerSupplyFormFactor);
 
-        return PowerSupplyFormFactorMapper.toDTO(powerSupplyFormFactor);
+        return PowerSupplyFormFactorMapper.toDTO(powerSupplyFormFactor, withCases);
     }
 
-    public void update(PowerSupplyFormFactorDTO powerSupplyFormFactorDTO) {
-        PowerSupplyFormFactor powerSupplyFormFactor = PowerSupplyFormFactorMapper.toBD(powerSupplyFormFactorDTO);
+    public void update(PowerSupplyFormFactorDTO powerSupplyFormFactorDTO, Boolean withCases) {
+        PowerSupplyFormFactor powerSupplyFormFactor = PowerSupplyFormFactorMapper.toBD(powerSupplyFormFactorDTO, withCases);
         this.powerSupplyFormFactorJPARepository.save(powerSupplyFormFactor);
-
-        PowerSupplyFormFactorMapper.toDTO(powerSupplyFormFactor);
     }
 
-    public void delete(PowerSupplyFormFactorDTO powerSupplyFormFactorDTO) {
-        PowerSupplyFormFactor powerSupplyFormFactor = PowerSupplyFormFactorMapper.toBD(powerSupplyFormFactorDTO);
+    public void delete(PowerSupplyFormFactorDTO powerSupplyFormFactorDTO, Boolean withCases) {
+        PowerSupplyFormFactor powerSupplyFormFactor = PowerSupplyFormFactorMapper.toBD(powerSupplyFormFactorDTO, withCases);
         this.powerSupplyFormFactorJPARepository.delete(powerSupplyFormFactor);
     }
 }

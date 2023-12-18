@@ -1,11 +1,12 @@
 package es.bit.api.persistence.model.componenttables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.bit.api.persistence.model.basictables.CpuSocket;
 import es.bit.api.persistence.model.componenttables.enums.CoolerTypes;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cpu_coolers")
@@ -17,6 +18,14 @@ public class CpuCooler extends Component {
 
     @Enumerated(EnumType.STRING)
     private CoolerTypes type;
+
+    @ManyToMany
+    @JoinTable(
+            name = "cpu_cooler_socket_relations",
+            joinColumns = @JoinColumn(name = "cpu_cooler_id"),
+            inverseJoinColumns = @JoinColumn(name = "cpu_socket_id")
+    )
+    private List<CpuSocket> cpuSockets = new ArrayList<>();
 
 
     public CpuCooler() {
@@ -53,6 +62,14 @@ public class CpuCooler extends Component {
 
     public void setType(CoolerTypes type) {
         this.type = type;
+    }
+
+    public List<CpuSocket> getCpuSockets() {
+        return cpuSockets;
+    }
+
+    public void setCpuSockets(List<CpuSocket> cpuSockets) {
+        this.cpuSockets = cpuSockets;
     }
 
 

@@ -1,8 +1,11 @@
 package es.bit.api.persistence.model.basictables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.bit.api.persistence.model.componenttables.Case;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,6 +16,9 @@ public class MotherboardFormFactor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    @ManyToMany(mappedBy = "motherboardFormFactors")
+    private List<Case> cases = new ArrayList<>();
 
 
     public MotherboardFormFactor() {}
@@ -32,6 +38,14 @@ public class MotherboardFormFactor {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Case> getCases() {
+        return cases;
+    }
+
+    public void setCases(List<Case> cases) {
+        this.cases = cases;
     }
 
 

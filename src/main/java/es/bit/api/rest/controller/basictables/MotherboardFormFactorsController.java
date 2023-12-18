@@ -31,8 +31,12 @@ public class MotherboardFormFactorsController {
     @Operation(summary = "Get all motherboard form factors paged")
     @ApiResponse(responseCode = "200", description = "Motherboard form factors obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<MotherboardFormFactorDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        List<MotherboardFormFactorDTO> content = this.motherboardFormFactorService.findAll(page, size);
+    public PagedResponse<MotherboardFormFactorDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCases
+    ) {
+        List<MotherboardFormFactorDTO> content = this.motherboardFormFactorService.findAll(page, size, withCases);
         long totalElements = this.motherboardFormFactorService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -47,8 +51,11 @@ public class MotherboardFormFactorsController {
     @Operation(summary = "Get a motherboard form factor by ID")
     @ApiResponse(responseCode = "200", description = "Motherboard form factor found.")
     @ApiResponse(responseCode = "404", description = "Motherboard form factor not found.")
-    public MotherboardFormFactorDTO findById(@PathVariable int id) {
-        MotherboardFormFactorDTO motherboardFormFactor = this.motherboardFormFactorService.findById(id);
+    public MotherboardFormFactorDTO findById(
+            @PathVariable int id,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCases
+    ) {
+        MotherboardFormFactorDTO motherboardFormFactor = this.motherboardFormFactorService.findById(id, withCases);
 
         if (motherboardFormFactor == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -62,8 +69,10 @@ public class MotherboardFormFactorsController {
     @Operation(summary = "Create a new motherboard form factor")
     @ApiResponse(responseCode = "201", description = "Motherboard form factor created.")
     @ApiResponse(responseCode = "500", description = "Motherboard form factor name is duplicated.")
-    public MotherboardFormFactorDTO create(@RequestBody MotherboardFormFactorDTO motherboardFormFactor) {
-        return this.motherboardFormFactorService.create(motherboardFormFactor);
+    public MotherboardFormFactorDTO create(
+            @RequestBody MotherboardFormFactorDTO motherboardFormFactor
+    ) {
+        return this.motherboardFormFactorService.create(motherboardFormFactor, true);
     }
 
     @PutMapping("/{id}")
@@ -72,12 +81,15 @@ public class MotherboardFormFactorsController {
     @ApiResponse(responseCode = "204", description = "Motherboard form factor updated correctly.")
     @ApiResponse(responseCode = "412", description = "Error in update query.")
     @ApiResponse(responseCode = "500", description = "Motherboard form factor name is duplicated.")
-    public void updateMotherboardFormFactor(@PathVariable int id, @RequestBody MotherboardFormFactorDTO motherboardFormFactor) {
+    public void updateMotherboardFormFactor(
+            @PathVariable int id,
+            @RequestBody MotherboardFormFactorDTO motherboardFormFactor
+    ) {
         if (id != motherboardFormFactor.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
-        this.motherboardFormFactorService.update(motherboardFormFactor);
+        this.motherboardFormFactorService.update(motherboardFormFactor, true);
     }
 
     @DeleteMapping("/{id}")
@@ -86,11 +98,14 @@ public class MotherboardFormFactorsController {
     @ApiResponse(responseCode = "204", description = "Motherboard form factor deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
     @ApiResponse(responseCode = "500", description = "Motherboard form factor cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody MotherboardFormFactorDTO motherboardFormFactor) {
+    public void delete(
+            @PathVariable int id,
+            @RequestBody MotherboardFormFactorDTO motherboardFormFactor
+    ) {
         if (id != motherboardFormFactor.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.motherboardFormFactorService.delete(motherboardFormFactor);
+        this.motherboardFormFactorService.delete(motherboardFormFactor, true);
     }
 }

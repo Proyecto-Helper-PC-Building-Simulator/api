@@ -21,41 +21,39 @@ public class CaseService {
         return this.caseObjectJPARepository.count();
     }
 
-    public List<CaseDTO> findAll(int page, int size) {
+    public List<CaseDTO> findAll(int page, int size, Boolean withMotherboardFormFactors, Boolean withPsuFormFactors) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Case> caseObjectPage = this.caseObjectJPARepository.findAll(pageRequest);
 
-        return CaseMapper.toDTO(caseObjectPage.getContent());
+        return CaseMapper.toDTO(caseObjectPage.getContent(), withMotherboardFormFactors, withPsuFormFactors);
     }
 
-    public CaseDTO findById(Integer id) {
+    public CaseDTO findById(Integer id, Boolean withMotherboardFormFactors, Boolean withPsuFormFactors) {
         Optional<Case> caseObject = this.caseObjectJPARepository.findById(id);
 
         if (caseObject.isEmpty()) {
             return null;
         }
 
-        return CaseMapper.toDTO(caseObject);
+        return CaseMapper.toDTO(caseObject, withMotherboardFormFactors, withPsuFormFactors);
     }
 
 
 
-    public CaseDTO create(CaseDTO caseObjectDTO) {
-        Case caseObject = CaseMapper.toBD(caseObjectDTO);
+    public CaseDTO create(CaseDTO caseObjectDTO, Boolean withMotherboardFormFactors, Boolean withPsuFormFactors) {
+        Case caseObject = CaseMapper.toBD(caseObjectDTO, withMotherboardFormFactors, withPsuFormFactors);
         caseObject = this.caseObjectJPARepository.save(caseObject);
 
-        return CaseMapper.toDTO(caseObject);
+        return CaseMapper.toDTO(caseObject, withMotherboardFormFactors, withPsuFormFactors);
     }
 
-    public void update(CaseDTO caseObjectDTO) {
-        Case caseObject = CaseMapper.toBD(caseObjectDTO);
+    public void update(CaseDTO caseObjectDTO, Boolean withMotherboardFormFactors, Boolean withPsuFormFactors) {
+        Case caseObject = CaseMapper.toBD(caseObjectDTO, withMotherboardFormFactors, withPsuFormFactors);
         this.caseObjectJPARepository.save(caseObject);
-
-        CaseMapper.toDTO(caseObject);
     }
 
-    public void delete(CaseDTO caseObjectDTO) {
-        Case caseObject = CaseMapper.toBD(caseObjectDTO);
+    public void delete(CaseDTO caseObjectDTO, Boolean withMotherboardFormFactors, Boolean withPsuFormFactors) {
+        Case caseObject = CaseMapper.toBD(caseObjectDTO, withMotherboardFormFactors, withPsuFormFactors);
         this.caseObjectJPARepository.delete(caseObject);
     }
 }

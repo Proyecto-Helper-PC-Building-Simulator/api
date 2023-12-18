@@ -2,6 +2,10 @@ package es.bit.api.rest.dto.componenttables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.persistence.model.componenttables.enums.CoolerTypes;
+import es.bit.api.rest.dto.basictables.CpuSocketDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CpuCoolerDTO extends ComponentDTO {
@@ -9,6 +13,7 @@ public class CpuCoolerDTO extends ComponentDTO {
     private Integer height;
     private Integer size;
     private CoolerTypes type;
+    private List<CpuSocketDTO> cpuSockets = new ArrayList<>();
 
 
     public CpuCoolerDTO() {
@@ -45,6 +50,14 @@ public class CpuCoolerDTO extends ComponentDTO {
 
     public void setType(CoolerTypes type) {
         this.type = type;
+    }
+
+    public List<CpuSocketDTO> getCpuSockets() {
+        return cpuSockets;
+    }
+
+    public void setCpuSockets(List<CpuSocketDTO> cpuSockets) {
+        this.cpuSockets = cpuSockets;
     }
 
 

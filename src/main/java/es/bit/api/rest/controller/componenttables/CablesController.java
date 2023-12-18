@@ -39,8 +39,12 @@ public class CablesController {
     @Operation(summary = "Get all cables paged")
     @ApiResponse(responseCode = "200", description = "Cables obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CableDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        List<CableDTO> content = this.cableService.findAll(page, size);
+    public PagedResponse<CableDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCableColors
+    ) {
+        List<CableDTO> content = this.cableService.findAll(page, size, withCableColors);
         long totalElements = this.cableService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -55,8 +59,11 @@ public class CablesController {
     @Operation(summary = "Get a cable by ID")
     @ApiResponse(responseCode = "200", description = "Cable found.")
     @ApiResponse(responseCode = "404", description = "Cable not found.")
-    public CableDTO findById(@PathVariable int id) {
-        CableDTO cable = this.cableService.findById(id);
+    public CableDTO findById(
+            @PathVariable int id,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCableColors
+    ) {
+        CableDTO cable = this.cableService.findById(id, withCableColors);
 
         if (cable == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -71,10 +78,12 @@ public class CablesController {
     @ApiResponse(responseCode = "201", description = "Cable created.")
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Cable name is duplicated.")
-    public CableDTO create(@RequestBody CableDTO cable) {
+    public CableDTO create(
+            @RequestBody CableDTO cable
+    ) {
         validateComponentType(cable);
 
-        return this.cableService.create(cable);
+        return this.cableService.create(cable, true);
     }
 
     @PutMapping("/{id}")
@@ -83,14 +92,17 @@ public class CablesController {
     @ApiResponse(responseCode = "204", description = "Cable updated correctly.")
     @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Cable name is duplicated.")
-    public void updateCable(@PathVariable int id, @RequestBody CableDTO cable) {
+    public void updateCable(
+            @PathVariable int id,
+            @RequestBody CableDTO cable
+    ) {
         if (id != cable.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
         validateComponentType(cable);
 
-        this.cableService.update(cable);
+        this.cableService.update(cable, true);
     }
 
     @DeleteMapping("/{id}")
@@ -99,12 +111,15 @@ public class CablesController {
     @ApiResponse(responseCode = "204", description = "Cable deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
     @ApiResponse(responseCode = "500", description = "Cable cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody CableDTO cable) {
+    public void delete(
+            @PathVariable int id,
+            @RequestBody CableDTO cable
+    ) {
         if (id != cable.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.cableService.delete(cable);
+        this.cableService.delete(cable, false);
     }
 
     private void validateComponentType(CableDTO cable) {

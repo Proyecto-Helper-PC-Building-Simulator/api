@@ -21,41 +21,39 @@ public class CpuCoolerService {
         return this.cpuCoolerJPARepository.count();
     }
 
-    public List<CpuCoolerDTO> findAll(int page, int size) {
+    public List<CpuCoolerDTO> findAll(int page, int size, Boolean withCpuSockets) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<CpuCooler> cpuCoolerPage = this.cpuCoolerJPARepository.findAll(pageRequest);
 
-        return CpuCoolerMapper.toDTO(cpuCoolerPage.getContent());
+        return CpuCoolerMapper.toDTO(cpuCoolerPage.getContent(), withCpuSockets);
     }
 
-    public CpuCoolerDTO findById(Integer id) {
+    public CpuCoolerDTO findById(Integer id, Boolean withCpuSockets) {
         Optional<CpuCooler> cpuCooler = this.cpuCoolerJPARepository.findById(id);
 
         if (cpuCooler.isEmpty()) {
             return null;
         }
 
-        return CpuCoolerMapper.toDTO(cpuCooler);
+        return CpuCoolerMapper.toDTO(cpuCooler, withCpuSockets);
     }
 
 
 
-    public CpuCoolerDTO create(CpuCoolerDTO cpuCoolerDTO) {
-        CpuCooler cpuCooler = CpuCoolerMapper.toBD(cpuCoolerDTO);
+    public CpuCoolerDTO create(CpuCoolerDTO cpuCoolerDTO, Boolean withCpuSockets) {
+        CpuCooler cpuCooler = CpuCoolerMapper.toBD(cpuCoolerDTO, withCpuSockets);
         cpuCooler = this.cpuCoolerJPARepository.save(cpuCooler);
 
-        return CpuCoolerMapper.toDTO(cpuCooler);
+        return CpuCoolerMapper.toDTO(cpuCooler, withCpuSockets);
     }
 
-    public void update(CpuCoolerDTO cpuCoolerDTO) {
-        CpuCooler cpuCooler = CpuCoolerMapper.toBD(cpuCoolerDTO);
+    public void update(CpuCoolerDTO cpuCoolerDTO, Boolean withCpuSockets) {
+        CpuCooler cpuCooler = CpuCoolerMapper.toBD(cpuCoolerDTO, withCpuSockets);
         this.cpuCoolerJPARepository.save(cpuCooler);
-
-        CpuCoolerMapper.toDTO(cpuCooler);
     }
 
-    public void delete(CpuCoolerDTO cpuCoolerDTO) {
-        CpuCooler cpuCooler = CpuCoolerMapper.toBD(cpuCoolerDTO);
+    public void delete(CpuCoolerDTO cpuCoolerDTO, Boolean withCpuSockets) {
+        CpuCooler cpuCooler = CpuCoolerMapper.toBD(cpuCoolerDTO, withCpuSockets);
         this.cpuCoolerJPARepository.delete(cpuCooler);
     }
 }

@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.rest.dto.basictables.CpuSocketDTO;
 import es.bit.api.rest.dto.basictables.MotherboardChipsetDTO;
 import es.bit.api.rest.dto.basictables.MotherboardFormFactorDTO;
+import es.bit.api.rest.dto.basictables.MultiGpuTypeDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MotherboardDTO extends ComponentDTO {
@@ -11,6 +15,7 @@ public class MotherboardDTO extends ComponentDTO {
     private MotherboardChipsetDTO motherboardChipset;
     private MotherboardFormFactorDTO motherboardFormFactor;
     private CpuSocketDTO cpuSocket;
+    private List<MultiGpuTypeDTO> multiGpuTypes = new ArrayList<>();
 
 
     public MotherboardDTO() {
@@ -47,6 +52,14 @@ public class MotherboardDTO extends ComponentDTO {
 
     public void setCpuSocket(CpuSocketDTO cpuSocket) {
         this.cpuSocket = cpuSocket;
+    }
+
+    public List<MultiGpuTypeDTO> getMultiGpuTypes() {
+        return multiGpuTypes;
+    }
+
+    public void setMultiGpuTypes(List<MultiGpuTypeDTO> multiGpuTypes) {
+        this.multiGpuTypes = multiGpuTypes;
     }
 
 

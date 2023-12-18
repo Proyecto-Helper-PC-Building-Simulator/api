@@ -1,13 +1,15 @@
 package es.bit.api.rest.dto.basictables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.bit.api.rest.dto.componenttables.CableDTO;
 
-import java.util.Objects;
+import java.util.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CableColorDTO {
     private int id;
     private String name;
+    private List<CableDTO> cables = new ArrayList<>();
 
 
     public CableColorDTO() {}
@@ -27,6 +29,14 @@ public class CableColorDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<CableDTO> getCables() {
+        return cables;
+    }
+
+    public void setCables(List<CableDTO> cables) {
+        this.cables = cables;
     }
 
 

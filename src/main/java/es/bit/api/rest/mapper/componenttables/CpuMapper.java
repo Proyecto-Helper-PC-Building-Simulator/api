@@ -21,7 +21,7 @@ public class CpuMapper {
         cpuDTO.setFrequency(cpu.getFrequency());
         cpuDTO.setCores(cpu.getCores());
         cpuDTO.setWattage(cpu.getWattage());
-        cpuDTO.setCpuSocket(CpuSocketMapper.toDTO(cpu.getCpuSocket()));
+        cpuDTO.setCpuSocket(CpuSocketMapper.toDTO(cpu.getCpuSocket(), false));
         cpuDTO.setCpuSerie(CpuSerieMapper.toDTO(cpu.getCpuSerie()));
 
         return cpuDTO;
@@ -56,7 +56,7 @@ public class CpuMapper {
         cpu.setFrequency(cpuDTO.getFrequency());
         cpu.setCores(cpuDTO.getCores());
         cpu.setWattage(cpuDTO.getWattage());
-        cpu.setCpuSocket(CpuSocketMapper.toBD(cpuDTO.getCpuSocket()));
+        cpu.setCpuSocket(CpuSocketMapper.toBD(cpuDTO.getCpuSocket(), false));
         cpu.setCpuSerie(CpuSerieMapper.toBD(cpuDTO.getCpuSerie()));
 
         return cpu;

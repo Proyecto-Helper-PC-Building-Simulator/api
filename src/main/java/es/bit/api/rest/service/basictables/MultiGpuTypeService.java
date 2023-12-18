@@ -21,39 +21,37 @@ public class MultiGpuTypeService {
         return this.multiGpuTypeJPARepository.count();
     }
 
-    public List<MultiGpuTypeDTO> findAll(int page, int size) {
+    public List<MultiGpuTypeDTO> findAll(int page, int size, Boolean withMotherboards) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<MultiGpuType> multiGpuTypePage = this.multiGpuTypeJPARepository.findAll(pageRequest);
 
-        return MultiGpuTypeMapper.toDTO(multiGpuTypePage.getContent());
+        return MultiGpuTypeMapper.toDTO(multiGpuTypePage.getContent(), withMotherboards);
     }
 
-    public MultiGpuTypeDTO findById(Integer id) {
+    public MultiGpuTypeDTO findById(Integer id, Boolean withMotherboards) {
         Optional<MultiGpuType> multiGpuType = this.multiGpuTypeJPARepository.findById(id);
 
         if (multiGpuType.isEmpty()) {
             return null;
         }
 
-        return MultiGpuTypeMapper.toDTO(multiGpuType);
+        return MultiGpuTypeMapper.toDTO(multiGpuType, withMotherboards);
     }
 
-    public MultiGpuTypeDTO create(MultiGpuTypeDTO multiGpuTypeDTO) {
-        MultiGpuType multiGpuType = MultiGpuTypeMapper.toBD(multiGpuTypeDTO);
+    public MultiGpuTypeDTO create(MultiGpuTypeDTO multiGpuTypeDTO, Boolean withMotherboards) {
+        MultiGpuType multiGpuType = MultiGpuTypeMapper.toBD(multiGpuTypeDTO, withMotherboards);
         multiGpuType = this.multiGpuTypeJPARepository.save(multiGpuType);
 
-        return MultiGpuTypeMapper.toDTO(multiGpuType);
+        return MultiGpuTypeMapper.toDTO(multiGpuType, withMotherboards);
     }
 
-    public void update(MultiGpuTypeDTO multiGpuTypeDTO) {
-        MultiGpuType multiGpuType = MultiGpuTypeMapper.toBD(multiGpuTypeDTO);
+    public void update(MultiGpuTypeDTO multiGpuTypeDTO, Boolean withMotherboards) {
+        MultiGpuType multiGpuType = MultiGpuTypeMapper.toBD(multiGpuTypeDTO, withMotherboards);
         this.multiGpuTypeJPARepository.save(multiGpuType);
-
-        MultiGpuTypeMapper.toDTO(multiGpuType);
     }
 
-    public void delete(MultiGpuTypeDTO multiGpuTypeDTO) {
-        MultiGpuType multiGpuType = MultiGpuTypeMapper.toBD(multiGpuTypeDTO);
+    public void delete(MultiGpuTypeDTO multiGpuTypeDTO, Boolean withMotherboards) {
+        MultiGpuType multiGpuType = MultiGpuTypeMapper.toBD(multiGpuTypeDTO, withMotherboards);
         this.multiGpuTypeJPARepository.delete(multiGpuType);
     }
 }

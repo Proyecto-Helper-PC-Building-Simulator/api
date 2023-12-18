@@ -1,8 +1,11 @@
 package es.bit.api.persistence.model.basictables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.bit.api.persistence.model.componenttables.Motherboard;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,6 +16,9 @@ public class MultiGpuType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    @ManyToMany(mappedBy = "multiGpuTypes")
+    private List<Motherboard> motherboards = new ArrayList<>();
 
 
     public MultiGpuType() {}
@@ -32,6 +38,14 @@ public class MultiGpuType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Motherboard> getMotherboards() {
+        return motherboards;
+    }
+
+    public void setMotherboards(List<Motherboard> motherboards) {
+        this.motherboards = motherboards;
     }
 
 

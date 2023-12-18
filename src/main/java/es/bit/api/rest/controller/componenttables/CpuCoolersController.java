@@ -39,8 +39,12 @@ public class CpuCoolersController {
     @Operation(summary = "Get all cpu coolers paged")
     @ApiResponse(responseCode = "200", description = "CpuCoolers obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CpuCoolerDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        List<CpuCoolerDTO> content = this.cpuCoolerService.findAll(page, size);
+    public PagedResponse<CpuCoolerDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCpuSockets
+    ) {
+        List<CpuCoolerDTO> content = this.cpuCoolerService.findAll(page, size, withCpuSockets);
         long totalElements = this.cpuCoolerService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -55,8 +59,11 @@ public class CpuCoolersController {
     @Operation(summary = "Get a cpu cooler by ID")
     @ApiResponse(responseCode = "200", description = "Cpu cooler found.")
     @ApiResponse(responseCode = "404", description = "Cpu cooler not found.")
-    public CpuCoolerDTO findById(@PathVariable int id) {
-        CpuCoolerDTO cpuCooler = this.cpuCoolerService.findById(id);
+    public CpuCoolerDTO findById(
+            @PathVariable int id,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCpuSockets
+    ) {
+        CpuCoolerDTO cpuCooler = this.cpuCoolerService.findById(id, withCpuSockets);
 
         if (cpuCooler == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -74,7 +81,7 @@ public class CpuCoolersController {
     public CpuCoolerDTO create(@RequestBody CpuCoolerDTO cpuCooler) {
         validateComponentType(cpuCooler);
 
-        return this.cpuCoolerService.create(cpuCooler);
+        return this.cpuCoolerService.create(cpuCooler, true);
     }
 
     @PutMapping("/{id}")
@@ -90,7 +97,7 @@ public class CpuCoolersController {
 
         validateComponentType(cpuCooler);
 
-        this.cpuCoolerService.update(cpuCooler);
+        this.cpuCoolerService.update(cpuCooler, true);
     }
 
     @DeleteMapping("/{id}")
@@ -104,7 +111,7 @@ public class CpuCoolersController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.cpuCoolerService.delete(cpuCooler);
+        this.cpuCoolerService.delete(cpuCooler, true);
     }
 
     private void validateComponentType(CpuCoolerDTO cpuCooler) {

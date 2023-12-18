@@ -39,8 +39,12 @@ public class MotherboardsController {
     @Operation(summary = "Get all motherboards paged")
     @ApiResponse(responseCode = "200", description = "Motherboards obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<MotherboardDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        List<MotherboardDTO> content = this.motherboardService.findAll(page, size);
+    public PagedResponse<MotherboardDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "false") Boolean withMultiGpuTypes
+    ) {
+        List<MotherboardDTO> content = this.motherboardService.findAll(page, size, withMultiGpuTypes);
         long totalElements = this.motherboardService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -55,8 +59,11 @@ public class MotherboardsController {
     @Operation(summary = "Get a motherboard by ID")
     @ApiResponse(responseCode = "200", description = "Motherboard found.")
     @ApiResponse(responseCode = "404", description = "Motherboard not found.")
-    public MotherboardDTO findById(@PathVariable int id) {
-        MotherboardDTO motherboard = this.motherboardService.findById(id);
+    public MotherboardDTO findById(
+            @PathVariable int id,
+            @RequestParam(required = false, defaultValue = "false") Boolean withMultiGpuTypes
+    ) {
+        MotherboardDTO motherboard = this.motherboardService.findById(id, withMultiGpuTypes);
 
         if (motherboard == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -71,10 +78,12 @@ public class MotherboardsController {
     @ApiResponse(responseCode = "201", description = "Motherboard created.")
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Motherboard name is duplicated.")
-    public MotherboardDTO create(@RequestBody MotherboardDTO motherboard) {
+    public MotherboardDTO create(
+            @RequestBody MotherboardDTO motherboard
+    ) {
         validateComponentType(motherboard);
 
-        return this.motherboardService.create(motherboard);
+        return this.motherboardService.create(motherboard, true);
     }
 
     @PutMapping("/{id}")
@@ -83,14 +92,17 @@ public class MotherboardsController {
     @ApiResponse(responseCode = "204", description = "Motherboard updated correctly.")
     @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Motherboard name is duplicated.")
-    public void updateMotherboard(@PathVariable int id, @RequestBody MotherboardDTO motherboard) {
+    public void updateMotherboard(
+            @PathVariable int id,
+            @RequestBody MotherboardDTO motherboard
+    ) {
         if (id != motherboard.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
         validateComponentType(motherboard);
 
-        this.motherboardService.update(motherboard);
+        this.motherboardService.update(motherboard, true);
     }
 
     @DeleteMapping("/{id}")
@@ -99,12 +111,15 @@ public class MotherboardsController {
     @ApiResponse(responseCode = "204", description = "Motherboard deleted correctly.")
     @ApiResponse(responseCode = "412", description = "Error in delete query.")
     @ApiResponse(responseCode = "500", description = "Motherboard cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody MotherboardDTO motherboard) {
+    public void delete(
+            @PathVariable int id,
+            @RequestBody MotherboardDTO motherboard
+    ) {
         if (id != motherboard.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.motherboardService.delete(motherboard);
+        this.motherboardService.delete(motherboard, false);
     }
 
     private void validateComponentType(MotherboardDTO motherboard) {

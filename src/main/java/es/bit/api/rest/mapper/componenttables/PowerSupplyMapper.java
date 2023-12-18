@@ -24,7 +24,7 @@ public class PowerSupplyMapper {
         powerSupplyDTO.setWattage(powerSupply.getWattage());
         powerSupplyDTO.setType(powerSupply.getType());
         powerSupplyDTO.setLength(powerSupply.getLength());
-        powerSupplyDTO.setPowerSupplyFormFactor(PowerSupplyFormFactorMapper.toDTO(powerSupply.getPowerSupplyFormFactor()));
+        powerSupplyDTO.setPowerSupplyFormFactor(PowerSupplyFormFactorMapper.toDTO(powerSupply.getPowerSupplyFormFactor(), false));
 
         return powerSupplyDTO;
     }
@@ -58,7 +58,7 @@ public class PowerSupplyMapper {
         powerSupply.setWattage(powerSupplyDTO.getWattage());
         powerSupply.setType(powerSupplyDTO.getType());
         powerSupply.setLength(powerSupplyDTO.getLength());
-        powerSupply.setPowerSupplyFormFactor(PowerSupplyFormFactorMapper.toBD(powerSupplyDTO.getPowerSupplyFormFactor()));
+        powerSupply.setPowerSupplyFormFactor(PowerSupplyFormFactorMapper.toBD(powerSupplyDTO.getPowerSupplyFormFactor(), false));
 
         return powerSupply;
     }

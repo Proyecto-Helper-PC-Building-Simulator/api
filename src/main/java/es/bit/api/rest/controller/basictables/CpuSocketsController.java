@@ -31,8 +31,12 @@ public class CpuSocketsController {
     @Operation(summary = "Get all cpu sockets paged")
     @ApiResponse(responseCode = "200", description = "Cpu sockets obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CpuSocketDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        List<CpuSocketDTO> content = this.cpuSocketService.findAll(page, size);
+    public PagedResponse<CpuSocketDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCpuCoolers
+    ) {
+        List<CpuSocketDTO> content = this.cpuSocketService.findAll(page, size, withCpuCoolers);
         long totalElements = this.cpuSocketService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -47,8 +51,11 @@ public class CpuSocketsController {
     @Operation(summary = "Get a cpu socket by ID")
     @ApiResponse(responseCode = "200", description = "Cpu socket found.")
     @ApiResponse(responseCode = "404", description = "Cpu socket not found.")
-    public CpuSocketDTO findById(@PathVariable int id) {
-        CpuSocketDTO cpuSocket = this.cpuSocketService.findById(id);
+    public CpuSocketDTO findById(
+            @PathVariable int id,
+            @RequestParam(required = false, defaultValue = "false") Boolean withCpuCoolers
+    ) {
+        CpuSocketDTO cpuSocket = this.cpuSocketService.findById(id, withCpuCoolers);
 
         if (cpuSocket == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -63,7 +70,7 @@ public class CpuSocketsController {
     @ApiResponse(responseCode = "201", description = "Cpu socket created.")
     @ApiResponse(responseCode = "500", description = "Cpu socket name is duplicated.")
     public CpuSocketDTO create(@RequestBody CpuSocketDTO cpuSocket) {
-        return this.cpuSocketService.create(cpuSocket);
+        return this.cpuSocketService.create(cpuSocket, true);
     }
 
     @PutMapping("/{id}")
@@ -77,7 +84,7 @@ public class CpuSocketsController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
-        this.cpuSocketService.update(cpuSocket);
+        this.cpuSocketService.update(cpuSocket, true);
     }
 
     @DeleteMapping("/{id}")
@@ -91,6 +98,6 @@ public class CpuSocketsController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.cpuSocketService.delete(cpuSocket);
+        this.cpuSocketService.delete(cpuSocket, true);
     }
 }

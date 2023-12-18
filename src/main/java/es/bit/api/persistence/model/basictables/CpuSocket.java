@@ -1,8 +1,11 @@
 package es.bit.api.persistence.model.basictables;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import es.bit.api.persistence.model.componenttables.CpuCooler;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,6 +16,9 @@ public class CpuSocket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    @ManyToMany(mappedBy = "cpuSockets")
+    private List<CpuCooler> cpuCoolers = new ArrayList<>();
 
 
     public CpuSocket() {}
@@ -32,6 +38,14 @@ public class CpuSocket {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<CpuCooler> getCpuCoolers() {
+        return cpuCoolers;
+    }
+
+    public void setCpuCoolers(List<CpuCooler> cpuCoolers) {
+        this.cpuCoolers = cpuCoolers;
     }
 
 

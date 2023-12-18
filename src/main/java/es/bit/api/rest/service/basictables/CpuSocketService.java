@@ -21,39 +21,37 @@ public class CpuSocketService {
         return this.cpuSocketJPARepository.count();
     }
 
-    public List<CpuSocketDTO> findAll(int page, int size) {
+    public List<CpuSocketDTO> findAll(int page, int size, Boolean withCpuCoolers) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<CpuSocket> cpuSocketPage = this.cpuSocketJPARepository.findAll(pageRequest);
 
-        return CpuSocketMapper.toDTO(cpuSocketPage.getContent());
+        return CpuSocketMapper.toDTO(cpuSocketPage.getContent(), withCpuCoolers);
     }
 
-    public CpuSocketDTO findById(Integer id) {
+    public CpuSocketDTO findById(Integer id, Boolean withCpuCoolers) {
         Optional<CpuSocket> cpuSocket = this.cpuSocketJPARepository.findById(id);
 
         if (cpuSocket.isEmpty()) {
             return null;
         }
 
-        return CpuSocketMapper.toDTO(cpuSocket);
+        return CpuSocketMapper.toDTO(cpuSocket, withCpuCoolers);
     }
 
-    public CpuSocketDTO create(CpuSocketDTO cpuSocketDTO) {
-        CpuSocket cpuSocket = CpuSocketMapper.toBD(cpuSocketDTO);
+    public CpuSocketDTO create(CpuSocketDTO cpuSocketDTO, Boolean withCpuCoolers) {
+        CpuSocket cpuSocket = CpuSocketMapper.toBD(cpuSocketDTO, withCpuCoolers);
         cpuSocket = this.cpuSocketJPARepository.save(cpuSocket);
 
-        return CpuSocketMapper.toDTO(cpuSocket);
+        return CpuSocketMapper.toDTO(cpuSocket, withCpuCoolers);
     }
 
-    public void update(CpuSocketDTO cpuSocketDTO) {
-        CpuSocket cpuSocket = CpuSocketMapper.toBD(cpuSocketDTO);
+    public void update(CpuSocketDTO cpuSocketDTO, Boolean withCpuCoolers) {
+        CpuSocket cpuSocket = CpuSocketMapper.toBD(cpuSocketDTO, withCpuCoolers);
         this.cpuSocketJPARepository.save(cpuSocket);
-
-        CpuSocketMapper.toDTO(cpuSocket);
     }
 
-    public void delete(CpuSocketDTO cpuSocketDTO) {
-        CpuSocket cpuSocket = CpuSocketMapper.toBD(cpuSocketDTO);
+    public void delete(CpuSocketDTO cpuSocketDTO, Boolean withCpuCoolers) {
+        CpuSocket cpuSocket = CpuSocketMapper.toBD(cpuSocketDTO, withCpuCoolers);
         this.cpuSocketJPARepository.delete(cpuSocket);
     }
 }

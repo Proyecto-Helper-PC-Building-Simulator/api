@@ -21,7 +21,7 @@ public class MotherboardMapper {
         motherboardDTO.setMaxRamSpeed(motherboard.getMaxRamSpeed());
         motherboardDTO.setMotherboardChipset(MotherboardChipsetMapper.toDTO(motherboard.getMotherboardChipset()));
         motherboardDTO.setMotherboardFormFactor(MotherboardFormFactorMapper.toDTO(motherboard.getMotherboardFormFactor(), false));
-        motherboardDTO.setCpuSocket(CpuSocketMapper.toDTO(motherboard.getCpuSocket()));
+        motherboardDTO.setCpuSocket(CpuSocketMapper.toDTO(motherboard.getCpuSocket(), false));
 
         return motherboardDTO;
     }
@@ -55,7 +55,7 @@ public class MotherboardMapper {
         motherboard.setMaxRamSpeed(motherboardDTO.getMaxRamSpeed());
         motherboard.setMotherboardChipset(MotherboardChipsetMapper.toBD(motherboardDTO.getMotherboardChipset()));
         motherboard.setMotherboardFormFactor(MotherboardFormFactorMapper.toBD(motherboardDTO.getMotherboardFormFactor(), false));
-        motherboard.setCpuSocket(CpuSocketMapper.toBD(motherboardDTO.getCpuSocket()));
+        motherboard.setCpuSocket(CpuSocketMapper.toBD(motherboardDTO.getCpuSocket(), false));
 
         return motherboard;
     }

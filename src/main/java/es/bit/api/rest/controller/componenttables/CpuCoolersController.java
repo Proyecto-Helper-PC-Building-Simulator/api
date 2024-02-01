@@ -41,7 +41,7 @@ public class CpuCoolersController {
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CpuCoolerDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "1000") int size,
             @RequestParam(required = false, defaultValue = "false") Boolean withCpuSockets
     ) {
         List<CpuCoolerDTO> content = this.cpuCoolerService.findAll(page, size, withCpuSockets);

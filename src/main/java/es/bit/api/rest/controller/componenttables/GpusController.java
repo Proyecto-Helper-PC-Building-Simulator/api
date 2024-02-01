@@ -39,7 +39,7 @@ public class GpusController {
     @Operation(summary = "Get all gpus paged")
     @ApiResponse(responseCode = "200", description = "Gpus obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<GpuDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+    public PagedResponse<GpuDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1000") int size) {
         List<GpuDTO> content = this.gpuService.findAll(page, size);
         long totalElements = this.gpuService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

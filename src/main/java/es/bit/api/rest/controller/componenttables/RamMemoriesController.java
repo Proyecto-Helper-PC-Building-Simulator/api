@@ -39,7 +39,7 @@ public class RamMemoriesController {
     @Operation(summary = "Get all ram memories paged")
     @ApiResponse(responseCode = "200", description = "Ram memories obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<RamMemoryDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+    public PagedResponse<RamMemoryDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1000") int size) {
         List<RamMemoryDTO> content = this.ramMemoryService.findAll(page, size);
         long totalElements = this.ramMemoryService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

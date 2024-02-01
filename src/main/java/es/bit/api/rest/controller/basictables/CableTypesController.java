@@ -31,7 +31,7 @@ public class CableTypesController {
     @Operation(summary = "Get all cable types paged")
     @ApiResponse(responseCode = "200", description = "Cable types obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CableTypeDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+    public PagedResponse<CableTypeDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size) {
         List<CableTypeDTO> content = this.cableTypeService.findAll(page, size);
         long totalElements = this.cableTypeService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

@@ -31,7 +31,7 @@ public class ComponentsController {
     @Operation(summary = "Get all components paged")
     @ApiResponse(responseCode = "200", description = "Components obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<ComponentDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+    public PagedResponse<ComponentDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2000") int size) {
         List<ComponentDTO> content = this.componentService.findAll(page, size);
         long totalElements = this.componentService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

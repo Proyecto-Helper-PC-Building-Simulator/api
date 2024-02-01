@@ -31,7 +31,7 @@ public class GpuChipsetSeriesController {
     @Operation(summary = "Get all gpu chipset series paged")
     @ApiResponse(responseCode = "200", description = "Gpu chipset series obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<GpuChipsetSerieDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+    public PagedResponse<GpuChipsetSerieDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size) {
         List<GpuChipsetSerieDTO> content = this.gpuChipsetSerieService.findAll(page, size);
         long totalElements = this.gpuChipsetSerieService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

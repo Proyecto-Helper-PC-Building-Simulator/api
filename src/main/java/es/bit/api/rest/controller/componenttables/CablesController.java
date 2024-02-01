@@ -41,8 +41,8 @@ public class CablesController {
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CableDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false, defaultValue = "false") Boolean withCableColors
+            @RequestParam(defaultValue = "1000") int size,
+            @RequestParam(required = false, defaultValue = "true") Boolean withCableColors
     ) {
         List<CableDTO> content = this.cableService.findAll(page, size, withCableColors);
         long totalElements = this.cableService.count();

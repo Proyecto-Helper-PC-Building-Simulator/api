@@ -37,8 +37,8 @@
 # .idea/modules.xml
 # .idea/*.iml
 # .idea/modules
-# *.iml
 # *.ipr
+*.iml
 
 # CMake
 cmake-build-*/
@@ -156,7 +156,7 @@ buildNumber.properties
 .classpath
 
 ### VisualStudioCode ###
-.vscode/*
+.vscode
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -174,3 +174,4 @@ buildNumber.properties
 .history
 .ionide
 HELP.md
+/src/test/

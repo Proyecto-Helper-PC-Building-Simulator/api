@@ -42,7 +42,7 @@ public class MotherboardsController {
     public PagedResponse<MotherboardDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "1000") int size,
-            @RequestParam(required = false, defaultValue = "false") Boolean withMultiGpuTypes
+            @RequestParam(required = false, defaultValue = "true") Boolean withMultiGpuTypes
     ) {
         List<MotherboardDTO> content = this.motherboardService.findAll(page, size, withMultiGpuTypes);
         long totalElements = this.motherboardService.count();
@@ -61,7 +61,7 @@ public class MotherboardsController {
     @ApiResponse(responseCode = "404", description = "Motherboard not found.")
     public MotherboardDTO findById(
             @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "false") Boolean withMultiGpuTypes
+            @RequestParam(required = false, defaultValue = "true") Boolean withMultiGpuTypes
     ) {
         MotherboardDTO motherboard = this.motherboardService.findById(id, withMultiGpuTypes);
 

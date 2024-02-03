@@ -42,8 +42,8 @@ public class CasesController {
     public PagedResponse<CaseDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "1000") int size,
-            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboardFormFactors,
-            @RequestParam(required = false, defaultValue = "false") Boolean withPsuFormFactors
+            @RequestParam(required = false, defaultValue = "true") Boolean withMotherboardFormFactors,
+            @RequestParam(required = false, defaultValue = "true") Boolean withPsuFormFactors
     ) {
         List<CaseDTO> content = this.caseService.findAll(page, size, withMotherboardFormFactors, withPsuFormFactors);
         long totalElements = this.caseService.count();
@@ -62,8 +62,8 @@ public class CasesController {
     @ApiResponse(responseCode = "404", description = "Case not found.")
     public CaseDTO findById(
             @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "false") Boolean withMotherboardFormFactors,
-            @RequestParam(required = false, defaultValue = "false") Boolean withPsuFormFactors
+            @RequestParam(required = false, defaultValue = "true") Boolean withMotherboardFormFactors,
+            @RequestParam(required = false, defaultValue = "true") Boolean withPsuFormFactors
     ) {
         CaseDTO caseObject = this.caseService.findById(id, withMotherboardFormFactors, withPsuFormFactors);
 

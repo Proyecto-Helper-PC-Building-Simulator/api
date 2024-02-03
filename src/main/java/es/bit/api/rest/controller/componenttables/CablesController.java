@@ -61,7 +61,7 @@ public class CablesController {
     @ApiResponse(responseCode = "404", description = "Cable not found.")
     public CableDTO findById(
             @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "false") Boolean withCableColors
+            @RequestParam(required = false, defaultValue = "true") Boolean withCableColors
     ) {
         CableDTO cable = this.cableService.findById(id, withCableColors);
 

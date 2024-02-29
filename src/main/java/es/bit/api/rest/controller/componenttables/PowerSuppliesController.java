@@ -39,7 +39,7 @@ public class PowerSuppliesController {
     @Operation(summary = "Get all power supplies paged")
     @ApiResponse(responseCode = "200", description = "Power supplies obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<PowerSupplyDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1000") int size) {
+    public PagedResponse<PowerSupplyDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
         List<PowerSupplyDTO> content = this.powerSupplyService.findAll(page, size);
         long totalElements = this.powerSupplyService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

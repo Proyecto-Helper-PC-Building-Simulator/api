@@ -39,7 +39,7 @@ public class StoragesController {
     @Operation(summary = "Get all storages paged")
     @ApiResponse(responseCode = "200", description = "Storages obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<StorageDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1000") int size) {
+    public PagedResponse<StorageDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
         List<StorageDTO> content = this.storageService.findAll(page, size);
         long totalElements = this.storageService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

@@ -31,7 +31,7 @@ public class MotherboardChipsetsController {
     @Operation(summary = "Get all motherboard chipsets paged")
     @ApiResponse(responseCode = "200", description = "Motherboard chipsets obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<MotherboardChipsetDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size) {
+    public PagedResponse<MotherboardChipsetDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         List<MotherboardChipsetDTO> content = this.motherboardChipsetService.findAll(page, size);
         long totalElements = this.motherboardChipsetService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

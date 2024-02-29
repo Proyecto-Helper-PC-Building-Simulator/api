@@ -39,7 +39,7 @@ public class CpusController {
     @Operation(summary = "Get all cpus paged")
     @ApiResponse(responseCode = "200", description = "Cpus obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CpuDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1000") int size) {
+    public PagedResponse<CpuDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
         List<CpuDTO> content = this.cpuService.findAll(page, size);
         long totalElements = this.cpuService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

@@ -41,7 +41,7 @@ public class CasesController {
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CaseDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "1000") int size,
+            @RequestParam(defaultValue = "50") int size,
             @RequestParam(required = false, defaultValue = "true") Boolean withMotherboardFormFactors,
             @RequestParam(required = false, defaultValue = "true") Boolean withPsuFormFactors
     ) {

@@ -31,7 +31,7 @@ public class LightingsController {
     @Operation(summary = "Get all lightings paged")
     @ApiResponse(responseCode = "200", description = "Lightings obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<LightingDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size) {
+    public PagedResponse<LightingDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         List<LightingDTO> content = this.lightingService.findAll(page, size);
         long totalElements = this.lightingService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

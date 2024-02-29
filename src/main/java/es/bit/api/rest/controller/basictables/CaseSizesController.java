@@ -31,7 +31,7 @@ public class CaseSizesController {
     @Operation(summary = "Get all case sizes paged")
     @ApiResponse(responseCode = "200", description = "Case sizes obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CaseSizeDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size) {
+    public PagedResponse<CaseSizeDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         List<CaseSizeDTO> content = this.caseSizeService.findAll(page, size);
         long totalElements = this.caseSizeService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

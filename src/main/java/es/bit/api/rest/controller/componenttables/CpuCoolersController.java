@@ -41,8 +41,8 @@ public class CpuCoolersController {
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CpuCoolerDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "1000") int size,
-            @RequestParam(required = false, defaultValue = "false") Boolean withCpuSockets
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(required = false, defaultValue = "true") Boolean withCpuSockets
     ) {
         List<CpuCoolerDTO> content = this.cpuCoolerService.findAll(page, size, withCpuSockets);
         long totalElements = this.cpuCoolerService.count();
@@ -61,7 +61,7 @@ public class CpuCoolersController {
     @ApiResponse(responseCode = "404", description = "Cpu cooler not found.")
     public CpuCoolerDTO findById(
             @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "false") Boolean withCpuSockets
+            @RequestParam(required = false, defaultValue = "true") Boolean withCpuSockets
     ) {
         CpuCoolerDTO cpuCooler = this.cpuCoolerService.findById(id, withCpuSockets);
 

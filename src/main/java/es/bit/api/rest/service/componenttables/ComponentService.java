@@ -28,6 +28,13 @@ public class ComponentService {
         return ComponentMapper.toDTO(componentPage.getContent());
     }
 
+    public List<ComponentDTO> findAllByName(String componentTypeName, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Component> componentPage = this.componentJPARepository.findAllByComponentName(componentTypeName, pageRequest);
+
+        return ComponentMapper.toDTO(componentPage.getContent());
+    }
+
     public ComponentDTO findById(Integer id) {
         Optional<Component> component = this.componentJPARepository.findById(id);
 

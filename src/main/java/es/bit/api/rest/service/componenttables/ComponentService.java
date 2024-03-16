@@ -1,6 +1,7 @@
 package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.componenttables.Component;
+import es.bit.api.persistence.repository.jpa.componenttables.IComponentCustomJPARepository;
 import es.bit.api.persistence.repository.jpa.componenttables.IComponentJPARepository;
 import es.bit.api.rest.dto.componenttables.ComponentDTO;
 import es.bit.api.rest.mapper.componenttables.ComponentMapper;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.CallSite;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,9 @@ import java.util.Optional;
 public class ComponentService {
     @Autowired
     IComponentJPARepository componentJPARepository;
+
+    @Autowired
+    IComponentCustomJPARepository componentCustomJPARepository;
 
     public Long count() {
         return this.componentJPARepository.count();
@@ -35,11 +40,10 @@ public class ComponentService {
         return ComponentMapper.toDTO(componentPage.getContent());
     }
 
-    public List<ComponentDTO> findAllByComponentTypeAndName(String componentTypeName, String name, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Component> componentPage = this.componentJPARepository.findAllByComponentTypeAndName(componentTypeName, name, pageRequest);
+    public List<ComponentDTO> findAllByName(String name) {
+        List<Component> components = this.componentCustomJPARepository.findAll(name);
 
-        return ComponentMapper.toDTO(componentPage.getContent());
+        return ComponentMapper.toDTO(components);
     }
 
     public ComponentDTO findById(Integer id) {

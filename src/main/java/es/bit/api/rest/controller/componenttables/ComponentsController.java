@@ -35,24 +35,17 @@ public class ComponentsController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(required = false) String componentType,
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String search
     ) {
         List<ComponentDTO> content;
 
-        if (componentType != null && !componentType.isEmpty()) {
-            switch (componentType.toLowerCase()) {
-                case "cpucooler" -> componentType = "cpu cooler";
-                case "powersupply" -> componentType = "power supply";
-            }
-
-            if (name != null && !name.isEmpty()) {
-                content = this.componentService.findAllByComponentTypeAndName(componentType, name, page, size);
-            } else {
-                content = this.componentService.findAllByComponentType(componentType, page, size);
-            }
+        if (search != null && !search.isEmpty()) {
+            content = this.componentService.findAllByName(search);
         } else {
-            content = this.componentService.findAll(page, size);
+            content = this.componentService.findAllByComponentType(componentType, page, size);
         }
+
+
 
         long totalElements = this.componentService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

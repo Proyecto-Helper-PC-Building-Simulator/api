@@ -34,12 +34,22 @@ public class ComponentsController {
     public PagedResponse<ComponentDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false) String componentTypeName
+            @RequestParam(required = false) String componentType,
+            @RequestParam(required = false) String name
     ) {
         List<ComponentDTO> content;
 
-        if (componentTypeName != null && !componentTypeName.isEmpty()) {
-            content = this.componentService.findAllByName(componentTypeName, page, size);
+        if (componentType != null && !componentType.isEmpty()) {
+            switch (componentType.toLowerCase()) {
+                case "cpucooler" -> componentType = "cpu cooler";
+                case "powersupply" -> componentType = "power supply";
+            }
+
+            if (name != null && !name.isEmpty()) {
+                content = this.componentService.findAllByComponentTypeAndName(componentType, name, page, size);
+            } else {
+                content = this.componentService.findAllByComponentType(componentType, page, size);
+            }
         } else {
             content = this.componentService.findAll(page, size);
         }

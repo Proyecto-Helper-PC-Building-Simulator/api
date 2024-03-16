@@ -15,10 +15,12 @@ public interface IComponentJPARepository extends JpaRepository<Component, Intege
     Optional<Component> findById(Integer componentId);
 
     @NonNull
-    @Query("SELECT c FROM Component c JOIN FETCH c.manufacturer m JOIN FETCH c.lighting l JOIN FETCH c.componentType")
+    @Query("SELECT c FROM Component c JOIN FETCH c.manufacturer m JOIN FETCH c.lighting l JOIN FETCH c.componentType ORDER BY c.name ASC")
     Page<Component> findAll(@NonNull Pageable pageable);
 
-    @Query("SELECT c FROM Component c JOIN FETCH c.componentType ct JOIN FETCH c.manufacturer m JOIN FETCH c.lighting l WHERE LOWER(ct.name) LIKE LOWER(CONCAT('%', :componentTypeName, '%'))")
-    Page<Component> findAllByComponentName(String componentTypeName, Pageable pageable);
+    @Query("SELECT c FROM Component c JOIN FETCH c.componentType ct JOIN FETCH c.manufacturer m JOIN FETCH c.lighting l WHERE LOWER(ct.name) = LOWER(:componentTypeName) ORDER BY c.name ASC")
+    Page<Component> findAllByComponentType(String componentTypeName, Pageable pageable);
 
+    @Query("SELECT c FROM Component c JOIN FETCH c.componentType ct JOIN FETCH c.manufacturer m JOIN FETCH c.lighting l WHERE LOWER (c.name) LIKE LOWER(CONCAT('%', :name, '%')) AND LOWER(ct.name) = LOWER(:componentTypeName) ORDER BY c.name ASC")
+    Page<Component> findAllByComponentTypeAndName(String componentTypeName, String name, Pageable pageable);
 }

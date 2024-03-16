@@ -1,5 +1,7 @@
 package es.bit.api.utils;
 
+import org.springframework.data.domain.Sort;
+
 import java.util.List;
 
 /**
@@ -11,6 +13,8 @@ public class PagedResponse<T> {
     private List<T> content;
     private int page;
     private int size;
+    private Sort.Direction sortDirection = Sort.Direction.ASC;
+    private String sortBy = "componentId";
     private long totalElements;
     private int totalPages;
 
@@ -71,5 +75,21 @@ public class PagedResponse<T> {
 
     public void setTotalPages(int totalPages) {
         this.totalPages = totalPages;
+    }
+
+    public Sort.Direction getSortDirection() {
+        return sortDirection;
+    }
+
+    public void setSortDirection(Sort.Direction sortDirection) {
+        this.sortDirection = sortDirection;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
     }
 }

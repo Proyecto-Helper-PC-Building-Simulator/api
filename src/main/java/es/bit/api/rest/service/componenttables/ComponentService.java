@@ -28,9 +28,16 @@ public class ComponentService {
         return ComponentMapper.toDTO(componentPage.getContent());
     }
 
-    public List<ComponentDTO> findAllByName(String componentTypeName, int page, int size) {
+    public List<ComponentDTO> findAllByComponentType(String componentTypeName, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Component> componentPage = this.componentJPARepository.findAllByComponentName(componentTypeName, pageRequest);
+        Page<Component> componentPage = this.componentJPARepository.findAllByComponentType(componentTypeName, pageRequest);
+
+        return ComponentMapper.toDTO(componentPage.getContent());
+    }
+
+    public List<ComponentDTO> findAllByComponentTypeAndName(String componentTypeName, String name, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Component> componentPage = this.componentJPARepository.findAllByComponentTypeAndName(componentTypeName, name, pageRequest);
 
         return ComponentMapper.toDTO(componentPage.getContent());
     }

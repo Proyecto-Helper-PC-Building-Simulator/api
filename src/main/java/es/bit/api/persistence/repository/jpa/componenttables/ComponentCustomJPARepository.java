@@ -69,6 +69,10 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
             String condition = matcher.group(3);
             String value = matcher.group(4);
 
+            if (value.contains("+")) {
+                value = value.replaceAll("\\+", " ");
+            }
+
             counter++;
 
             buildCondition(conditions, parameters, entity, attribute, condition, URLEncoder.encode(value.toLowerCase(), StandardCharsets.UTF_8), counter);
@@ -145,22 +149,27 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
     }
 
     private void addCondition(List<String> conditions, Map<String, Object> parameters, String condition, String identifier, String value, int counter, String entity, String attribute, boolean isString) {
-        conditions.add(condition + identifier);
-
-        if (value.contains("+")) {
+        if (value.contains("+") && (value.toLowerCase().contains("cpu+cooler") || value.toLowerCase().contains("power+supply") || value.toLowerCase().contains("case+fan"))) {
             String [] searchTerms = value.split("\\+");
 
             for (String searchTerm : searchTerms) {
                 parameters.put(identifier, "%" + searchTerm + "%");
+                conditions.add(condition + identifier);
                 counter++;
                 identifier = "param" + entity.charAt(0) + attribute.charAt(0) + counter;
             }
         } else {
             if (isString) {
-                parameters.put(identifier, "%" + value + "%");
+                if (value.toLowerCase().contains("cpu")) {
+                    parameters.put(identifier, value);
+                } else {
+                    parameters.put(identifier, "%" + value + "%");
+                }
             } else {
                 parameters.put(identifier, value);
             }
+
+            conditions.add(condition + identifier);
         }
     }
 }

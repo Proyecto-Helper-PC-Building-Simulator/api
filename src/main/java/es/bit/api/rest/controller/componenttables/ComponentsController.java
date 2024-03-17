@@ -40,7 +40,7 @@ public class ComponentsController {
         List<ComponentDTO> content;
 
         if (search != null && !search.isEmpty()) {
-            content = this.componentService.findAllByName(search);
+            content = this.componentService.findAllByName(search, page, size);
         } else {
             content = this.componentService.findAllByComponentType(componentType, page, size);
         }

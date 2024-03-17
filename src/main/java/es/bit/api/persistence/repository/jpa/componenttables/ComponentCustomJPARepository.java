@@ -1,10 +1,13 @@
 package es.bit.api.persistence.repository.jpa.componenttables;
 
-import es.bit.api.persistence.model.componenttables.Component;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.net.URLEncoder;
@@ -17,13 +20,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Repository
-public class ComponentCustomJPARepository implements IComponentCustomJPARepository {
+public class ComponentCustomJPARepository implements IComponentCustomJPARepository<Object> {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    IComponentJPARepository componentJPARepository;
+
 
     @Override
-    public List<Component> findAll(String search) {
+    public Page<Object> findAll(String search, Pageable pageable) {
         List<String> conditions = new ArrayList<>();
         Map<String, Object> parameters = new HashMap<>();
 
@@ -36,16 +42,21 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
 
         Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
 
-        for (String key : parameters.keySet()) {
-            jpaQuery.setParameter(key, parameters.get(key));
+        for (Map.Entry<String, Object> entry: parameters.entrySet()) {
+            jpaQuery.setParameter(entry.getKey(), entry.getValue());
         }
 
-        return jpaQuery.getResultList();
+        long total = componentJPARepository.count();
+
+        jpaQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        jpaQuery.setMaxResults(pageable.getPageSize());
+
+        return new PageImpl<>(jpaQuery.getResultList(), pageable, total);
     }
 
 
     private void generateQueryParameters(String search, List<String> conditions, Map<String, Object> parameters) {
-        Pattern pattern = Pattern.compile("([\\w\\d]+)\\.([\\w\\d]+)(:|<=|<|>=|>)([^,]+)");
+        Pattern pattern = Pattern.compile("(\\w+)\\.(\\w+)(:|<=|<|>=|>)([^,]+)");
         Matcher matcher = pattern.matcher(search);
 
         int counter = 0;
@@ -63,19 +74,16 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
     }
 
     private void buildCondition(List<String> conditions, Map<String, Object> parameters, String entity, String attribute, String condition, String value, int counter) {
-        String parameterIdentifier = "param" + entity.substring(0, 1) + attribute.substring(0, 1) + counter;
+        String parameterIdentifier = "param" + entity.charAt(0) + attribute.charAt(0) + counter;
 
         switch (entity) {
             case "component":
                 switch (attribute) {
                     case "name":
-                        switch (condition) {
-                            case ":":
-                                addCondition(conditions, parameters, "LOWER(c.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
-                                break;
-
-                            default:
-                                throw new IllegalArgumentException("Condition not supported for component.name: " + condition);
+                        if (condition.equals(":")) {
+                            addCondition(conditions, parameters, "LOWER(c.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
+                        } else {
+                            throw new IllegalArgumentException("Condition not supported for component.name: " + condition);
                         }
                         break;
 
@@ -85,10 +93,7 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
                                 addCondition(conditions, parameters, " c.price LIKE :", parameterIdentifier, value, counter, entity, attribute, false);
                                 break;
 
-                            case "<":
-                            case "<=":
-                            case ">=":
-                            case ">":
+                            case "<", "<=", ">=", ">":
                                 addCondition(conditions, parameters, " c.price " + condition + ":", parameterIdentifier, value, counter, entity, attribute, false);
                                 break;
 
@@ -103,59 +108,41 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
                 break;
 
             case "manufacturer": {
-                switch (attribute) {
-                    case "name":
-                        switch (condition) {
-                            case ":":
-                                addCondition(conditions, parameters, "LOWER(m.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
-                                break;
-
-                            default:
-                                throw new IllegalArgumentException("Condition not supported for manufacturer.name: " + condition);
-                        }
-                        break;
-
-                    default:
-                        throw new IllegalArgumentException("Attribute not supported for manufacturer entity: " + attribute);
+                if (attribute.equals("name")) {
+                    if (condition.equals(":")) {
+                        addCondition(conditions, parameters, "LOWER(m.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
+                    } else {
+                        throw new IllegalArgumentException("Condition not supported for manufacturer.name: " + condition);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Attribute not supported for manufacturer entity: " + attribute);
                 }
             }
             break;
 
             case "lighting": {
-                switch (attribute) {
-                    case "name":
-                        switch (condition) {
-                            case ":":
-                                addCondition(conditions, parameters, "LOWER(l.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
-                                break;
-
-                            default:
-                                throw new IllegalArgumentException("Condition not supported for lighting.name: " + condition);
-                        }
-                        break;
-
-                    default:
-                        throw new IllegalArgumentException("Attribute not supported for lighting entity: " + attribute);
+                if (attribute.equals("name")) {
+                    if (condition.equals(":")) {
+                        addCondition(conditions, parameters, "LOWER(l.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
+                    } else {
+                        throw new IllegalArgumentException("Condition not supported for lighting.name: " + condition);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Attribute not supported for lighting entity: " + attribute);
                 }
             }
 
             break;
 
             case "componentType": {
-                switch (attribute) {
-                    case "name":
-                        switch (condition) {
-                            case ":":
-                                addCondition(conditions, parameters, "LOWER(ct.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
-                                break;
-
-                            default:
-                                throw new IllegalArgumentException("Condition not supported for componentType.name: " + condition);
-                        }
-                        break;
-
-                    default:
-                        throw new IllegalArgumentException("Attribute not supported for componentType entity: " + attribute);
+                if (attribute.equals("name")) {
+                    if (condition.equals(":")) {
+                        addCondition(conditions, parameters, "LOWER(ct.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, false);
+                    } else {
+                        throw new IllegalArgumentException("Condition not supported for componentType.name: " + condition);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Attribute not supported for componentType entity: " + attribute);
                 }
             }
             break;
@@ -169,11 +156,11 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
         if (value.contains("+")) {
             String [] searchTerms = value.split("\\+");
 
-            for (int i = 0; i < searchTerms.length; i++) {
+            for (String searchTerm : searchTerms) {
                 conditions.add(condition + identifier);
-                parameters.put(identifier, "%" + searchTerms[i] + "%");
+                parameters.put(identifier, "%" + searchTerm + "%");
                 counter++;
-                identifier = "param" + entity.substring(0, 1) + attribute.substring(0, 1) + counter;
+                identifier = "param" + entity.charAt(0) + attribute.charAt(0) + counter;
             }
         } else {
             conditions.add(condition + identifier);

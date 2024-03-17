@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.CallSite;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,10 +39,12 @@ public class ComponentService {
         return ComponentMapper.toDTO(componentPage.getContent());
     }
 
-    public List<ComponentDTO> findAllByName(String name) {
-        List<Component> components = this.componentCustomJPARepository.findAll(name);
+    public List<ComponentDTO> findAllByName(String name, int page, int size) {
+        PageRequest pageRequest =  PageRequest.of(page, size);
 
-        return ComponentMapper.toDTO(components);
+        Page<Component> components = this.componentCustomJPARepository.findAll(name, pageRequest);
+
+        return ComponentMapper.toDTO(components.getContent());
     }
 
     public ComponentDTO findById(Integer id) {

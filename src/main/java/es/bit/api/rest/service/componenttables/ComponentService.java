@@ -21,6 +21,7 @@ public class ComponentService {
     @Autowired
     IComponentCustomJPARepository componentCustomJPARepository;
 
+
     public Long count() {
         return this.componentJPARepository.count();
     }
@@ -32,16 +33,8 @@ public class ComponentService {
         return ComponentMapper.toDTO(componentPage.getContent());
     }
 
-    public List<ComponentDTO> findAllByComponentType(String componentTypeName, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Component> componentPage = this.componentJPARepository.findAllByComponentType(componentTypeName, pageRequest);
-
-        return ComponentMapper.toDTO(componentPage.getContent());
-    }
-
     public List<ComponentDTO> findAllByName(String name, int page, int size) {
         PageRequest pageRequest =  PageRequest.of(page, size);
-
         Page<Component> components = this.componentCustomJPARepository.findAll(name, pageRequest);
 
         return ComponentMapper.toDTO(components.getContent());
@@ -56,8 +49,6 @@ public class ComponentService {
 
         return ComponentMapper.toDTO(component);
     }
-
-
 
     public ComponentDTO create(ComponentDTO componentDTO) {
         Component component = ComponentMapper.toBD(componentDTO);

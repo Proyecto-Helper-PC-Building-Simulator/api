@@ -34,18 +34,9 @@ public class ComponentsController {
     public PagedResponse<ComponentDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false) String componentType,
             @RequestParam(required = false) String search
     ) {
-        List<ComponentDTO> content;
-
-        if (search != null && !search.isEmpty()) {
-            content = this.componentService.findAllByName(search, page, size);
-        } else {
-            content = this.componentService.findAllByComponentType(componentType, page, size);
-        }
-
-
+        List<ComponentDTO> content = (search != null && !search.isEmpty()) ? this.componentService.findAllByName(search, page, size) : this.componentService.findAll(page, size);
 
         long totalElements = this.componentService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

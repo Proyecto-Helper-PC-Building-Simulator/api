@@ -40,6 +40,8 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
             queryBuilder.append(" WHERE ").append(StringUtils.join(conditions, " AND "));
         }
 
+        queryBuilder.append(" ORDER BY c.componentId ASC");
+
         Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
 
         for (Map.Entry<String, Object> entry: parameters.entrySet()) {
@@ -78,93 +80,82 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
 
         switch (entity) {
             case "component":
-                switch (attribute) {
-                    case "name":
-                        if (condition.equals(":")) {
-                            addCondition(conditions, parameters, "LOWER(c.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
-                        } else {
-                            throw new IllegalArgumentException("Condition not supported for component.name: " + condition);
-                        }
-                        break;
-
-                    case "price":
-                        switch (condition) {
-                            case ":":
-                                addCondition(conditions, parameters, " c.price LIKE :", parameterIdentifier, value, counter, entity, attribute, false);
-                                break;
-
-                            case "<", "<=", ">=", ">":
-                                addCondition(conditions, parameters, " c.price " + condition + ":", parameterIdentifier, value, counter, entity, attribute, false);
-                                break;
-
-                            default:
-                                throw new IllegalArgumentException("Condition not supported for component.price: " + condition);
-                        }
-                        break;
-
-                    default:
-                        throw new IllegalArgumentException("Attribute not supported for component entity: " + attribute);
-                }
+                buildComponentCondition(conditions, parameters, entity, attribute, condition, value, counter, parameterIdentifier);
                 break;
 
-            case "manufacturer": {
-                if (attribute.equals("name")) {
-                    if (condition.equals(":")) {
-                        addCondition(conditions, parameters, "LOWER(m.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
-                    } else {
-                        throw new IllegalArgumentException("Condition not supported for manufacturer.name: " + condition);
-                    }
-                } else {
-                    throw new IllegalArgumentException("Attribute not supported for manufacturer entity: " + attribute);
-                }
-            }
-            break;
+            case "manufacturer":
+                buildNameCondition(conditions, parameters, entity, attribute, condition, value, counter, parameterIdentifier, "m.name");
+                break;
 
-            case "lighting": {
-                if (attribute.equals("name")) {
-                    if (condition.equals(":")) {
-                        addCondition(conditions, parameters, "LOWER(l.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
-                    } else {
-                        throw new IllegalArgumentException("Condition not supported for lighting.name: " + condition);
-                    }
-                } else {
-                    throw new IllegalArgumentException("Attribute not supported for lighting entity: " + attribute);
-                }
-            }
+            case "lighting":
+                buildNameCondition(conditions, parameters, entity, attribute, condition, value, counter, parameterIdentifier, "l.name");
 
-            break;
+                break;
 
-            case "componentType": {
-                if (attribute.equals("name")) {
-                    if (condition.equals(":")) {
-                        addCondition(conditions, parameters, "LOWER(ct.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, false);
-                    } else {
-                        throw new IllegalArgumentException("Condition not supported for componentType.name: " + condition);
-                    }
-                } else {
-                    throw new IllegalArgumentException("Attribute not supported for componentType entity: " + attribute);
-                }
-            }
-            break;
+            case "componentType":
+                buildNameCondition(conditions, parameters, entity, attribute, condition, value, counter, parameterIdentifier, "ct.name");
+                break;
 
             default:
                 throw new IllegalArgumentException("Entity not supported: " + entity);
         }
     }
 
+    private void buildNameCondition(List<String> conditions, Map<String, Object> parameters, String entity, String attribute, String condition, String value, int counter, String parameterIdentifier, String objectAttribute
+    ) {
+        if (attribute.equals("name")) {
+            if (condition.equals(":")) {
+                addCondition(conditions, parameters, "LOWER(" + objectAttribute + ") LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
+            } else {
+                throw new IllegalArgumentException("Condition not supported for " + entity + "." + attribute + ": " + condition);
+            }
+        } else {
+            throw new IllegalArgumentException("Attribute not supported for " + entity + " entity: " + attribute);
+        }
+    }
+
+    private void buildComponentCondition(List<String> conditions, Map<String, Object> parameters, String entity, String attribute, String condition, String value, int counter, String parameterIdentifier) {
+        switch (attribute) {
+            case "name":
+                if (condition.equals(":")) {
+                    addCondition(conditions, parameters, "LOWER(c.name) LIKE :", parameterIdentifier, value, counter, entity, attribute, true);
+                } else {
+                    throw new IllegalArgumentException("Condition not supported for component.name: " + condition);
+                }
+                break;
+
+            case "price":
+                switch (condition) {
+                    case ":":
+                        addCondition(conditions, parameters, " c.price LIKE :", parameterIdentifier, value, counter, entity, attribute, false);
+                        break;
+
+                    case "<", "<=", ">=", ">":
+                        addCondition(conditions, parameters, " c.price " + condition + ":", parameterIdentifier, value, counter, entity, attribute, false);
+                        break;
+
+                    default:
+                        throw new IllegalArgumentException("Condition not supported for component.price: " + condition);
+                }
+                break;
+
+            default:
+                throw new IllegalArgumentException("Attribute not supported for component entity: " + attribute);
+        }
+    }
+
     private void addCondition(List<String> conditions, Map<String, Object> parameters, String condition, String identifier, String value, int counter, String entity, String attribute, boolean isString) {
+        conditions.add(condition + identifier);
+
         if (value.contains("+")) {
             String [] searchTerms = value.split("\\+");
 
             for (String searchTerm : searchTerms) {
-                conditions.add(condition + identifier);
                 parameters.put(identifier, "%" + searchTerm + "%");
                 counter++;
                 identifier = "param" + entity.charAt(0) + attribute.charAt(0) + counter;
             }
         } else {
-            conditions.add(condition + identifier);
-
             if (isString) {
                 parameters.put(identifier, "%" + value + "%");
             } else {

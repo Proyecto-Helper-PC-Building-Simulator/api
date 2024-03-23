@@ -149,7 +149,7 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
     }
 
     private void addCondition(List<String> conditions, Map<String, Object> parameters, String condition, String identifier, String value, int counter, String entity, String attribute, boolean isString) {
-        if (value.contains("+") && (value.toLowerCase().contains("cpu+cooler") || value.toLowerCase().contains("power+supply") || value.toLowerCase().contains("case+fan"))) {
+        if (value.contains("+") || (value.toLowerCase().contains("cpu+cooler") || value.toLowerCase().contains("power+supply") || value.toLowerCase().contains("case+fan"))) {
             String [] searchTerms = value.split("\\+");
 
             for (String searchTerm : searchTerms) {

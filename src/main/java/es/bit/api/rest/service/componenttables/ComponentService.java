@@ -1,6 +1,7 @@
 package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.componenttables.Component;
+import es.bit.api.persistence.repository.jpa.componenttables.IComponentCustomJPARepository;
 import es.bit.api.persistence.repository.jpa.componenttables.IComponentJPARepository;
 import es.bit.api.rest.dto.componenttables.ComponentDTO;
 import es.bit.api.rest.mapper.componenttables.ComponentMapper;
@@ -17,6 +18,10 @@ public class ComponentService {
     @Autowired
     IComponentJPARepository componentJPARepository;
 
+    @Autowired
+    IComponentCustomJPARepository componentCustomJPARepository;
+
+
     public Long count() {
         return this.componentJPARepository.count();
     }
@@ -28,6 +33,13 @@ public class ComponentService {
         return ComponentMapper.toDTO(componentPage.getContent());
     }
 
+    public List<ComponentDTO> findAllByName(String name, int page, int size) {
+        PageRequest pageRequest =  PageRequest.of(page, size);
+        Page<Component> components = this.componentCustomJPARepository.findAll(name, pageRequest);
+
+        return ComponentMapper.toDTO(components.getContent());
+    }
+
     public ComponentDTO findById(Integer id) {
         Optional<Component> component = this.componentJPARepository.findById(id);
 
@@ -37,8 +49,6 @@ public class ComponentService {
 
         return ComponentMapper.toDTO(component);
     }
-
-
 
     public ComponentDTO create(ComponentDTO componentDTO) {
         Component component = ComponentMapper.toBD(componentDTO);

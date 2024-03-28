@@ -36,7 +36,10 @@ public class ComponentsController {
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(required = false) String search
     ) {
-        List<ComponentDTO> content = (search != null && !search.isEmpty()) ? this.componentService.findAllByName(search, page, size) : this.componentService.findAll(page, size);
+        List<ComponentDTO> content =
+                ((search != null) && !search.isEmpty())
+                        ? ((search.contains("component.ids")) ? this.componentService.findAllByIds(search) : this.componentService.findAllByName(search, page, size))
+                        : this.componentService.findAll(page, size);
 
         long totalElements = this.componentService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);

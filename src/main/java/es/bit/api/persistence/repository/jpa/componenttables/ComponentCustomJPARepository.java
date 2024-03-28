@@ -1,5 +1,6 @@
 package es.bit.api.persistence.repository.jpa.componenttables;
 
+import es.bit.api.persistence.model.componenttables.Component;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -26,6 +27,8 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
 
     @Autowired
     IComponentJPARepository componentJPARepository;
+
+
 
 
     @Override
@@ -56,6 +59,36 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
         return new PageImpl<>(jpaQuery.getResultList(), pageable, total);
     }
 
+    @Override
+    public List<Object> findAllByIds(String search) {
+        String[] entityAttributePair = search.split("\\.");
+        String entity = entityAttributePair[0];
+        String attribute = entityAttributePair[1].split(":")[0];
+
+        if (!entity.equals("component") || !attribute.equals("ids")) {
+            throw new IllegalArgumentException("Entity or attribute not supported for findAllByIds");
+        }
+
+        List<Integer> ids = extractIdsFromSearchString(search);
+
+        String queryString = "SELECT c FROM Component c WHERE c.componentId IN :ids";
+        Query jpaQuery = entityManager.createQuery(queryString);
+        jpaQuery.setParameter("ids", ids);
+
+        return jpaQuery.getResultList();
+    }
+
+
+    private List<Integer> extractIdsFromSearchString(String search) {
+        List<Integer> ids = new ArrayList<>();
+        String[] idStrings = search.split(":")[1].split("-");
+
+        for (String idString : idStrings) {
+            ids.add(Integer.parseInt(idString));
+        }
+
+        return ids;
+    }
 
     private void generateQueryParameters(String search, List<String> conditions, Map<String, Object> parameters) {
         Pattern pattern = Pattern.compile("(\\w+)\\.(\\w+)(:|<=|<|>=|>)([^,]+)");

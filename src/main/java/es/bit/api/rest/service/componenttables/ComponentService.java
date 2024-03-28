@@ -6,6 +6,7 @@ import es.bit.api.persistence.repository.jpa.componenttables.IComponentJPAReposi
 import es.bit.api.rest.dto.componenttables.ComponentDTO;
 import es.bit.api.rest.mapper.componenttables.ComponentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class ComponentService {
         return this.componentJPARepository.count();
     }
 
+    @Cacheable("components")
     public List<ComponentDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Component> componentPage = this.componentJPARepository.findAll(pageRequest);
@@ -33,11 +35,18 @@ public class ComponentService {
         return ComponentMapper.toDTO(componentPage.getContent());
     }
 
+    @Cacheable("components")
     public List<ComponentDTO> findAllByName(String name, int page, int size) {
         PageRequest pageRequest =  PageRequest.of(page, size);
         Page<Component> components = this.componentCustomJPARepository.findAll(name, pageRequest);
 
         return ComponentMapper.toDTO(components.getContent());
+    }
+
+    public List<ComponentDTO> findAllByIds(String name) {
+        List<Component> components = this.componentCustomJPARepository.findAllByIds(name);
+
+        return ComponentMapper.toDTO(components);
     }
 
     public ComponentDTO findById(Integer id) {

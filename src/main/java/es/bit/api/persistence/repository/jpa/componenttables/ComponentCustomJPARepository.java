@@ -1,6 +1,5 @@
 package es.bit.api.persistence.repository.jpa.componenttables;
 
-import es.bit.api.persistence.model.componenttables.Component;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -27,8 +26,6 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
 
     @Autowired
     IComponentJPARepository componentJPARepository;
-
-
 
 
     @Override
@@ -182,7 +179,14 @@ public class ComponentCustomJPARepository implements IComponentCustomJPAReposito
     }
 
     private void addCondition(List<String> conditions, Map<String, Object> parameters, String condition, String identifier, String value, int counter, String entity, String attribute, boolean isString) {
-        if (value.contains("+") || (value.toLowerCase().contains("cpu+cooler") || value.toLowerCase().contains("power+supply") || value.toLowerCase().contains("case+fan"))) {
+        if (value.equalsIgnoreCase("cpu+cooler") || value.equalsIgnoreCase("power+supply") || value.equalsIgnoreCase("case+fan")) {
+            if (value.contains("+")) {
+                value = value.replaceAll("\\+", " ");
+            }
+            parameters.put(identifier, value);
+            conditions.add(condition + identifier);
+
+        } else if (value.contains("+")) {
             String [] searchTerms = value.split("\\+");
 
             for (String searchTerm : searchTerms) {

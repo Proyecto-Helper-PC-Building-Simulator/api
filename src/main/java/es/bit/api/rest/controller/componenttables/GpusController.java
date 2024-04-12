@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/gpus")
@@ -39,8 +40,14 @@ public class GpusController {
     @Operation(summary = "Get all gpus paged")
     @ApiResponse(responseCode = "200", description = "Gpus obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<GpuDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
-        List<GpuDTO> content = this.gpuService.findAll(page, size);
+    public PagedResponse<GpuDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
+    ) {
+        List<GpuDTO> content = this.gpuService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.gpuService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 

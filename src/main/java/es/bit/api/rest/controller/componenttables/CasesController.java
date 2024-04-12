@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cases")
@@ -42,10 +43,11 @@ public class CasesController {
     public PagedResponse<CaseDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false, defaultValue = "true") Boolean withMotherboardFormFactors,
-            @RequestParam(required = false, defaultValue = "true") Boolean withPsuFormFactors
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
     ) {
-        List<CaseDTO> content = this.caseService.findAll(page, size, withMotherboardFormFactors, withPsuFormFactors);
+        List<CaseDTO> content = this.caseService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.caseService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -61,11 +63,9 @@ public class CasesController {
     @ApiResponse(responseCode = "200", description = "Case found.")
     @ApiResponse(responseCode = "404", description = "Case not found.")
     public CaseDTO findById(
-            @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "true") Boolean withMotherboardFormFactors,
-            @RequestParam(required = false, defaultValue = "true") Boolean withPsuFormFactors
+            @PathVariable int id
     ) {
-        CaseDTO caseObject = this.caseService.findById(id, withMotherboardFormFactors, withPsuFormFactors);
+        CaseDTO caseObject = this.caseService.findById(id);
 
         if (caseObject == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -85,7 +85,7 @@ public class CasesController {
     ) {
         validateComponentType(caseObject);
 
-        return this.caseService.create(caseObject, true, true);
+        return this.caseService.create(caseObject);
     }
 
     @PutMapping("/{id}")
@@ -104,7 +104,7 @@ public class CasesController {
 
         validateComponentType(caseObject);
 
-        this.caseService.update(caseObject, true, true);
+        this.caseService.update(caseObject);
     }
 
     @DeleteMapping("/{id}")
@@ -121,7 +121,7 @@ public class CasesController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.caseService.delete(caseObject, false, false);
+        this.caseService.delete(caseObject);
     }
 
     private void validateComponentType(CaseDTO caseObject) {

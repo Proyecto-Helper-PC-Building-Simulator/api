@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/motherboards")
@@ -42,12 +43,14 @@ public class MotherboardsController {
     public PagedResponse<MotherboardDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false, defaultValue = "true") Boolean withMultiGpuTypes
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
     ) {
-        List<MotherboardDTO> content = this.motherboardService.findAll(page, size, withMultiGpuTypes);
+        List<MotherboardDTO> content = this.motherboardService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.motherboardService.count();
-        int totalPages = (int) Math.ceil((double) totalElements / size);
 
+        int totalPages = (int) Math.ceil((double) totalElements / size);
         if (page >= totalPages) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");
         }
@@ -59,11 +62,8 @@ public class MotherboardsController {
     @Operation(summary = "Get a motherboard by ID")
     @ApiResponse(responseCode = "200", description = "Motherboard found.")
     @ApiResponse(responseCode = "404", description = "Motherboard not found.")
-    public MotherboardDTO findById(
-            @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "true") Boolean withMultiGpuTypes
-    ) {
-        MotherboardDTO motherboard = this.motherboardService.findById(id, withMultiGpuTypes);
+    public MotherboardDTO findById(@PathVariable int id) {
+        MotherboardDTO motherboard = this.motherboardService.findById(id);
 
         if (motherboard == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -83,7 +83,7 @@ public class MotherboardsController {
     ) {
         validateComponentType(motherboard);
 
-        return this.motherboardService.create(motherboard, true);
+        return this.motherboardService.create(motherboard);
     }
 
     @PutMapping("/{id}")
@@ -102,7 +102,7 @@ public class MotherboardsController {
 
         validateComponentType(motherboard);
 
-        this.motherboardService.update(motherboard, true);
+        this.motherboardService.update(motherboard);
     }
 
     @DeleteMapping("/{id}")
@@ -119,7 +119,7 @@ public class MotherboardsController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.motherboardService.delete(motherboard, false);
+        this.motherboardService.delete(motherboard);
     }
 
     private void validateComponentType(MotherboardDTO motherboard) {

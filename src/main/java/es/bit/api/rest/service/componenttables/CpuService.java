@@ -2,11 +2,11 @@ package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.basictables.CpuSerie;
 import es.bit.api.persistence.model.basictables.CpuSocket;
-import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.Cpu;
-import es.bit.api.persistence.repository.jpa.componenttables.ICpuJPARepository;
+import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.componenttables.CpuDTO;
 import es.bit.api.rest.mapper.componenttables.CpuMapper;
+import es.bit.api.rest.service.GenericService;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -24,20 +24,22 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class CpuService {
-    @Autowired
-    ICpuJPARepository cpuJPARepository;
+public class CpuService implements GenericService<CpuDTO, Cpu, Integer> {
+    private final IGenericJpaRepository<Cpu, Integer> cpuJPARepository;
 
+
+    @Autowired
+    public CpuService(IGenericJpaRepository<Cpu, Integer> cpuJPARepository) {
+        this.cpuJPARepository = cpuJPARepository;
+    }
+
+
+    @Override
     public Long count() {
         return this.cpuJPARepository.count();
     }
 
-    public List<CpuDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<Cpu> cpuPage = this.cpuJPARepository.findAll(getSpecification(filters), pageable);
-        return CpuMapper.toDTO(cpuPage.getContent());
-    }
-
+    @Override
     public CpuDTO findById(Integer id) {
         Optional<Cpu> cpu = this.cpuJPARepository.findById(id);
 
@@ -48,6 +50,14 @@ public class CpuService {
         return CpuMapper.toDTO(cpu);
     }
 
+    @Override
+    public List<CpuDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
+        Page<Cpu> cpuPage = this.cpuJPARepository.findAll(getSpecification(filters), pageable);
+        return CpuMapper.toDTO(cpuPage.getContent());
+    }
+
+    @Override
     public CpuDTO create(CpuDTO cpuDTO) {
         Cpu cpu = CpuMapper.toBD(cpuDTO);
         cpu = this.cpuJPARepository.save(cpu);
@@ -55,6 +65,7 @@ public class CpuService {
         return CpuMapper.toDTO(cpu);
     }
 
+    @Override
     public void update(CpuDTO cpuDTO) {
         Cpu cpu = CpuMapper.toBD(cpuDTO);
         this.cpuJPARepository.save(cpu);
@@ -62,39 +73,23 @@ public class CpuService {
         CpuMapper.toDTO(cpu);
     }
 
+    @Override
     public void delete(CpuDTO cpuDTO) {
         Cpu cpu = CpuMapper.toBD(cpuDTO);
         this.cpuJPARepository.delete(cpu);
     }
 
 
-    private Specification<Cpu> getSpecification(Map<String, String> filters) {
+    @Override
+    public Specification<Cpu> getSpecification(Map<String, String> filters) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (filters.containsKey("name")) {
-                String[] searchTerms = filters.get("name").split("\\s+");
-                Predicate[] termPredicates = new Predicate[searchTerms.length];
-                for (int i = 0; i < searchTerms.length; i++) {
-                    String searchTerm = "%" + searchTerms[i] + "%";
-                    termPredicates[i] = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), criteriaBuilder.lower(criteriaBuilder.literal(searchTerm)));
-                }
-                predicates.add(criteriaBuilder.and(termPredicates));
+            Predicate commonPredicates = addCommonPredicates(criteriaBuilder, root, filters);
+            if (commonPredicates != null) {
+                predicates.add(commonPredicates);
             }
-            if (filters.containsKey("manufacturer")) {
-                Join<Cpu, Manufacturer> cpuSocketJoin = root.join("manufacturer", JoinType.INNER);
-                predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + filters.get("manufacturer") + "%"));
-            }
-            if (filters.containsKey("lighting")) {
-                Join<Cpu, Manufacturer> cpuSocketJoin = root.join("lighting", JoinType.INNER);
-                predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + filters.get("lighting") + "%"));
-            }
-            if (filters.containsKey("priceMin")) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("price"), Integer.parseInt(filters.get("priceMin"))));
-            }
-            if (filters.containsKey("priceMax")) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), Integer.parseInt(filters.get("priceMax"))));
-            }
+
             if (filters.containsKey("coresMin")) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("cores"), Integer.parseInt(filters.get("coresMin"))));
             }

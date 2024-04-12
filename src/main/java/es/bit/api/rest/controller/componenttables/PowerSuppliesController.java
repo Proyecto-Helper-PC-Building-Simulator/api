@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/power_supplies")
@@ -21,6 +22,7 @@ import java.util.List;
 public class PowerSuppliesController {
     private final PowerSupplyService powerSupplyService;
     private final ComponentTypeService componentTypeService;
+
 
     @Autowired
     public PowerSuppliesController(PowerSupplyService powerSupplyService, ComponentTypeService componentTypeService) {
@@ -39,8 +41,14 @@ public class PowerSuppliesController {
     @Operation(summary = "Get all power supplies paged")
     @ApiResponse(responseCode = "200", description = "Power supplies obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<PowerSupplyDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
-        List<PowerSupplyDTO> content = this.powerSupplyService.findAll(page, size);
+    public PagedResponse<PowerSupplyDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
+    ) {
+        List<PowerSupplyDTO> content = this.powerSupplyService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.powerSupplyService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 

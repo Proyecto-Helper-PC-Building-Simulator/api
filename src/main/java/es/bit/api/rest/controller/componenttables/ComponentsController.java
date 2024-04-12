@@ -12,13 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/components")
 @Tag(name = "Components Controller", description = "Related operations with component s")
 public class ComponentsController {
+    private final ComponentService componentService;
+
+
     @Autowired
-    ComponentService componentService;
+    public ComponentsController(ComponentService componentService) {
+        this.componentService = componentService;
+    }
 
 
     @GetMapping("/count")
@@ -34,13 +40,11 @@ public class ComponentsController {
     public PagedResponse<ComponentDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false) String search
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "") Map<String, String> filters
     ) {
-        List<ComponentDTO> content =
-                ((search != null) && !search.isEmpty())
-                        ? ((search.contains("component.ids")) ? this.componentService.findAllByIds(search) : this.componentService.findAllByName(search, page, size))
-                        : this.componentService.findAll(page, size);
-
+        List<ComponentDTO> content = this.componentService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.componentService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -50,6 +54,21 @@ public class ComponentsController {
 
         return new PagedResponse<>(content, page, size, totalElements, totalPages);
     }
+
+    @GetMapping("/multiple")
+    @Operation(summary = "Get multiple components by IDs")
+    @ApiResponse(responseCode = "200", description = "Components found.")
+    @ApiResponse(responseCode = "404", description = "Component not found.")
+    public List<ComponentDTO> findMultipleComponentsByIds(@RequestParam List<Integer> ids) {
+        List<ComponentDTO> components = componentService.findComponentsByIds(ids);
+
+        if (components.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No components found for the provided IDs.");
+        }
+
+        return components;
+    }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a component by ID")

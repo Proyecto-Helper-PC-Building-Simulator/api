@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ram_memories")
@@ -39,8 +40,14 @@ public class RamMemoriesController {
     @Operation(summary = "Get all ram memories paged")
     @ApiResponse(responseCode = "200", description = "Ram memories obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<RamMemoryDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
-        List<RamMemoryDTO> content = this.ramMemoryService.findAll(page, size);
+    public PagedResponse<RamMemoryDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
+    ) {
+        List<RamMemoryDTO> content = this.ramMemoryService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.ramMemoryService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cables")
@@ -42,9 +43,11 @@ public class CablesController {
     public PagedResponse<CableDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false, defaultValue = "true") Boolean withCableColors
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
     ) {
-        List<CableDTO> content = this.cableService.findAll(page, size, withCableColors);
+        List<CableDTO> content = this.cableService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.cableService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -60,10 +63,9 @@ public class CablesController {
     @ApiResponse(responseCode = "200", description = "Cable found.")
     @ApiResponse(responseCode = "404", description = "Cable not found.")
     public CableDTO findById(
-            @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "true") Boolean withCableColors
+            @PathVariable int id
     ) {
-        CableDTO cable = this.cableService.findById(id, withCableColors);
+        CableDTO cable = this.cableService.findById(id);
 
         if (cable == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -83,7 +85,7 @@ public class CablesController {
     ) {
         validateComponentType(cable);
 
-        return this.cableService.create(cable, true);
+        return this.cableService.create(cable);
     }
 
     @PutMapping("/{id}")
@@ -102,7 +104,7 @@ public class CablesController {
 
         validateComponentType(cable);
 
-        this.cableService.update(cable, true);
+        this.cableService.update(cable);
     }
 
     @DeleteMapping("/{id}")
@@ -119,7 +121,7 @@ public class CablesController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.cableService.delete(cable, false);
+        this.cableService.delete(cable);
     }
 
     private void validateComponentType(CableDTO cable) {

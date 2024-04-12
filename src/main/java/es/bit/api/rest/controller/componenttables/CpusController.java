@@ -45,7 +45,7 @@ public class CpusController {
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(defaultValue = "") Map<String, String> filters
+            @RequestParam Map<String, String> filters
     ) {
         List<CpuDTO> content = this.cpuService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.cpuService.count();

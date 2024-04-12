@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/case_fans")
@@ -39,8 +40,14 @@ public class CaseFansController {
     @Operation(summary = "Get all case fans paged")
     @ApiResponse(responseCode = "200", description = "CaseFans obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CaseFanDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
-        List<CaseFanDTO> content = this.caseFanService.findAll(page, size);
+    public PagedResponse<CaseFanDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
+    ) {
+        List<CaseFanDTO> content = this.caseFanService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.caseFanService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 

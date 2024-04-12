@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cpus")
@@ -39,11 +40,16 @@ public class CpusController {
     @Operation(summary = "Get all cpus paged")
     @ApiResponse(responseCode = "200", description = "Cpus obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CpuDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
-        List<CpuDTO> content = this.cpuService.findAll(page, size);
+    public PagedResponse<CpuDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "") Map<String, String> filters
+    ) {
+        List<CpuDTO> content = this.cpuService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.cpuService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
-
         if (page >= totalPages) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");
         }

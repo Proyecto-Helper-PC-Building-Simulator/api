@@ -1,10 +1,12 @@
 package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.basictables.GpuChipsetSerie;
+import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.basictables.MultiGpuType;
 import es.bit.api.persistence.model.componenttables.Gpu;
 import es.bit.api.persistence.model.componenttables.enums.ChipsetBrands;
 import es.bit.api.persistence.repository.jpa.componenttables.IGpuJpaRepository;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.GpuDTO;
 import es.bit.api.rest.mapper.componenttables.GpuMapper;
 import es.bit.api.rest.service.GenericService;
@@ -19,10 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GpuService implements GenericService<GpuDTO, Gpu, Integer> {
@@ -136,5 +136,42 @@ public class GpuService implements GenericService<GpuDTO, Gpu, Integer> {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    @Override
+    public Map<String, Double> getPriceRange() {
+        Double highestPrice = gpuJPARepository.findAll()
+                .stream()
+                .mapToDouble(Gpu::getPrice)
+                .max()
+                .orElse(0.0);
+
+        Double lowestPrice = gpuJPARepository.findAll()
+                .stream()
+                .mapToDouble(Gpu::getPrice)
+                .min()
+                .orElse(0.0);
+
+        Map<String, Double> priceRange = new HashMap<>();
+        priceRange.put("highestPrice", highestPrice);
+        priceRange.put("lowestPrice", lowestPrice);
+        return priceRange;
+    }
+
+    @Override
+    public Set<ManufacturerDTO> getManufacturers() {
+        Set<Manufacturer> manufacturers = gpuJPARepository.findAll()
+                .stream()
+                .map(Gpu::getManufacturer)
+                .collect(Collectors.toSet());
+
+        return manufacturers.stream()
+                .map(manufacturer -> {
+                    ManufacturerDTO dto = new ManufacturerDTO();
+                    dto.setId(manufacturer.getId());
+                    dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
     }
 }

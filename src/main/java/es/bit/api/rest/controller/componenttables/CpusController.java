@@ -1,6 +1,9 @@
 package es.bit.api.rest.controller.componenttables;
 
+import es.bit.api.persistence.model.componenttables.Cpu;
+import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CpuDTO;
 import es.bit.api.rest.service.basictables.ComponentTypeService;
 import es.bit.api.rest.service.componenttables.CpuService;
@@ -13,30 +16,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/cpus")
 @Tag(name = "Cpus Controller", description = "Related operations with cpus")
-public class CpusController {
-    private final CpuService cpuService;
+public class CpusController extends GenericController<CpuDTO, Cpu, Integer> {
     private final ComponentTypeService componentTypeService;
+
 
     @Autowired
     public CpusController(CpuService cpuService, ComponentTypeService componentTypeService) {
-        this.cpuService = cpuService;
+        super(cpuService);
         this.componentTypeService = componentTypeService;
     }
 
 
-    @GetMapping("/count")
+    @Override
     @Operation(summary = "Get the total number of cpus")
     public Long count() {
-        return this.cpuService.count();
+        return super.count();
     }
 
-    @GetMapping("")
+    @Override
     @Operation(summary = "Get all cpus paged")
     @ApiResponse(responseCode = "200", description = "Cpus obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
@@ -47,31 +50,17 @@ public class CpusController {
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam Map<String, String> filters
     ) {
-        List<CpuDTO> content = this.cpuService.findAll(page, size, sortBy, sortDir, filters);
-        long totalElements = this.cpuService.count();
-        int totalPages = (int) Math.ceil((double) totalElements / size);
-        if (page >= totalPages) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");
-        }
-
-        return new PagedResponse<>(content, page, size, totalElements, totalPages);
+        return super.findAll(page, size, sortBy, sortDir, filters);
     }
 
-    @GetMapping("/{id}")
     @Operation(summary = "Get a cpu by ID")
     @ApiResponse(responseCode = "200", description = "Cpu found.")
     @ApiResponse(responseCode = "404", description = "Cpu not found.")
     public CpuDTO findById(@PathVariable int id) {
-        CpuDTO cpu = this.cpuService.findById(id);
-
-        if (cpu == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
-        }
-
-        return cpu;
+        return super.findById(id);
     }
 
-    @PostMapping("")
+    @Override
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new cpu")
     @ApiResponse(responseCode = "201", description = "Cpu created.")
@@ -80,26 +69,24 @@ public class CpusController {
     public CpuDTO create(@RequestBody CpuDTO cpu) {
         validateComponentType(cpu);
 
-        return this.cpuService.create(cpu);
+        return super.create(cpu);
     }
 
-    @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update a cpu by ID")
     @ApiResponse(responseCode = "204", description = "Cpu updated correctly.")
     @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Cpu name is duplicated.")
-    public void updateCpu(@PathVariable int id, @RequestBody CpuDTO cpu) {
+    public void update(@PathVariable int id, @RequestBody CpuDTO cpu) {
         if (id != cpu.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
         validateComponentType(cpu);
 
-        this.cpuService.update(cpu);
+        super.update(id, cpu);
     }
 
-    @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete a cpu by ID")
     @ApiResponse(responseCode = "204", description = "Cpu deleted correctly.")
@@ -110,10 +97,24 @@ public class CpusController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.cpuService.delete(cpu);
+        super.delete(id);
     }
 
-    private void validateComponentType(CpuDTO cpu) {
+    @Override
+    @Operation(summary = "Get the highest and lowest price of CPUs")
+    public Map<String, Double> getPriceRange() {
+        return super.getPriceRange();
+    }
+
+    @Override
+    @Operation(summary = "Get a list of manufacturers without duplicates")
+    public Set<ManufacturerDTO> getManufacturers() {
+        return super.getManufacturers();
+    }
+
+
+    @Override
+    protected void validateComponentType(CpuDTO cpu) {
         ComponentTypeDTO componentType = componentTypeService.findById(cpu.getComponentTypeDTO().getId());
 
         if (!"/cpus".equals(componentType.getApiName())) {

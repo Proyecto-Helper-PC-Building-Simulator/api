@@ -3,6 +3,7 @@ package es.bit.api.rest.service.componenttables;
 import es.bit.api.persistence.model.basictables.ComponentType;
 import es.bit.api.persistence.model.componenttables.Component;
 import es.bit.api.persistence.repository.jpa.componenttables.*;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.*;
 import es.bit.api.rest.mapper.basictables.ComponentTypeMapper;
 import es.bit.api.rest.mapper.componenttables.*;
@@ -16,10 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ComponentService implements GenericService<ComponentDTO, Component, Integer> {
@@ -165,5 +163,16 @@ public class ComponentService implements GenericService<ComponentDTO, Component,
     @Override
     public Specification<Component> getSpecification(Map<String, String> filters) {
         return GenericService.super.getSpecification(filters);
+    }
+
+
+    @Override
+    public Map<String, Double> getPriceRange() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Set<ManufacturerDTO> getManufacturers() {
+        return Collections.emptySet();
     }
 }

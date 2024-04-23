@@ -1,8 +1,10 @@
 package es.bit.api.rest.service.componenttables;
 
+import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.CpuCooler;
 import es.bit.api.persistence.model.componenttables.enums.CoolerTypes;
 import es.bit.api.persistence.repository.jpa.componenttables.ICpuCoolerJpaRepository;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CpuCoolerDTO;
 import es.bit.api.rest.mapper.componenttables.CpuCoolerMapper;
 import es.bit.api.rest.service.GenericService;
@@ -15,10 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CpuCoolerService implements GenericService<CpuCoolerDTO, CpuCooler, Integer> {
@@ -110,5 +110,42 @@ public class CpuCoolerService implements GenericService<CpuCoolerDTO, CpuCooler,
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    @Override
+    public Map<String, Double> getPriceRange() {
+        Double highestPrice = cpuCoolerJPARepository.findAll()
+                .stream()
+                .mapToDouble(CpuCooler::getPrice)
+                .max()
+                .orElse(0.0);
+
+        Double lowestPrice = cpuCoolerJPARepository.findAll()
+                .stream()
+                .mapToDouble(CpuCooler::getPrice)
+                .min()
+                .orElse(0.0);
+
+        Map<String, Double> priceRange = new HashMap<>();
+        priceRange.put("highestPrice", highestPrice);
+        priceRange.put("lowestPrice", lowestPrice);
+        return priceRange;
+    }
+
+    @Override
+    public Set<ManufacturerDTO> getManufacturers() {
+        Set<Manufacturer> manufacturers = cpuCoolerJPARepository.findAll()
+                .stream()
+                .map(CpuCooler::getManufacturer)
+                .collect(Collectors.toSet());
+
+        return manufacturers.stream()
+                .map(manufacturer -> {
+                    ManufacturerDTO dto = new ManufacturerDTO();
+                    dto.setId(manufacturer.getId());
+                    dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
     }
 }

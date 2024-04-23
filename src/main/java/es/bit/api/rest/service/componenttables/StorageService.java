@@ -1,8 +1,10 @@
 package es.bit.api.rest.service.componenttables;
 
+import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.Storage;
 import es.bit.api.persistence.model.componenttables.enums.StorageTypes;
 import es.bit.api.persistence.repository.jpa.componenttables.IStorageJpaRepository;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.StorageDTO;
 import es.bit.api.rest.mapper.componenttables.StorageMapper;
 import es.bit.api.rest.service.GenericService;
@@ -15,10 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StorageService implements GenericService<StorageDTO, Storage, Integer> {
@@ -106,5 +106,42 @@ public class StorageService implements GenericService<StorageDTO, Storage, Integ
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    @Override
+    public Map<String, Double> getPriceRange() {
+        Double highestPrice = storageJPARepository.findAll()
+                .stream()
+                .mapToDouble(Storage::getPrice)
+                .max()
+                .orElse(0.0);
+
+        Double lowestPrice = storageJPARepository.findAll()
+                .stream()
+                .mapToDouble(Storage::getPrice)
+                .min()
+                .orElse(0.0);
+
+        Map<String, Double> priceRange = new HashMap<>();
+        priceRange.put("highestPrice", highestPrice);
+        priceRange.put("lowestPrice", lowestPrice);
+        return priceRange;
+    }
+
+    @Override
+    public Set<ManufacturerDTO> getManufacturers() {
+        Set<Manufacturer> manufacturers = storageJPARepository.findAll()
+                .stream()
+                .map(Storage::getManufacturer)
+                .collect(Collectors.toSet());
+
+        return manufacturers.stream()
+                .map(manufacturer -> {
+                    ManufacturerDTO dto = new ManufacturerDTO();
+                    dto.setId(manufacturer.getId());
+                    dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
     }
 }

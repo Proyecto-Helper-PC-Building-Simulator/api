@@ -1,9 +1,11 @@
 package es.bit.api.rest.service.componenttables;
 
+import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.basictables.PowerSupplyFormFactor;
 import es.bit.api.persistence.model.componenttables.PowerSupply;
 import es.bit.api.persistence.model.componenttables.enums.PowerSupplyTypes;
 import es.bit.api.persistence.repository.jpa.componenttables.IPowerSupplyJpaRepository;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.PowerSupplyDTO;
 import es.bit.api.rest.mapper.componenttables.PowerSupplyMapper;
 import es.bit.api.rest.service.GenericService;
@@ -18,10 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PowerSupplyService implements GenericService<PowerSupplyDTO, PowerSupply, Integer> {
@@ -113,5 +113,42 @@ public class PowerSupplyService implements GenericService<PowerSupplyDTO, PowerS
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    @Override
+    public Map<String, Double> getPriceRange() {
+        Double highestPrice = powerSupplyJPARepository.findAll()
+                .stream()
+                .mapToDouble(PowerSupply::getPrice)
+                .max()
+                .orElse(0.0);
+
+        Double lowestPrice = powerSupplyJPARepository.findAll()
+                .stream()
+                .mapToDouble(PowerSupply::getPrice)
+                .min()
+                .orElse(0.0);
+
+        Map<String, Double> priceRange = new HashMap<>();
+        priceRange.put("highestPrice", highestPrice);
+        priceRange.put("lowestPrice", lowestPrice);
+        return priceRange;
+    }
+
+    @Override
+    public Set<ManufacturerDTO> getManufacturers() {
+        Set<Manufacturer> manufacturers = powerSupplyJPARepository.findAll()
+                .stream()
+                .map(PowerSupply::getManufacturer)
+                .collect(Collectors.toSet());
+
+        return manufacturers.stream()
+                .map(manufacturer -> {
+                    ManufacturerDTO dto = new ManufacturerDTO();
+                    dto.setId(manufacturer.getId());
+                    dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
     }
 }

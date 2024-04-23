@@ -4,6 +4,7 @@ import es.bit.api.persistence.model.basictables.*;
 import es.bit.api.persistence.model.componenttables.Cable;
 import es.bit.api.persistence.model.componenttables.Case;
 import es.bit.api.persistence.repository.jpa.componenttables.ICaseJpaRepository;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CaseDTO;
 import es.bit.api.rest.mapper.componenttables.CaseMapper;
 import es.bit.api.rest.service.GenericService;
@@ -18,10 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CaseService implements GenericService<CaseDTO, Case, Integer> {
@@ -131,5 +130,42 @@ public class CaseService implements GenericService<CaseDTO, Case, Integer> {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    @Override
+    public Map<String, Double> getPriceRange() {
+        Double highestPrice = caseObjectJPARepository.findAll()
+                .stream()
+                .mapToDouble(Case::getPrice)
+                .max()
+                .orElse(0.0);
+
+        Double lowestPrice = caseObjectJPARepository.findAll()
+                .stream()
+                .mapToDouble(Case::getPrice)
+                .min()
+                .orElse(0.0);
+
+        Map<String, Double> priceRange = new HashMap<>();
+        priceRange.put("highestPrice", highestPrice);
+        priceRange.put("lowestPrice", lowestPrice);
+        return priceRange;
+    }
+
+    @Override
+    public Set<ManufacturerDTO> getManufacturers() {
+        Set<Manufacturer> manufacturers = caseObjectJPARepository.findAll()
+                .stream()
+                .map(Case::getManufacturer)
+                .collect(Collectors.toSet());
+
+        return manufacturers.stream()
+                .map(manufacturer -> {
+                    ManufacturerDTO dto = new ManufacturerDTO();
+                    dto.setId(manufacturer.getId());
+                    dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
     }
 }

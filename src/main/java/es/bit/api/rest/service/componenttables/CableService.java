@@ -2,8 +2,10 @@ package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.basictables.CableColor;
 import es.bit.api.persistence.model.basictables.CableType;
+import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.Cable;
 import es.bit.api.persistence.repository.jpa.componenttables.ICableJpaRepository;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CableDTO;
 import es.bit.api.rest.mapper.componenttables.CableMapper;
 import es.bit.api.rest.service.GenericService;
@@ -18,10 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CableService implements GenericService<CableDTO, Cable, Integer> {
@@ -102,5 +102,42 @@ public class CableService implements GenericService<CableDTO, Cable, Integer> {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    @Override
+    public Map<String, Double> getPriceRange() {
+        Double highestPrice = cableJPARepository.findAll()
+                .stream()
+                .mapToDouble(Cable::getPrice)
+                .max()
+                .orElse(0.0);
+
+        Double lowestPrice = cableJPARepository.findAll()
+                .stream()
+                .mapToDouble(Cable::getPrice)
+                .min()
+                .orElse(0.0);
+
+        Map<String, Double> priceRange = new HashMap<>();
+        priceRange.put("highestPrice", highestPrice);
+        priceRange.put("lowestPrice", lowestPrice);
+        return priceRange;
+    }
+
+    @Override
+    public Set<ManufacturerDTO> getManufacturers() {
+        Set<Manufacturer> manufacturers = cableJPARepository.findAll()
+                .stream()
+                .map(Cable::getManufacturer)
+                .collect(Collectors.toSet());
+
+        return manufacturers.stream()
+                .map(manufacturer -> {
+                    ManufacturerDTO dto = new ManufacturerDTO();
+                    dto.setId(manufacturer.getId());
+                    dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
     }
 }

@@ -2,6 +2,7 @@ package es.bit.api.rest.service;
 
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.Cpu;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -79,4 +80,6 @@ public interface GenericService<D, C, I> {
     Map<String, Double> getPriceRange();
 
     Set<ManufacturerDTO> getManufacturers();
+
+    Set<LightingDTO> getLightings();
 }

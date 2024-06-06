@@ -2,9 +2,11 @@ package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.basictables.CpuSerie;
 import es.bit.api.persistence.model.basictables.CpuSocket;
+import es.bit.api.persistence.model.basictables.Lighting;
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.Cpu;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CpuDTO;
 import es.bit.api.rest.mapper.componenttables.CpuMapper;
@@ -110,6 +112,12 @@ public class CpuService implements GenericService<CpuDTO, Cpu, Integer> {
                 Join<Cpu, CpuSocket> cpuSocketJoin = root.join("cpuSocket", JoinType.INNER);
                 predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + filters.get("socket") + "%"));
             }
+            if (filters.containsKey("wattageMin")) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("wattage"), Integer.parseInt(filters.get("wattageMin"))));
+            }
+            if (filters.containsKey("wattageMax")) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("wattage"), Integer.parseInt(filters.get("wattageMax"))));
+            }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -149,6 +157,23 @@ public class CpuService implements GenericService<CpuDTO, Cpu, Integer> {
                     ManufacturerDTO dto = new ManufacturerDTO();
                     dto.setId(manufacturer.getId());
                     dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = cpuJPARepository.findAll()
+                .stream()
+                .map(Cpu::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
                     return dto;
                 })
                 .collect(Collectors.toSet());

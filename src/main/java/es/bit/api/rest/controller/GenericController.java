@@ -1,5 +1,6 @@
 package es.bit.api.rest.controller;
 
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.PagedResponse;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class GenericController<D, C, I> {
-    private final GenericService<D, C, I> genericService;
+    protected final GenericService<D, C, I> genericService;
 
     @Autowired
     protected GenericController(GenericService<D, C, I> genericService) {
@@ -101,6 +102,12 @@ public abstract class GenericController<D, C, I> {
     @Operation(summary = "Get a list of manufacturers without duplicates")
     public Set<ManufacturerDTO> getManufacturers() {
         return genericService.getManufacturers();
+    }
+
+    @GetMapping("/lightings")
+    @Operation(summary = "Get a list of lightings without duplicates")
+    public Set<LightingDTO> getLightings() {
+        return genericService.getLightings();
     }
 
 

@@ -2,9 +2,11 @@ package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.basictables.CableColor;
 import es.bit.api.persistence.model.basictables.CableType;
+import es.bit.api.persistence.model.basictables.Lighting;
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.Cable;
 import es.bit.api.persistence.repository.jpa.componenttables.ICableJpaRepository;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CableDTO;
 import es.bit.api.rest.mapper.componenttables.CableMapper;
@@ -136,6 +138,23 @@ public class CableService implements GenericService<CableDTO, Cable, Integer> {
                     ManufacturerDTO dto = new ManufacturerDTO();
                     dto.setId(manufacturer.getId());
                     dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = cableJPARepository.findAll()
+                .stream()
+                .map(Cable::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
                     return dto;
                 })
                 .collect(Collectors.toSet());

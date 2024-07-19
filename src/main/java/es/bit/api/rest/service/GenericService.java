@@ -73,6 +73,9 @@ public interface GenericService<D, C, I> {
         if (filters.containsKey("priceMax")) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), Integer.parseInt(filters.get("priceMax"))));
         }
+        if (filters.containsKey("level")) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("level"), Integer.parseInt(filters.get("level"))));
+        }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }

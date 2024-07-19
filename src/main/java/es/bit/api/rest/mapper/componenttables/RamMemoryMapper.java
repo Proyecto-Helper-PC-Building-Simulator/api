@@ -19,6 +19,7 @@ public class RamMemoryMapper {
         ramMemoryDTO.setManufacturerDTO(ManufacturerMapper.toDTO(ramMemory.getManufacturer()));
         ramMemoryDTO.setLightingDTO(LightingMapper.toDTO(ramMemory.getLighting()));
         ramMemoryDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(ramMemory.getComponentType()));
+        ramMemoryDTO.setLevel(ramMemory.getLevel());
 
         ramMemoryDTO.setSize(ramMemory.getSize());
         ramMemoryDTO.setFrequency(ramMemory.getFrequency());
@@ -51,6 +52,7 @@ public class RamMemoryMapper {
         ramMemory.setManufacturer(ManufacturerMapper.toBD(ramMemoryDTO.getManufacturerDTO()));
         ramMemory.setLighting(LightingMapper.toBD(ramMemoryDTO.getLightingDTO()));
         ramMemory.setComponentType(ComponentTypeMapper.toBD(ramMemoryDTO.getComponentTypeDTO()));
+        ramMemory.setLevel(ramMemoryDTO.getLevel());
 
         ramMemory.setSize(ramMemoryDTO.getSize());
         ramMemory.setFrequency(ramMemoryDTO.getFrequency());

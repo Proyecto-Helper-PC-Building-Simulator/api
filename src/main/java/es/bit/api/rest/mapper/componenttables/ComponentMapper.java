@@ -19,6 +19,7 @@ public class ComponentMapper {
         componentDTO.setManufacturerDTO(ManufacturerMapper.toDTO(component.getManufacturer()));
         componentDTO.setLightingDTO(LightingMapper.toDTO(component.getLighting()));
         componentDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(component.getComponentType()));
+        componentDTO.setLevel(component.getLevel());
 
         return componentDTO;
     }
@@ -48,6 +49,7 @@ public class ComponentMapper {
         component.setManufacturer(ManufacturerMapper.toBD(componentDTO.getManufacturerDTO()));
         component.setLighting(LightingMapper.toBD(componentDTO.getLightingDTO()));
         component.setComponentType(ComponentTypeMapper.toBD(componentDTO.getComponentTypeDTO()));
+        component.setLevel(componentDTO.getLevel());
 
         return component;
     }

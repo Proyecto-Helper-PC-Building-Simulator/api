@@ -17,6 +17,7 @@ public class CpuMapper {
         cpuDTO.setManufacturerDTO(ManufacturerMapper.toDTO(cpu.getManufacturer()));
         cpuDTO.setLightingDTO(LightingMapper.toDTO(cpu.getLighting()));
         cpuDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(cpu.getComponentType()));
+        cpuDTO.setLevel(cpu.getLevel());
 
         cpuDTO.setFrequency(cpu.getFrequency());
         cpuDTO.setCores(cpu.getCores());
@@ -52,6 +53,7 @@ public class CpuMapper {
         cpu.setManufacturer(ManufacturerMapper.toBD(cpuDTO.getManufacturerDTO()));
         cpu.setLighting(LightingMapper.toBD(cpuDTO.getLightingDTO()));
         cpu.setComponentType(ComponentTypeMapper.toBD(cpuDTO.getComponentTypeDTO()));
+        cpu.setLevel(cpuDTO.getLevel());
 
         cpu.setFrequency(cpuDTO.getFrequency());
         cpu.setCores(cpuDTO.getCores());

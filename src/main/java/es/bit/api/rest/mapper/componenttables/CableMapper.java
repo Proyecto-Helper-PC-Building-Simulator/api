@@ -17,6 +17,7 @@ public class CableMapper {
         cableDTO.setManufacturerDTO(ManufacturerMapper.toDTO(cable.getManufacturer()));
         cableDTO.setLightingDTO(LightingMapper.toDTO(cable.getLighting()));
         cableDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(cable.getComponentType()));
+        cableDTO.setLevel(cable.getLevel());
 
         cableDTO.setCableType(CableTypeMapper.toDTO(cable.getCableType()));
 
@@ -52,7 +53,7 @@ public class CableMapper {
         cable.setManufacturer(ManufacturerMapper.toBD(cableDTO.getManufacturerDTO()));
         cable.setLighting(LightingMapper.toBD(cableDTO.getLightingDTO()));
         cable.setComponentType(ComponentTypeMapper.toBD(cableDTO.getComponentTypeDTO()));
-
+        cable.setLevel(cableDTO.getLevel());
         cable.setCableType(CableTypeMapper.toBD(cableDTO.getCableType()));
 
         if (withCableColors) {

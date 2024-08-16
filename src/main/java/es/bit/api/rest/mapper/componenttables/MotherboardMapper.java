@@ -17,6 +17,7 @@ public class MotherboardMapper {
         motherboardDTO.setManufacturerDTO(ManufacturerMapper.toDTO(motherboard.getManufacturer()));
         motherboardDTO.setLightingDTO(LightingMapper.toDTO(motherboard.getLighting()));
         motherboardDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(motherboard.getComponentType()));
+        motherboardDTO.setLevel(motherboard.getLevel());
 
         motherboardDTO.setMaxRamSpeed(motherboard.getMaxRamSpeed());
         motherboardDTO.setMotherboardChipset(MotherboardChipsetMapper.toDTO(motherboard.getMotherboardChipset()));
@@ -55,6 +56,7 @@ public class MotherboardMapper {
         motherboard.setManufacturer(ManufacturerMapper.toBD(motherboardDTO.getManufacturerDTO()));
         motherboard.setLighting(LightingMapper.toBD(motherboardDTO.getLightingDTO()));
         motherboard.setComponentType(ComponentTypeMapper.toBD(motherboardDTO.getComponentTypeDTO()));
+        motherboard.setLevel(motherboardDTO.getLevel());
 
         motherboard.setMaxRamSpeed(motherboardDTO.getMaxRamSpeed());
         motherboard.setMotherboardChipset(MotherboardChipsetMapper.toBD(motherboardDTO.getMotherboardChipset()));

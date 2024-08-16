@@ -1,11 +1,13 @@
 package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.basictables.GpuChipsetSerie;
+import es.bit.api.persistence.model.basictables.Lighting;
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.basictables.MultiGpuType;
 import es.bit.api.persistence.model.componenttables.Gpu;
 import es.bit.api.persistence.model.componenttables.enums.ChipsetBrands;
 import es.bit.api.persistence.repository.jpa.componenttables.IGpuJpaRepository;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.GpuDTO;
 import es.bit.api.rest.mapper.componenttables.GpuMapper;
@@ -170,6 +172,23 @@ public class GpuService implements GenericService<GpuDTO, Gpu, Integer> {
                     ManufacturerDTO dto = new ManufacturerDTO();
                     dto.setId(manufacturer.getId());
                     dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = gpuJPARepository.findAll()
+                .stream()
+                .map(Gpu::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
                     return dto;
                 })
                 .collect(Collectors.toSet());

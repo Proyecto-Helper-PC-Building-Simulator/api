@@ -1,8 +1,10 @@
 package es.bit.api.rest.service.componenttables;
 
 import es.bit.api.persistence.model.basictables.ComponentType;
+import es.bit.api.persistence.model.basictables.Lighting;
 import es.bit.api.persistence.model.componenttables.Component;
 import es.bit.api.persistence.repository.jpa.componenttables.*;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.*;
 import es.bit.api.rest.mapper.basictables.ComponentTypeMapper;
@@ -18,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ComponentService implements GenericService<ComponentDTO, Component, Integer> {
@@ -163,6 +166,23 @@ public class ComponentService implements GenericService<ComponentDTO, Component,
     @Override
     public Specification<Component> getSpecification(Map<String, String> filters) {
         return GenericService.super.getSpecification(filters);
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = componentJPARepository.findAll()
+                .stream()
+                .map(Component::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
     }
 
 

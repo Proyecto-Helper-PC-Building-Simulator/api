@@ -2,6 +2,7 @@ package es.bit.api.rest.service;
 
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.Cpu;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -72,6 +73,9 @@ public interface GenericService<D, C, I> {
         if (filters.containsKey("priceMax")) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), Integer.parseInt(filters.get("priceMax"))));
         }
+        if (filters.containsKey("level")) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("level"), Integer.parseInt(filters.get("level"))));
+        }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
@@ -79,4 +83,6 @@ public interface GenericService<D, C, I> {
     Map<String, Double> getPriceRange();
 
     Set<ManufacturerDTO> getManufacturers();
+
+    Set<LightingDTO> getLightings();
 }

@@ -1,9 +1,11 @@
 package es.bit.api.rest.service.componenttables;
 
+import es.bit.api.persistence.model.basictables.Lighting;
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.CpuCooler;
 import es.bit.api.persistence.model.componenttables.enums.CoolerTypes;
 import es.bit.api.persistence.repository.jpa.componenttables.ICpuCoolerJpaRepository;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CpuCoolerDTO;
 import es.bit.api.rest.mapper.componenttables.CpuCoolerMapper;
@@ -144,6 +146,23 @@ public class CpuCoolerService implements GenericService<CpuCoolerDTO, CpuCooler,
                     ManufacturerDTO dto = new ManufacturerDTO();
                     dto.setId(manufacturer.getId());
                     dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = cpuCoolerJPARepository.findAll()
+                .stream()
+                .map(CpuCooler::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
                     return dto;
                 })
                 .collect(Collectors.toSet());

@@ -4,6 +4,7 @@ import es.bit.api.persistence.model.basictables.*;
 import es.bit.api.persistence.model.componenttables.Cable;
 import es.bit.api.persistence.model.componenttables.Case;
 import es.bit.api.persistence.repository.jpa.componenttables.ICaseJpaRepository;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CaseDTO;
 import es.bit.api.rest.mapper.componenttables.CaseMapper;
@@ -164,6 +165,23 @@ public class CaseService implements GenericService<CaseDTO, Case, Integer> {
                     ManufacturerDTO dto = new ManufacturerDTO();
                     dto.setId(manufacturer.getId());
                     dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = caseObjectJPARepository.findAll()
+                .stream()
+                .map(Case::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
                     return dto;
                 })
                 .collect(Collectors.toSet());

@@ -1,11 +1,10 @@
 package es.bit.api.rest.service.componenttables;
 
-import es.bit.api.persistence.model.basictables.CpuSocket;
-import es.bit.api.persistence.model.basictables.Manufacturer;
-import es.bit.api.persistence.model.basictables.MotherboardChipset;
-import es.bit.api.persistence.model.basictables.MotherboardFormFactor;
+import es.bit.api.persistence.model.basictables.*;
+import es.bit.api.persistence.model.componenttables.Gpu;
 import es.bit.api.persistence.model.componenttables.Motherboard;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.MotherboardDTO;
 import es.bit.api.rest.mapper.componenttables.MotherboardMapper;
@@ -55,7 +54,7 @@ public class MotherboardService implements GenericService<MotherboardDTO, Mother
     public List<MotherboardDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
         Page<Motherboard> motherboardPage = this.motherboardJPARepository.findAll(getSpecification(filters), pageable);
-        return MotherboardMapper.toDTO(motherboardPage.getContent(), false);
+        return MotherboardMapper.toDTO(motherboardPage.getContent(), true);
     }
 
     @Override
@@ -107,6 +106,10 @@ public class MotherboardService implements GenericService<MotherboardDTO, Mother
                 Join<Motherboard, CpuSocket> cpuSocketJoin = root.join("cpuSocket", JoinType.INNER);
                 predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + filters.get("socket") + "%"));
             }
+            if (filters.containsKey("multiGpuType")) {
+                Join<Gpu, MultiGpuType> cpuSocketJoin = root.join("multiGpuTypes", JoinType.INNER);
+                predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + filters.get("multiGpuType") + "%"));
+            }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -144,6 +147,23 @@ public class MotherboardService implements GenericService<MotherboardDTO, Mother
                     ManufacturerDTO dto = new ManufacturerDTO();
                     dto.setId(manufacturer.getId());
                     dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = motherboardJPARepository.findAll()
+                .stream()
+                .map(Motherboard::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
                     return dto;
                 })
                 .collect(Collectors.toSet());

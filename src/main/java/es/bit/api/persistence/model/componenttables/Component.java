@@ -19,6 +19,7 @@ public class Component {
 
     private String name;
     private int price;
+    private int level;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manufacturer_id", referencedColumnName = "id")
@@ -83,6 +84,14 @@ public class Component {
 
     public void setComponentType(ComponentType componentType) {
         this.componentType = componentType;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
 

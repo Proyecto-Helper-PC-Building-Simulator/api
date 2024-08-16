@@ -17,6 +17,7 @@ public class GpuMapper {
         gpuDTO.setManufacturerDTO(ManufacturerMapper.toDTO(gpu.getManufacturer()));
         gpuDTO.setLightingDTO(LightingMapper.toDTO(gpu.getLighting()));
         gpuDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(gpu.getComponentType()));
+        gpuDTO.setLevel(gpu.getLevel());
 
         gpuDTO.setVram(gpu.getVram());
         gpuDTO.setMemoryFrequency(gpu.getMemoryFrequency());
@@ -55,6 +56,7 @@ public class GpuMapper {
         gpu.setManufacturer(ManufacturerMapper.toBD(gpuDTO.getManufacturerDTO()));
         gpu.setLighting(LightingMapper.toBD(gpuDTO.getLightingDTO()));
         gpu.setComponentType(ComponentTypeMapper.toBD(gpuDTO.getComponentTypeDTO()));
+        gpu.setLevel(gpuDTO.getLevel());
 
         gpu.setVram(gpuDTO.getVram());
         gpu.setMemoryFrequency(gpuDTO.getMemoryFrequency());

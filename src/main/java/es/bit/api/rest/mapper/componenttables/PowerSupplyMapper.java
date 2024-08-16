@@ -20,6 +20,7 @@ public class PowerSupplyMapper {
         powerSupplyDTO.setManufacturerDTO(ManufacturerMapper.toDTO(powerSupply.getManufacturer()));
         powerSupplyDTO.setLightingDTO(LightingMapper.toDTO(powerSupply.getLighting()));
         powerSupplyDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(powerSupply.getComponentType()));
+        powerSupplyDTO.setLevel(powerSupply.getLevel());
 
         powerSupplyDTO.setWattage(powerSupply.getWattage());
         powerSupplyDTO.setType(powerSupply.getType());
@@ -54,6 +55,7 @@ public class PowerSupplyMapper {
         powerSupply.setManufacturer(ManufacturerMapper.toBD(powerSupplyDTO.getManufacturerDTO()));
         powerSupply.setLighting(LightingMapper.toBD(powerSupplyDTO.getLightingDTO()));
         powerSupply.setComponentType(ComponentTypeMapper.toBD(powerSupplyDTO.getComponentTypeDTO()));
+        powerSupply.setLevel(powerSupplyDTO.getLevel());
 
         powerSupply.setWattage(powerSupplyDTO.getWattage());
         powerSupply.setType(powerSupplyDTO.getType());

@@ -1,5 +1,6 @@
 package es.bit.api.rest.controller.componenttables;
 
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CaseFanDTO;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
@@ -134,5 +135,11 @@ public class CaseFansController {
     @Operation(summary = "Get a list of manufacturers without duplicates")
     public Set<ManufacturerDTO> getManufacturers() {
         return caseFanService.getManufacturers();
+    }
+
+    @GetMapping("/lightings")
+    @Operation(summary = "Get a list of lightings without duplicates")
+    public Set<LightingDTO> getLightings() {
+        return caseFanService.getLightings();
     }
 }

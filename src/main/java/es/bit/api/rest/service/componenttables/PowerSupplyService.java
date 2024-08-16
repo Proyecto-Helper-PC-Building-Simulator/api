@@ -1,10 +1,12 @@
 package es.bit.api.rest.service.componenttables;
 
+import es.bit.api.persistence.model.basictables.Lighting;
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.basictables.PowerSupplyFormFactor;
 import es.bit.api.persistence.model.componenttables.PowerSupply;
 import es.bit.api.persistence.model.componenttables.enums.PowerSupplyTypes;
 import es.bit.api.persistence.repository.jpa.componenttables.IPowerSupplyJpaRepository;
+import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.PowerSupplyDTO;
 import es.bit.api.rest.mapper.componenttables.PowerSupplyMapper;
@@ -147,6 +149,23 @@ public class PowerSupplyService implements GenericService<PowerSupplyDTO, PowerS
                     ManufacturerDTO dto = new ManufacturerDTO();
                     dto.setId(manufacturer.getId());
                     dto.setName(manufacturer.getName());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<LightingDTO> getLightings() {
+        Set<Lighting> lightings = powerSupplyJPARepository.findAll()
+                .stream()
+                .map(PowerSupply::getLighting)
+                .collect(Collectors.toSet());
+
+        return lightings.stream()
+                .map(lighting -> {
+                    LightingDTO dto = new LightingDTO();
+                    dto.setId(lighting.getId());
+                    dto.setName(lighting.getName());
                     return dto;
                 })
                 .collect(Collectors.toSet());

@@ -13,6 +13,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +52,7 @@ public class CaseService implements GenericService<CaseDTO, Case, Integer> {
     }
 
     @Override
+    @Cacheable(value = "cases", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CaseDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
         Page<Case> cpuPage = this.caseObjectJPARepository.findAll(getSpecification(filters), pageable);

@@ -15,6 +15,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,7 @@ public class PowerSupplyService implements GenericService<PowerSupplyDTO, PowerS
     }
 
     @Override
+    @Cacheable(value = "powerSupplies", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<PowerSupplyDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
         Page<PowerSupply> powerSupplyPage = this.powerSupplyJPARepository.findAll(getSpecification(filters), pageable);

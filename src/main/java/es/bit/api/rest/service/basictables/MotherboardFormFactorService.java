@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.IMotherboardFormFactorJ
 import es.bit.api.rest.dto.basictables.MotherboardFormFactorDTO;
 import es.bit.api.rest.mapper.basictables.MotherboardFormFactorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class MotherboardFormFactorService {
         return this.motherboardFormFactorJPARepository.count();
     }
 
+    @Cacheable(value = "motherboardFormFactors", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<MotherboardFormFactorDTO> findAll(int page, int size, Boolean withCases) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<MotherboardFormFactor> motherboardFormFactorPage = this.motherboardFormFactorJPARepository.findAll(pageRequest);

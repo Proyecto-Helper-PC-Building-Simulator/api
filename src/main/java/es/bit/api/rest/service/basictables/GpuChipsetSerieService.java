@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.IGpuChipsetSerieJPARepo
 import es.bit.api.rest.dto.basictables.GpuChipsetSerieDTO;
 import es.bit.api.rest.mapper.basictables.GpuChipsetSerieMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class GpuChipsetSerieService {
         return this.gpuChipsetSerieJPARepository.count();
     }
 
+    @Cacheable(value = "gpuChipsetSeries", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<GpuChipsetSerieDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<GpuChipsetSerie> gpuChipsetSeriePage = this.gpuChipsetSerieJPARepository.findAll(pageRequest);

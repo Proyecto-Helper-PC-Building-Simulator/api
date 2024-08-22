@@ -1,5 +1,6 @@
 package es.bit.api.rest.service.componenttables;
 
+import es.bit.api.persistence.model.basictables.CpuSocket;
 import es.bit.api.persistence.model.basictables.Lighting;
 import es.bit.api.persistence.model.basictables.Manufacturer;
 import es.bit.api.persistence.model.componenttables.CpuCooler;
@@ -10,8 +11,11 @@ import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CpuCoolerDTO;
 import es.bit.api.rest.mapper.componenttables.CpuCoolerMapper;
 import es.bit.api.rest.service.GenericService;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +43,7 @@ public class CpuCoolerService implements GenericService<CpuCoolerDTO, CpuCooler,
     }
 
     @Override
+    @Cacheable(value = "cpuCoolers", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CpuCoolerDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
         Page<CpuCooler> cpuPage = this.cpuCoolerJPARepository.findAll(getSpecification(filters), pageable);
@@ -108,6 +113,10 @@ public class CpuCoolerService implements GenericService<CpuCoolerDTO, CpuCooler,
             }
             if (filters.containsKey("sizeMax")) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("size"), Integer.parseInt(filters.get("sizeMax"))));
+            }
+            if (filters.containsKey("socket")) {
+                Join<CpuCooler, CpuSocket> cpuSocketJoin = root.join("cpuSockets", JoinType.INNER);
+                predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + filters.get("socket") + "%"));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.IManufacturerJPAReposit
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.mapper.basictables.ManufacturerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ManufacturerService {
         return this.manufacturerJPARepository.count();
     }
 
+    @Cacheable(value = "manufacturers", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<ManufacturerDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Manufacturer> manufacturerPage = this.manufacturerJPARepository.findAll(pageRequest);

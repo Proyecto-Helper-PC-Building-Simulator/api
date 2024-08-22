@@ -40,6 +40,13 @@ public class Cable extends Component {
         this.cableColors = motherboardFormFactors;
     }
 
+    public CableType getCableType() {
+        return cableType;
+    }
+
+    public List<CableColor> getCableColors() {
+        return cableColors;
+    }
 
     @Override
     public boolean equals(Object o) {

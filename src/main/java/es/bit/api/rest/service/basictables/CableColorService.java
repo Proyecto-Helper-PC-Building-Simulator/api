@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.ICableColorJPARepositor
 import es.bit.api.rest.dto.basictables.CableColorDTO;
 import es.bit.api.rest.mapper.basictables.CableColorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CableColorService {
         return this.cableColorJPARepository.count();
     }
 
+    @Cacheable(value = "cableColors", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CableColorDTO> findAll(int page, int size, Boolean withCables) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<CableColor> cableColorPage = this.cableColorJPARepository.findAll(pageRequest);

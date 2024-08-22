@@ -11,6 +11,7 @@ import es.bit.api.rest.mapper.componenttables.RamMemoryMapper;
 import es.bit.api.rest.service.GenericService;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +50,7 @@ public class RamMemoryService implements GenericService<RamMemoryDTO, RamMemory,
     }
 
     @Override
+    @Cacheable(value = "ramMemories", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<RamMemoryDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
         Page<RamMemory> ramMemoryPage = this.ramMemoryJPARepository.findAll(getSpecification(filters), pageable);

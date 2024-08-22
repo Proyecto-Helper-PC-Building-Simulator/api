@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.IPowerSupplyFormFactorJ
 import es.bit.api.rest.dto.basictables.PowerSupplyFormFactorDTO;
 import es.bit.api.rest.mapper.basictables.PowerSupplyFormFactorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class PowerSupplyFormFactorService {
         return this.powerSupplyFormFactorJPARepository.count();
     }
 
+    @Cacheable(value = "powerSupplyFormFactors", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<PowerSupplyFormFactorDTO> findAll(int page, int size, Boolean withCases) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<PowerSupplyFormFactor> powerSupplyFormFactorPage = this.powerSupplyFormFactorJPARepository.findAll(pageRequest);

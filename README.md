@@ -1,16 +1,16 @@
 # PC Building Simulator API
 
+> [!IMPORTANT]
+> This is **NOT** an official API from the creators of the 'PC Building Simulator' game.
+
+> [!NOTE]
+> This version uses a database stored **for free** in [Clever Cloud](https://www.clever-cloud.com/) services. This means that **it may take a while to get the required requests**.
+
 The **PC Building Simulator API** is a tool designed to be used by an [app](https://github.com/Proyecto-Helper-PC-Building-Simulator/app_javafx) that
 allows players to **keep track of the requests** from the customers in the game,
 along with the parts needed.
 
 The component data was obtained from the ['PC Building Simulator 1'](https://www.pcbuildingsim.com/pc-building-simulator) game.
-
-> [!IMPORTANT]
-> This is **NOT** an official API from the creators of the 'PC Building Simulator' game. 
-
-> [!WARNING]
-> This version uses a database stored **for free** in [Clever Cloud](https://www.clever-cloud.com/) services. This means that **it may take a while to get the required requests**.
 
 ## Index
 - [Instructions](#instructions)
@@ -35,24 +35,17 @@ Once it has been executed you can access the documentation generated with Swagge
 
 From here you will be able to consult the different requests present in the API.
 
-![image](https://github.com/Proyecto-Helper-PC-Building-Simulator/api/assets/94007271/1a939604-5d94-4613-9e5f-4f420390b765)
+![Swagger](https://github.com/Proyecto-Helper-PC-Building-Simulator/api/assets/94007271/1a939604-5d94-4613-9e5f-4f420390b765)
 
 ## Example Usage
 
 Here is an example of how you might use the API:
 
-- <span style="color:slategrey">192.168.1.1:9090</span><span style="color:yellow">/pc</span><span style="color:cyan">/motherboards</span>?<span style="color:coral">priceMin</span>=<span style="color:lightpink">100</span>&<span style="color:coral">multiGpuType</span>=<span style="color:lightpink">SLI</span>&<span style="color:coral">frequencyMin</span>=<span style="color:lightpink">2000</span>&<span style="color:coral">lighting</span>=<span style="color:lightpink">Red</span>&<span style="color:lightseagreen">page=0</span>&<span style="color:orchid">level=18</span>
+![URL](https://github.com/user-attachments/assets/a7259118-6b33-481e-8fea-4367dfbbf7d3)
 
 Where the colors represent:
 
-- <span style="color:slategrey">&#9724;</span> 🡢 **Host** (IP address and port)
-- <span style="color:yellow">&#9724;</span> 🡢 **Context path** (API endpoint root)
-- <span style="color:cyan">&#9724;</span> 🡢 **Resource** (Specific resource or collection within the API)
-- <span style="color:coral">&#9724;</span> 🡢 **Query Key** (Filter or parameter key in the query string)
-- <span style="color:lightpink">&#9724;</span> 🡢 **Query Value** (Value corresponding to the query key)
-- <span style="color:lightseagreen">&#9724;</span> 🡢 **Pagination** (Parameter for pagination control)
-- <span style="color:orchid">&#9724;</span> 🡢 **Level Filter** (Specific parameter indicating the level where is unlocked)
-- <span style="color:white">&#9724;</span> 🡢 **Separators** (Characters like `/`, `?`, `=` and `&`)
+![URL Colors](https://github.com/user-attachments/assets/f1c2eb08-b7be-4548-b6fc-b7e76717826f)
 
 ## Common Filters
 

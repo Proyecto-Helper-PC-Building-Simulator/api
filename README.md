@@ -32,7 +32,15 @@ The component data was obtained from the ['PC Building Simulator 1'](https://www
     - [Case Fan](#case-fan)
 
 ## Instructions
-In order to use the API, download the JAR file from the `Releases` section and run the command `java -jar api-1.1.jar`.
+In order to consume the API:
+
+### Hosted
+Access to the hosted API in render with this URL: [`https://api-pc-building-sim-latest.onrender.com`](https://api-pc-building-sim-latest.onrender.com/pc/doc/swagger-ui/index.html)
+
+⚠ REMEMBER THAT IT MAY TAKE A WHILE ⚠
+
+### Local
+Download the JAR file from the `Releases` section and run the command `java -jar api-1.1.jar`.
 
 Once it has been executed you can access the documentation generated with Swagger UI using the route [`http://localhost:9090/pc/doc/swagger-ui/index.html`](http://localhost:9090/pc/doc/swagger-ui/index.html).
 

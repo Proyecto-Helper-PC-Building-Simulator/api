@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.persistence.model.basictables.CableColor;
 import es.bit.api.persistence.model.basictables.CableType;
 import jakarta.persistence.*;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 @Entity
 @Table(name = "cables")
 @JsonInclude(JsonInclude.Include.NON_NULL)

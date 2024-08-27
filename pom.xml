@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>es.bit</groupId>
 	<artifactId>api</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<name>api</name>
 	<description>Spring Boot API for PC Building Simulator</description>
 	<properties>
@@ -36,13 +36,6 @@
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.2</version>
-			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -91,10 +84,6 @@
 						<builder>paketobuildpacks/builder-jammy-base:latest</builder>
 					</image>
 					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

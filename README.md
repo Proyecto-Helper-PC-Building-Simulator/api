@@ -4,8 +4,8 @@
 > This is **NOT** an official API from the creators of the 'PC Building Simulator' game.
 
 > [!NOTE]
-> This version uses a database stored **for free** in [Clever Cloud](https://www.clever-cloud.com/) services. This means that **it may take a while to get the required requests**.
->
+> - This API and its database are hosted at [Render](https://www.render.com) and [CleverCloud](https://www.clever-cloud.com/) with their **free plans**.
+> - This means that **it may take some time** if you are using it for **the first time or if has been a while** while it wakes the service up due to the limitations of their free plans.
 > <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/Proyecto-Helper-PC-Building-Simulator/api">PC Building Helper API</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://github.com/bitrawbfg">BiTRaW</a> is licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-ND 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg?ref=chooser-v1" alt=""></a></p>
 
 
@@ -32,7 +32,7 @@ The component data was obtained from the ['PC Building Simulator 1'](https://www
     - [Case Fan](#case-fan)
 
 ## Instructions
-In order to use the API, download the JAR file from the `Releases` section and run the command `java -jar api-1.0.jar`.
+In order to use the API, download the JAR file from the `Releases` section and run the command `java -jar api-1.1.jar`.
 
 Once it has been executed you can access the documentation generated with Swagger UI using the route [`http://localhost:9090/pc/doc/swagger-ui/index.html`](http://localhost:9090/pc/doc/swagger-ui/index.html).
 

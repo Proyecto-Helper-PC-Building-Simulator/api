@@ -1,6 +1,9 @@
 package es.bit.api.rest.controller.componenttables;
 
+import es.bit.api.persistence.model.componenttables.CpuCooler;
+import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CpuCoolerDTO;
 import es.bit.api.rest.service.basictables.ComponentTypeService;
 import es.bit.api.rest.service.componenttables.CpuCoolerService;
@@ -13,66 +16,51 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/cpu_coolers")
 @Tag(name = "Cpu Coolers Controller", description = "Related operations with cpu coolers")
-public class CpuCoolersController {
-    private final CpuCoolerService cpuCoolerService;
+public class CpuCoolersController extends GenericController<CpuCoolerDTO, CpuCooler, Integer> {
     private final ComponentTypeService componentTypeService;
+
 
     @Autowired
     public CpuCoolersController(CpuCoolerService cpuCoolerService, ComponentTypeService componentTypeService) {
-        this.cpuCoolerService = cpuCoolerService;
+        super(cpuCoolerService);
         this.componentTypeService = componentTypeService;
     }
 
 
-    @GetMapping("/count")
+    @Override
     @Operation(summary = "Get the total number of cpu coolers")
     public Long count() {
-        return this.cpuCoolerService.count();
+        return super.count();
     }
 
-    @GetMapping("")
+    @Override
     @Operation(summary = "Get all cpu coolers paged")
     @ApiResponse(responseCode = "200", description = "CpuCoolers obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CpuCoolerDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false, defaultValue = "true") Boolean withCpuSockets
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
     ) {
-        List<CpuCoolerDTO> content = this.cpuCoolerService.findAll(page, size, withCpuSockets);
-        long totalElements = this.cpuCoolerService.count();
-        int totalPages = (int) Math.ceil((double) totalElements / size);
-
-        if (page >= totalPages) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");
-        }
-
-        return new PagedResponse<>(content, page, size, totalElements, totalPages);
+        return super.findAll(page, size, sortBy, sortDir, filters);
     }
 
-    @GetMapping("/{id}")
     @Operation(summary = "Get a cpu cooler by ID")
     @ApiResponse(responseCode = "200", description = "Cpu cooler found.")
     @ApiResponse(responseCode = "404", description = "Cpu cooler not found.")
-    public CpuCoolerDTO findById(
-            @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "true") Boolean withCpuSockets
-    ) {
-        CpuCoolerDTO cpuCooler = this.cpuCoolerService.findById(id, withCpuSockets);
-
-        if (cpuCooler == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
-        }
-
-        return cpuCooler;
+    public CpuCoolerDTO findById(@PathVariable int id) {
+        return super.findById(id);
     }
 
-    @PostMapping("")
+    @Override
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new cpu cooler")
     @ApiResponse(responseCode = "201", description = "Cpu cooler created.")
@@ -81,26 +69,24 @@ public class CpuCoolersController {
     public CpuCoolerDTO create(@RequestBody CpuCoolerDTO cpuCooler) {
         validateComponentType(cpuCooler);
 
-        return this.cpuCoolerService.create(cpuCooler, true);
+        return super.create(cpuCooler);
     }
 
-    @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update a cpu cooler by ID")
     @ApiResponse(responseCode = "204", description = "Cpu cooler updated correctly.")
     @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Cpu cooler name is duplicated.")
-    public void updateCpuCooler(@PathVariable int id, @RequestBody CpuCoolerDTO cpuCooler) {
+    public void update(@PathVariable int id, @RequestBody CpuCoolerDTO cpuCooler) {
         if (id != cpuCooler.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
         validateComponentType(cpuCooler);
 
-        this.cpuCoolerService.update(cpuCooler, true);
+        super.update(id, cpuCooler);
     }
 
-    @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete a cpu cooler by ID")
     @ApiResponse(responseCode = "204", description = "Cpu cooler deleted correctly.")
@@ -111,10 +97,26 @@ public class CpuCoolersController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.cpuCoolerService.delete(cpuCooler, true);
+        super.delete(id);
     }
 
-    private void validateComponentType(CpuCoolerDTO cpuCooler) {
+    @Override
+    @GetMapping("/price-range")
+    @Operation(summary = "Get the highest and lowest price of CPUs")
+    public Map<String, Double> getPriceRange() {
+        return super.getPriceRange();
+    }
+
+    @Override
+    @GetMapping("/manufacturers")
+    @Operation(summary = "Get a list of manufacturers without duplicates")
+    public Set<ManufacturerDTO> getManufacturers() {
+        return super.getManufacturers();
+    }
+
+
+    @Override
+    protected void validateComponentType(CpuCoolerDTO cpuCooler) {
         ComponentTypeDTO componentType = componentTypeService.findById(cpuCooler.getComponentTypeDTO().getId());
 
         if (!"/cpu_coolers".equals(componentType.getApiName())) {

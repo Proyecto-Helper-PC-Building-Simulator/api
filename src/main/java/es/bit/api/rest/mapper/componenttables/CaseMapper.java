@@ -17,6 +17,7 @@ public class CaseMapper {
         caseObjectDTO.setManufacturerDTO(ManufacturerMapper.toDTO(caseObject.getManufacturer()));
         caseObjectDTO.setLightingDTO(LightingMapper.toDTO(caseObject.getLighting()));
         caseObjectDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(caseObject.getComponentType()));
+        caseObjectDTO.setLevel(caseObject.getLevel());
 
         caseObjectDTO.setMaxPsuLength(caseObject.getMaxPsuLength());
         caseObjectDTO.setMaxGpuLength(caseObject.getMaxGpuLength());
@@ -60,6 +61,7 @@ public class CaseMapper {
         caseObject.setManufacturer(ManufacturerMapper.toBD(caseObjectDTO.getManufacturerDTO()));
         caseObject.setLighting(LightingMapper.toBD(caseObjectDTO.getLightingDTO()));
         caseObject.setComponentType(ComponentTypeMapper.toBD(caseObjectDTO.getComponentTypeDTO()));
+        caseObject.setLevel(caseObjectDTO.getLevel());
 
         caseObject.setMaxPsuLength(caseObjectDTO.getMaxPsuLength());
         caseObject.setMaxGpuLength(caseObjectDTO.getMaxGpuLength());

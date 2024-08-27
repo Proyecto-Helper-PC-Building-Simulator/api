@@ -26,25 +26,25 @@ public class Cable extends Component {
 
 
     public Cable() {
+        // Empty constructor
     }
 
 
-    public CableType getCableType() {
-        return cableType;
-    }
-
-    public void setCableType(CableType airFlow) {
-        this.cableType = airFlow;
-    }
-
-    public List<CableColor> getCableColors() {
-        return cableColors;
+    public void setCableType(CableType cableType) {
+        this.cableType = cableType;
     }
 
     public void setCableColors(List<CableColor> motherboardFormFactors) {
         this.cableColors = motherboardFormFactors;
     }
 
+    public CableType getCableType() {
+        return cableType;
+    }
+
+    public List<CableColor> getCableColors() {
+        return cableColors;
+    }
 
     @Override
     public boolean equals(Object o) {

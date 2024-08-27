@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.ICaseFanSizeJPAReposito
 import es.bit.api.rest.dto.basictables.CaseFanSizeDTO;
 import es.bit.api.rest.mapper.basictables.CaseFanSizeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CaseFanSizeService {
         return this.caseFanSizeJPARepository.count();
     }
 
+    @Cacheable(value = "caseFanSizes", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CaseFanSizeDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<CaseFanSize> caseFanSizePage = this.caseFanSizeJPARepository.findAll(pageRequest);

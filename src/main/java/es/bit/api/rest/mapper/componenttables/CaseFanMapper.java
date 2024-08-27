@@ -19,6 +19,7 @@ public class CaseFanMapper {
         caseFanDTO.setManufacturerDTO(ManufacturerMapper.toDTO(caseFan.getManufacturer()));
         caseFanDTO.setLightingDTO(LightingMapper.toDTO(caseFan.getLighting()));
         caseFanDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(caseFan.getComponentType()));
+        caseFanDTO.setLevel(caseFan.getLevel());
 
         caseFanDTO.setSize(caseFan.getSize());
         caseFanDTO.setAirFlow(caseFan.getAirFlow());
@@ -51,6 +52,7 @@ public class CaseFanMapper {
         caseFan.setManufacturer(ManufacturerMapper.toBD(caseFanDTO.getManufacturerDTO()));
         caseFan.setLighting(LightingMapper.toBD(caseFanDTO.getLightingDTO()));
         caseFan.setComponentType(ComponentTypeMapper.toBD(caseFanDTO.getComponentTypeDTO()));
+        caseFan.setLevel(caseFanDTO.getLevel());
 
         caseFan.setSize(caseFanDTO.getSize());
         caseFan.setAirFlow(caseFanDTO.getAirFlow());

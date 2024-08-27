@@ -1,6 +1,9 @@
 package es.bit.api.rest.controller.componenttables;
 
+import es.bit.api.persistence.model.componenttables.Case;
+import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CaseDTO;
 import es.bit.api.rest.service.basictables.ComponentTypeService;
 import es.bit.api.rest.service.componenttables.CaseService;
@@ -13,101 +16,77 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/cases")
 @Tag(name = "Cases Controller", description = "Related operations with cases")
-public class CasesController {
-    private final CaseService caseService;
+public class CasesController extends GenericController<CaseDTO, Case, Integer> {
     private final ComponentTypeService componentTypeService;
+
 
     @Autowired
     public CasesController(CaseService caseService, ComponentTypeService componentTypeService) {
-        this.caseService = caseService;
+        super(caseService);
         this.componentTypeService = componentTypeService;
     }
 
 
-    @GetMapping("/count")
+    @Override
     @Operation(summary = "Get the total number of cases")
     public Long count() {
-        return this.caseService.count();
+        return super.count();
     }
 
-    @GetMapping("")
+    @Override
     @Operation(summary = "Get all cases paged")
     @ApiResponse(responseCode = "200", description = "Cases obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CaseDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
-            @RequestParam(required = false, defaultValue = "true") Boolean withMotherboardFormFactors,
-            @RequestParam(required = false, defaultValue = "true") Boolean withPsuFormFactors
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
     ) {
-        List<CaseDTO> content = this.caseService.findAll(page, size, withMotherboardFormFactors, withPsuFormFactors);
-        long totalElements = this.caseService.count();
-        int totalPages = (int) Math.ceil((double) totalElements / size);
-
-        if (page >= totalPages) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");
-        }
-
-        return new PagedResponse<>(content, page, size, totalElements, totalPages);
+        return super.findAll(page, size, sortBy, sortDir, filters);
     }
 
-    @GetMapping("/{id}")
     @Operation(summary = "Get a case by ID")
     @ApiResponse(responseCode = "200", description = "Case found.")
     @ApiResponse(responseCode = "404", description = "Case not found.")
-    public CaseDTO findById(
-            @PathVariable int id,
-            @RequestParam(required = false, defaultValue = "true") Boolean withMotherboardFormFactors,
-            @RequestParam(required = false, defaultValue = "true") Boolean withPsuFormFactors
-    ) {
-        CaseDTO caseObject = this.caseService.findById(id, withMotherboardFormFactors, withPsuFormFactors);
-
-        if (caseObject == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
-        }
-
-        return caseObject;
+    public CaseDTO findById(@PathVariable int id) {
+        return super.findById(id);
     }
 
-    @PostMapping("")
+    @Override
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new case")
     @ApiResponse(responseCode = "201", description = "Case created.")
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Case name is duplicated.")
-    public CaseDTO create(
-            @RequestBody CaseDTO caseObject
-    ) {
+    public CaseDTO create(@RequestBody CaseDTO caseObject) {
         validateComponentType(caseObject);
 
-        return this.caseService.create(caseObject, true, true);
+        return super.create(caseObject);
     }
 
-    @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update a case by ID")
     @ApiResponse(responseCode = "204", description = "Case updated correctly.")
     @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Case name is duplicated.")
-    public void updateCase(
-            @PathVariable int id,
-            @RequestBody CaseDTO caseObject
-    ) {
+    public void update(@PathVariable int id, @RequestBody CaseDTO caseObject) {
         if (id != caseObject.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
         validateComponentType(caseObject);
 
-        this.caseService.update(caseObject, true, true);
+        super.update(id, caseObject);
     }
 
-    @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete a case by ID")
     @ApiResponse(responseCode = "204", description = "Case deleted correctly.")
@@ -121,10 +100,24 @@ public class CasesController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.caseService.delete(caseObject, false, false);
+        super.delete(id);
     }
 
-    private void validateComponentType(CaseDTO caseObject) {
+    @Override
+    @Operation(summary = "Get the highest and lowest price of CPUs")
+    public Map<String, Double> getPriceRange() {
+        return super.getPriceRange();
+    }
+
+    @Override
+    @Operation(summary = "Get a list of manufacturers without duplicates")
+    public Set<ManufacturerDTO> getManufacturers() {
+        return super.getManufacturers();
+    }
+
+
+    @Override
+    protected void validateComponentType(CaseDTO caseObject) {
         ComponentTypeDTO componentType = componentTypeService.findById(caseObject.getComponentTypeDTO().getId());
 
         if (!"/cases".equals(componentType.getApiName())) {

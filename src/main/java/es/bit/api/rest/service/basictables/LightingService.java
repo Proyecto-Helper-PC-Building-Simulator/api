@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.ILightingJPARepository;
 import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.mapper.basictables.LightingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class LightingService {
         return this.lightingJPARepository.count();
     }
 
+    @Cacheable(value = "lightings", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<LightingDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Lighting> lightingPage = this.lightingJPARepository.findAll(pageRequest);

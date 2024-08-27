@@ -12,6 +12,7 @@ public class ComponentDTO {
     private int componentId;
     private String name;
     private int price;
+    private int level;
     private ManufacturerDTO manufacturerDTO;
     private LightingDTO lightingDTO;
     private ComponentTypeDTO componentTypeDTO;
@@ -67,6 +68,14 @@ public class ComponentDTO {
 
     public void setComponentTypeDTO(ComponentTypeDTO componentTypeDTO) {
         this.componentTypeDTO = componentTypeDTO;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
 

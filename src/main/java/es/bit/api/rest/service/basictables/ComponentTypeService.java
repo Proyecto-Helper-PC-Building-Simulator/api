@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.IComponentTypeJPAReposi
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
 import es.bit.api.rest.mapper.basictables.ComponentTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ComponentTypeService {
         return this.componentTypeJPARepository.count();
     }
 
+    @Cacheable(value = "componentTypes", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<ComponentTypeDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<ComponentType> componentTypePage = this.componentTypeJPARepository.findAll(pageRequest);

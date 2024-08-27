@@ -17,6 +17,7 @@ public class StorageMapper {
         storageDTO.setManufacturerDTO(ManufacturerMapper.toDTO(storage.getManufacturer()));
         storageDTO.setLightingDTO(LightingMapper.toDTO(storage.getLighting()));
         storageDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(storage.getComponentType()));
+        storageDTO.setLevel(storage.getLevel());
 
         storageDTO.setSize(storage.getSize());
         storageDTO.setTransferSpeed(storage.getTransferSpeed());
@@ -50,6 +51,7 @@ public class StorageMapper {
         storage.setManufacturer(ManufacturerMapper.toBD(storageDTO.getManufacturerDTO()));
         storage.setLighting(LightingMapper.toBD(storageDTO.getLightingDTO()));
         storage.setComponentType(ComponentTypeMapper.toBD(storageDTO.getComponentTypeDTO()));
+        storage.setLevel(storageDTO.getLevel());
 
         storage.setSize(storageDTO.getSize());
         storage.setTransferSpeed(storageDTO.getTransferSpeed());

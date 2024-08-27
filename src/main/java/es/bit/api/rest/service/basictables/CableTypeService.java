@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.ICableTypeJPARepository
 import es.bit.api.rest.dto.basictables.CableTypeDTO;
 import es.bit.api.rest.mapper.basictables.CableTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CableTypeService {
         return this.cableTypeJPARepository.count();
     }
 
+    @Cacheable(value = "cableTypes", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CableTypeDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<CableType> cableTypePage = this.cableTypeJPARepository.findAll(pageRequest);

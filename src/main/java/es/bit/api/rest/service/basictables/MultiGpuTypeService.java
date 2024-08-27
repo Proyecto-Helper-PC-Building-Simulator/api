@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.IMultiGpuTypeJPAReposit
 import es.bit.api.rest.dto.basictables.MultiGpuTypeDTO;
 import es.bit.api.rest.mapper.basictables.MultiGpuTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class MultiGpuTypeService {
         return this.multiGpuTypeJPARepository.count();
     }
 
+    @Cacheable(value = "multiGpuTypes", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<MultiGpuTypeDTO> findAll(int page, int size, Boolean withMotherboards) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<MultiGpuType> multiGpuTypePage = this.multiGpuTypeJPARepository.findAll(pageRequest);

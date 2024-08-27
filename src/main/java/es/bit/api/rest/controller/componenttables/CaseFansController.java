@@ -1,5 +1,7 @@
 package es.bit.api.rest.controller.componenttables;
 
+import es.bit.api.rest.dto.basictables.LightingDTO;
+import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CaseFanDTO;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
 import es.bit.api.rest.service.componenttables.CaseFanService;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/case_fans")
@@ -39,8 +43,14 @@ public class CaseFansController {
     @Operation(summary = "Get all case fans paged")
     @ApiResponse(responseCode = "200", description = "CaseFans obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<CaseFanDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
-        List<CaseFanDTO> content = this.caseFanService.findAll(page, size);
+    public PagedResponse<CaseFanDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
+    ) {
+        List<CaseFanDTO> content = this.caseFanService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.caseFanService.count();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
@@ -113,5 +123,23 @@ public class CaseFansController {
         if (!"/case_fans".equals(componentType.getApiName())) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
+    }
+
+    @GetMapping("/price-range")
+    @Operation(summary = "Get the highest and lowest price of CPUs")
+    public Map<String, Double> getPriceRange() {
+        return caseFanService.getPriceRange();
+    }
+
+    @GetMapping("/manufacturers")
+    @Operation(summary = "Get a list of manufacturers without duplicates")
+    public Set<ManufacturerDTO> getManufacturers() {
+        return caseFanService.getManufacturers();
+    }
+
+    @GetMapping("/lightings")
+    @Operation(summary = "Get a list of lightings without duplicates")
+    public Set<LightingDTO> getLightings() {
+        return caseFanService.getLightings();
     }
 }

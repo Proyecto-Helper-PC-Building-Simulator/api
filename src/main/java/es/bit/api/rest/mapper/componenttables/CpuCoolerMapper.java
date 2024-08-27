@@ -20,6 +20,7 @@ public class CpuCoolerMapper {
         cpuCoolerDTO.setManufacturerDTO(ManufacturerMapper.toDTO(cpuCooler.getManufacturer()));
         cpuCoolerDTO.setLightingDTO(LightingMapper.toDTO(cpuCooler.getLighting()));
         cpuCoolerDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(cpuCooler.getComponentType()));
+        cpuCoolerDTO.setLevel(cpuCoolerDTO.getLevel());
 
         cpuCoolerDTO.setType(cpuCooler.getType());
         cpuCoolerDTO.setAirFlow(cpuCooler.getAirFlow());
@@ -58,6 +59,7 @@ public class CpuCoolerMapper {
         cpuCooler.setManufacturer(ManufacturerMapper.toBD(cpuCoolerDTO.getManufacturerDTO()));
         cpuCooler.setLighting(LightingMapper.toBD(cpuCoolerDTO.getLightingDTO()));
         cpuCooler.setComponentType(ComponentTypeMapper.toBD(cpuCoolerDTO.getComponentTypeDTO()));
+        cpuCooler.setLevel(cpuCoolerDTO.getLevel());
 
         cpuCooler.setType(cpuCoolerDTO.getType());
         cpuCooler.setAirFlow(cpuCoolerDTO.getAirFlow());

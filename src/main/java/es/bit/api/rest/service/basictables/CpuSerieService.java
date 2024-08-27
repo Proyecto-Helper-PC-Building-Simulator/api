@@ -5,6 +5,7 @@ import es.bit.api.persistence.repository.jpa.basictables.ICpuSerieJPARepository;
 import es.bit.api.rest.dto.basictables.CpuSerieDTO;
 import es.bit.api.rest.mapper.basictables.CpuSerieMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CpuSerieService {
         return this.cpuSerieJPARepository.count();
     }
 
+    @Cacheable(value = "cpuSeries", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CpuSerieDTO> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<CpuSerie> cpuSeriePage = this.cpuSerieJPARepository.findAll(pageRequest);

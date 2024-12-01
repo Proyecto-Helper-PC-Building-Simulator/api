@@ -19,6 +19,7 @@ import java.util.Set;
  */
 public interface GenericService<D, C, I> {
     Long count();
+    Long countFiltered(Map<String, String> filters);
     List<D> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters);
     D findById(I id);
     D create(D dto);

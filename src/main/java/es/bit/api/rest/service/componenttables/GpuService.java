@@ -44,6 +44,11 @@ public class GpuService implements GenericService<GpuDTO, Gpu, Integer> {
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.gpuJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     @Cacheable(value = "gpus", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<GpuDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);

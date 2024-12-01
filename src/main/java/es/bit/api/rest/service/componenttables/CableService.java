@@ -43,6 +43,11 @@ public class CableService implements GenericService<CableDTO, Cable, Integer> {
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.cableJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public CableDTO findById(Integer id) {
         Optional<Cable> cable = this.cableJPARepository.findById(id);
 

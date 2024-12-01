@@ -41,6 +41,11 @@ public class MotherboardService implements GenericService<MotherboardDTO, Mother
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.motherboardJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public MotherboardDTO findById(Integer id) {
         Optional<Motherboard> motherboard = this.motherboardJPARepository.findById(id);
 

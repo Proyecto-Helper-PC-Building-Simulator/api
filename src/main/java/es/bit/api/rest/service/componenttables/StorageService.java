@@ -40,6 +40,11 @@ public class StorageService implements GenericService<StorageDTO, Storage, Integ
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.storageJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public StorageDTO findById(Integer id) {
         Optional<Storage> storage = this.storageJPARepository.findById(id);
 

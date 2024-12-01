@@ -41,6 +41,11 @@ public class CaseService implements GenericService<CaseDTO, Case, Integer> {
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.caseObjectJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public CaseDTO findById(Integer id) {
         Optional<Case> caseObject = this.caseObjectJPARepository.findById(id);
 

@@ -41,7 +41,7 @@ public abstract class GenericController<D, C, I> {
             @RequestParam Map<String, String> filters
     ) {
         List<D> content = this.genericService.findAll(page, size, sortBy, sortDir, filters);
-        long totalElements = this.genericService.count();
+        long totalElements = this.genericService.countFiltered(filters);
         int totalPages = (int) Math.ceil((double) totalElements / size);
         if (page >= totalPages) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");

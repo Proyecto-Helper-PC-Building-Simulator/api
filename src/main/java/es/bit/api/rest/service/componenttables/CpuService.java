@@ -43,6 +43,11 @@ public class CpuService implements GenericService<CpuDTO, Cpu, Integer> {
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.cpuJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public CpuDTO findById(Integer id) {
         Optional<Cpu> cpu = this.cpuJPARepository.findById(id);
 

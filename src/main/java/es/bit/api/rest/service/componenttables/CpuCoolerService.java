@@ -43,6 +43,11 @@ public class CpuCoolerService implements GenericService<CpuCoolerDTO, CpuCooler,
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.cpuCoolerJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     @Cacheable(value = "cpuCoolers", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CpuCoolerDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);

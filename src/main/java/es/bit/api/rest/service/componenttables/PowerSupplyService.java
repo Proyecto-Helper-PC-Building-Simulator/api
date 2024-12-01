@@ -43,6 +43,11 @@ public class PowerSupplyService implements GenericService<PowerSupplyDTO, PowerS
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.powerSupplyJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public PowerSupplyDTO findById(Integer id) {
         Optional<PowerSupply> powerSupply = this.powerSupplyJPARepository.findById(id);
 

@@ -38,6 +38,11 @@ public class CaseFanService implements GenericService<CaseFanDTO, CaseFan, Integ
         return this.caseFanJPARepository.count();
     }
 
+    @Cacheable(value = "caseFans", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
+    public Long countFiltered(Map<String, String> filters) {
+        return caseFanJPARepository.count(getSpecification(filters));
+    }
+
     @Override
     public CaseFanDTO findById(Integer id) {
         Optional<CaseFan> caseFan = this.caseFanJPARepository.findById(id);
@@ -53,8 +58,8 @@ public class CaseFanService implements GenericService<CaseFanDTO, CaseFan, Integ
     @Cacheable(value = "caseFans", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public List<CaseFanDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<CaseFan> cpuPage = this.caseFanJPARepository.findAll(getSpecification(filters), pageable);
-        return CaseFanMapper.toDTO(cpuPage.getContent());
+        Page<CaseFan> caseFanPage = this.caseFanJPARepository.findAll(getSpecification(filters), pageable);
+        return CaseFanMapper.toDTO(caseFanPage.getContent());
     }
 
     @Override

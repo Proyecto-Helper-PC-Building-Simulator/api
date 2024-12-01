@@ -1,5 +1,7 @@
 package es.bit.api.rest.controller.componenttables;
 
+import es.bit.api.persistence.model.componenttables.CaseFan;
+import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.basictables.LightingDTO;
 import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CaseFanDTO;
@@ -15,31 +17,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/case_fans")
 @Tag(name = "Case Fans Controller", description = "Related operations with case fans")
-public class CaseFansController {
-    private final CaseFanService caseFanService;
+public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, Integer> {
     private final ComponentTypeService componentTypeService;
 
     @Autowired
     public CaseFansController(CaseFanService caseFanService, ComponentTypeService componentTypeService) {
-        this.caseFanService = caseFanService;
+        super(caseFanService);
         this.componentTypeService = componentTypeService;
     }
 
 
-    @GetMapping("/count")
     @Operation(summary = "Get the total number of case fans")
     public Long count() {
-        return this.caseFanService.count();
+        return super.count();
     }
 
-    @GetMapping("")
     @Operation(summary = "Get all case fans paged")
     @ApiResponse(responseCode = "200", description = "CaseFans obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
@@ -50,23 +48,14 @@ public class CaseFansController {
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam Map<String, String> filters
     ) {
-        List<CaseFanDTO> content = this.caseFanService.findAll(page, size, sortBy, sortDir, filters);
-        long totalElements = this.caseFanService.count();
-        int totalPages = (int) Math.ceil((double) totalElements / size);
-
-        if (page >= totalPages) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");
-        }
-
-        return new PagedResponse<>(content, page, size, totalElements, totalPages);
+        return super.findAll(page, size, sortBy, sortDir, filters);
     }
 
-    @GetMapping("/{id}")
     @Operation(summary = "Get a case fan by ID")
     @ApiResponse(responseCode = "200", description = "Case fan found.")
     @ApiResponse(responseCode = "404", description = "Case fan not found.")
     public CaseFanDTO findById(@PathVariable int id) {
-        CaseFanDTO caseFan = this.caseFanService.findById(id);
+        CaseFanDTO caseFan = super.findById(id);
 
         if (caseFan == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
@@ -84,26 +73,24 @@ public class CaseFansController {
     public CaseFanDTO create(@RequestBody CaseFanDTO caseFan) {
         validateComponentType(caseFan);
 
-        return this.caseFanService.create(caseFan);
+        return super.create(caseFan);
     }
 
-    @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update a case fan by ID")
     @ApiResponse(responseCode = "204", description = "Case fan updated correctly.")
     @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Case fan name is duplicated.")
-    public void updateCaseFan(@PathVariable int id, @RequestBody CaseFanDTO caseFan) {
+    public void update(@PathVariable int id, @RequestBody CaseFanDTO caseFan) {
         if (id != caseFan.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
 
         validateComponentType(caseFan);
 
-        this.caseFanService.update(caseFan);
+        super.update(id, caseFan);
     }
 
-    @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete a case fan by ID")
     @ApiResponse(responseCode = "204", description = "Case fan deleted correctly.")
@@ -114,10 +101,11 @@ public class CaseFansController {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
         }
 
-        this.caseFanService.delete(caseFan);
+        super.delete(id);
     }
 
-    private void validateComponentType(CaseFanDTO caseFan) {
+    @Override
+    protected void validateComponentType(CaseFanDTO caseFan) {
         ComponentTypeDTO componentType = componentTypeService.findById(caseFan.getComponentTypeDTO().getId());
 
         if (!"/case_fans".equals(componentType.getApiName())) {
@@ -125,21 +113,18 @@ public class CaseFansController {
         }
     }
 
-    @GetMapping("/price-range")
     @Operation(summary = "Get the highest and lowest price of CPUs")
     public Map<String, Double> getPriceRange() {
-        return caseFanService.getPriceRange();
+        return super.getPriceRange();
     }
 
-    @GetMapping("/manufacturers")
     @Operation(summary = "Get a list of manufacturers without duplicates")
     public Set<ManufacturerDTO> getManufacturers() {
-        return caseFanService.getManufacturers();
+        return super.getManufacturers();
     }
 
-    @GetMapping("/lightings")
     @Operation(summary = "Get a list of lightings without duplicates")
     public Set<LightingDTO> getLightings() {
-        return caseFanService.getLightings();
+        return super.getLightings();
     }
 }

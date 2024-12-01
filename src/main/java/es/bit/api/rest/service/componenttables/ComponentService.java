@@ -59,6 +59,11 @@ public class ComponentService implements GenericService<ComponentDTO, Component,
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.componentJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public ComponentDTO findById(Integer id) {
         Optional<Component> component = this.componentJPARepository.findById(id);
 

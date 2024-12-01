@@ -39,6 +39,11 @@ public class RamMemoryService implements GenericService<RamMemoryDTO, RamMemory,
     }
 
     @Override
+    public Long countFiltered(Map<String, String> filters) {
+        return this.ramMemoryJPARepository.count(getSpecification(filters));
+    }
+
+    @Override
     public RamMemoryDTO findById(Integer id) {
         Optional<RamMemory> ramMemory = this.ramMemoryJPARepository.findById(id);
 

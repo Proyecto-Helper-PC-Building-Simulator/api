@@ -2,8 +2,6 @@ package es.bit.api.rest.controller.componenttables;
 
 import es.bit.api.persistence.model.componenttables.CaseFan;
 import es.bit.api.rest.controller.GenericController;
-import es.bit.api.rest.dto.basictables.LightingDTO;
-import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CaseFanDTO;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
 import es.bit.api.rest.service.componenttables.CaseFanService;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/case_fans")
@@ -104,6 +101,7 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
         super.delete(id);
     }
 
+
     @Override
     protected void validateComponentType(CaseFanDTO caseFan) {
         ComponentTypeDTO componentType = componentTypeService.findById(caseFan.getComponentTypeDTO().getId());
@@ -111,20 +109,5 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
         if (!"/case_fans".equals(componentType.getApiName())) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-    }
-
-    @Operation(summary = "Get the highest and lowest price of CPUs")
-    public Map<String, Double> getPriceRange() {
-        return super.getPriceRange();
-    }
-
-    @Operation(summary = "Get a list of manufacturers without duplicates")
-    public Set<ManufacturerDTO> getManufacturers() {
-        return super.getManufacturers();
-    }
-
-    @Operation(summary = "Get a list of lightings without duplicates")
-    public Set<LightingDTO> getLightings() {
-        return super.getLightings();
     }
 }

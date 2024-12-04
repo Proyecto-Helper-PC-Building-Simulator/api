@@ -3,7 +3,6 @@ package es.bit.api.rest.controller.componenttables;
 import es.bit.api.persistence.model.componenttables.PowerSupply;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
-import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.PowerSupplyDTO;
 import es.bit.api.rest.service.basictables.ComponentTypeService;
 import es.bit.api.rest.service.componenttables.PowerSupplyService;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/power_supplies")
@@ -98,18 +96,6 @@ public class PowerSuppliesController extends GenericController<PowerSupplyDTO, P
         }
 
         super.delete(id);
-    }
-
-    @Override
-    @Operation(summary = "Get the highest and lowest price")
-    public Map<String, Double> getPriceRange() {
-        return super.getPriceRange();
-    }
-
-    @Override
-    @Operation(summary = "Get a list of manufacturers without duplicates")
-    public Set<ManufacturerDTO> getManufacturers() {
-        return super.getManufacturers();
     }
 
 

@@ -32,7 +32,8 @@ public abstract class GenericController<D, C, I> {
     @GetMapping("")
     @Operation(summary = "Get all entities paged")
     @ApiResponse(responseCode = "200", description = "Entities obtained correctly.")
-    @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
+    @ApiResponse(responseCode = "204", description = "Entities not found")
+    @ApiResponse(responseCode = "404", description = "Error getting the selected page.")
     public PagedResponse<D> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
@@ -40,12 +41,17 @@ public abstract class GenericController<D, C, I> {
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam Map<String, String> filters
     ) {
-        List<D> content = this.genericService.findAll(page, size, sortBy, sortDir, filters);
         long totalElements = this.genericService.countFiltered(filters);
+        if (totalElements == 0) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No results found for the given filters.");
+        }
+
         int totalPages = (int) Math.ceil((double) totalElements / size);
         if (page >= totalPages) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Page does not exist.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page does not exist.");
         }
+
+        List<D> content = this.genericService.findAll(page, size, sortBy, sortDir, filters);
 
         return new PagedResponse<>(content, page, size, totalElements, totalPages);
     }
@@ -93,7 +99,7 @@ public abstract class GenericController<D, C, I> {
     }
 
     @GetMapping("/price-range")
-    @Operation(summary = "Get the highest and lowest price of CPUs")
+    @Operation(summary = "Get the highest and lowest price of a component type")
     public Map<String, Double> getPriceRange() {
         return genericService.getPriceRange();
     }

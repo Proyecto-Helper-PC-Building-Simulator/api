@@ -3,7 +3,6 @@ package es.bit.api.rest.controller.componenttables;
 import es.bit.api.persistence.model.componenttables.Cable;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.basictables.ComponentTypeDTO;
-import es.bit.api.rest.dto.basictables.ManufacturerDTO;
 import es.bit.api.rest.dto.componenttables.CableDTO;
 import es.bit.api.rest.service.basictables.ComponentTypeService;
 import es.bit.api.rest.service.componenttables.CableService;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/cables")
@@ -102,18 +100,6 @@ public class CablesController extends GenericController<CableDTO, Cable, Integer
         }
 
         super.delete(id);
-    }
-
-    @Override
-    @Operation(summary = "Get the highest and lowest price of CPUs")
-    public Map<String, Double> getPriceRange() {
-        return super.getPriceRange();
-    }
-
-    @Override
-    @Operation(summary = "Get a list of manufacturers without duplicates")
-    public Set<ManufacturerDTO> getManufacturers() {
-        return super.getManufacturers();
     }
 
 

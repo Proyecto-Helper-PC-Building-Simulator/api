@@ -175,3 +175,4 @@ buildNumber.properties
 .ionide
 HELP.md
 /src/test/
+/**/MANIFEST.MF

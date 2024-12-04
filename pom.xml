@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>es.bit</groupId>
 	<artifactId>api</artifactId>
-	<version>1.1</version>
+	<version>1.1.1</version>
 	<name>api</name>
 	<description>Spring Boot API for PC Building Simulator</description>
 	<properties>
@@ -24,6 +24,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 		<dependency>
@@ -75,6 +80,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>api</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

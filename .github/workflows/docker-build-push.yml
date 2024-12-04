@@ -28,6 +28,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
+      - name: Extract branch name
+        id: vars
+        run: |
+          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+
       # 3. Build and tag Docker image
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -41,4 +47,4 @@ jobs:
           push: true
           tags: |
             bitraw/api-pc-building-sim:latest
-            bitraw/api-pc-building-sim:${{ github.ref_name }}
+            bitraw/api-pc-building-sim:${{ env.BRANCH_NAME }}

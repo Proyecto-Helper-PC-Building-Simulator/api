@@ -3,8 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - 'feature/add-github-actions'
-      # - main       # Rama de producción
+      - main       # Rama de producción
       # - develop    # Rama de desarrollo
       # - 'release/*' # Opcional: ramas de release según GitFlow
       # - 'feature/*' # Opcional: ramas de feature según GitFlow

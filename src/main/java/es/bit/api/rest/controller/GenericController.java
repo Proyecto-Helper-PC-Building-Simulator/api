@@ -1,8 +1,8 @@
 package es.bit.api.rest.controller;
 
-import es.bit.api.rest.dto.basictables.LightingDTO;
-import es.bit.api.rest.dto.basictables.ManufacturerDTO;
-import es.bit.api.rest.service.GenericService;
+import es.bit.api.rest.dto.components.attributes.LightingDTO;
+import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
+import es.bit.api.rest.service.components.GenericService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -99,32 +99,39 @@ public class CpuService implements GenericService<CpuDTO, Cpu, Integer> {
                 predicates.add(commonPredicates);
             }
 
-            if (filters.containsKey("coresMin")) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("cores"), Integer.parseInt(filters.get("coresMin"))));
-            }
-            if (filters.containsKey("coresMax")) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("cores"), Integer.parseInt(filters.get("coresMax"))));
-            }
-            if (filters.containsKey("frequencyMin")) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("frequency"), Integer.parseInt(filters.get("frequencyMin"))));
-            }
-            if (filters.containsKey("frequencyMax")) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("frequency"), Integer.parseInt(filters.get("frequencyMax"))));
-            }
-            if (filters.containsKey("serie")) {
-                Join<Cpu, CpuSerie> cpuSerieJoin = root.join("cpuSerie", JoinType.INNER);
-                predicates.add(criteriaBuilder.like(cpuSerieJoin.get("name"), "%" + filters.get("serie") + "%"));
-            }
-            if (filters.containsKey("socket")) {
-                Join<Cpu, CpuSocket> cpuSocketJoin = root.join("cpuSocket", JoinType.INNER);
-                predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + filters.get("socket") + "%"));
-            }
-            if (filters.containsKey("wattageMin")) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("wattage"), Integer.parseInt(filters.get("wattageMin"))));
-            }
-            if (filters.containsKey("wattageMax")) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("wattage"), Integer.parseInt(filters.get("wattageMax"))));
-            }
+            filters.forEach((key, value) -> {
+                switch (key) {
+                    case "coresMin":
+                        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("cores"), Integer.parseInt(value)));
+                        break;
+                    case "coresMax":
+                        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("cores"), Integer.parseInt(value)));
+                        break;
+                    case "frequencyMin":
+                        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("frequency"), Integer.parseInt(value)));
+                        break;
+                    case "frequencyMax":
+                        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("frequency"), Integer.parseInt(value)));
+                        break;
+                    case "wattageMin":
+                        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("wattage"), Integer.parseInt(value)));
+                        break;
+                    case "wattageMax":
+                        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("wattage"), Integer.parseInt(value)));
+                        break;
+                    case "serie":
+                        Join<Cpu, CpuSerie> cpuSerieJoin = root.join("cpuSerie", JoinType.INNER);
+                        predicates.add(criteriaBuilder.like(cpuSerieJoin.get("name"), "%" + value + "%"));
+                        break;
+                    case "socket":
+                        Join<Cpu, CpuSocket> cpuSocketJoin = root.join("cpuSocket", JoinType.INNER);
+                        predicates.add(criteriaBuilder.like(cpuSocketJoin.get("name"), "%" + value + "%"));
+                        break;
+                    default:
+                        // Ignore unknown filters
+                        break;
+                }
+            });
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };

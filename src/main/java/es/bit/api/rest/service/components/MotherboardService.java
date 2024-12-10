@@ -1,11 +1,12 @@
 package es.bit.api.rest.service.components;
 
-import es.bit.api.persistence.model.components.attributes.*;
 import es.bit.api.persistence.model.components.Gpu;
 import es.bit.api.persistence.model.components.Motherboard;
+import es.bit.api.persistence.model.components.attributes.CpuSocket;
+import es.bit.api.persistence.model.components.attributes.MotherboardChipset;
+import es.bit.api.persistence.model.components.attributes.MotherboardFormFactor;
+import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
 import es.bit.api.rest.dto.components.MotherboardDTO;
 import es.bit.api.rest.mapper.components.MotherboardMapper;
 import jakarta.persistence.criteria.Join;
@@ -20,11 +21,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class MotherboardService implements GenericService<MotherboardDTO, Motherboard, Integer> {
+public class MotherboardService extends GenericService<MotherboardDTO, Motherboard, Integer> {
     private final IGenericJpaRepository<Motherboard, Integer> motherboardJPARepository;
 
 
@@ -119,59 +122,5 @@ public class MotherboardService implements GenericService<MotherboardDTO, Mother
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-    }
-
-    @Override
-    public Map<String, Double> getPriceRange() {
-        Double highestPrice = motherboardJPARepository.findAll()
-                .stream()
-                .mapToDouble(Motherboard::getPrice)
-                .max()
-                .orElse(0.0);
-
-        Double lowestPrice = motherboardJPARepository.findAll()
-                .stream()
-                .mapToDouble(Motherboard::getPrice)
-                .min()
-                .orElse(0.0);
-
-        Map<String, Double> priceRange = new HashMap<>();
-        priceRange.put("highestPrice", highestPrice);
-        priceRange.put("lowestPrice", lowestPrice);
-        return priceRange;
-    }
-
-    @Override
-    public Set<ManufacturerDTO> getManufacturers() {
-        Set<Manufacturer> manufacturers = motherboardJPARepository.findAll()
-                .stream()
-                .map(Motherboard::getManufacturer)
-                .collect(Collectors.toSet());
-
-        return manufacturers.stream()
-                .map(manufacturer -> {
-                    ManufacturerDTO dto = new ManufacturerDTO();
-                    dto.setId(manufacturer.getId());
-                    dto.setName(manufacturer.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<LightingDTO> getLightings() {
-        Set<Lighting> lightings = motherboardJPARepository.findAll()
-                .stream()
-                .map(Motherboard::getLighting)
-                .collect(Collectors.toSet());
-
-        return lightings.stream()
-                .map(lighting -> {
-                    LightingDTO dto = new LightingDTO();
-                    dto.setId(lighting.getId());
-                    dto.setName(lighting.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
     }
 }

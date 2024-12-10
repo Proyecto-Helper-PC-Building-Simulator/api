@@ -1,13 +1,9 @@
 package es.bit.api.rest.service.components;
 
+import es.bit.api.persistence.model.components.Cpu;
 import es.bit.api.persistence.model.components.attributes.CpuSerie;
 import es.bit.api.persistence.model.components.attributes.CpuSocket;
-import es.bit.api.persistence.model.components.attributes.Lighting;
-import es.bit.api.persistence.model.components.attributes.Manufacturer;
-import es.bit.api.persistence.model.components.Cpu;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
 import es.bit.api.rest.dto.components.CpuDTO;
 import es.bit.api.rest.mapper.components.CpuMapper;
 import jakarta.persistence.criteria.Join;
@@ -22,11 +18,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class CpuService implements GenericService<CpuDTO, Cpu, Integer> {
+public class CpuService extends GenericService<CpuDTO, Cpu, Integer> {
     private final IGenericJpaRepository<Cpu, Integer> cpuJPARepository;
 
 
@@ -134,61 +132,5 @@ public class CpuService implements GenericService<CpuDTO, Cpu, Integer> {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-    }
-
-    @Override
-    public Map<String, Double> getPriceRange() {
-        Double highestPrice = cpuJPARepository.findAll()
-                .stream()
-                .mapToDouble(Cpu::getPrice)
-                .max()
-                .orElse(0.0);
-
-        Double lowestPrice = cpuJPARepository.findAll()
-                .stream()
-                .mapToDouble(Cpu::getPrice)
-                .min()
-                .orElse(0.0);
-
-        Map<String, Double> priceRange = new HashMap<>();
-        priceRange.put("highestPrice", highestPrice);
-        priceRange.put("lowestPrice", lowestPrice);
-        return priceRange;
-    }
-
-    @Override
-    public Set<ManufacturerDTO> getManufacturers() {
-        Set<Manufacturer> manufacturers = cpuJPARepository.findAll()
-                .stream()
-                .map(Cpu::getManufacturer)
-                .collect(Collectors.toSet());
-
-        // Convertir los Manufacturer en ManufacturerDTO
-
-        return manufacturers.stream()
-                .map(manufacturer -> {
-                    ManufacturerDTO dto = new ManufacturerDTO();
-                    dto.setId(manufacturer.getId());
-                    dto.setName(manufacturer.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<LightingDTO> getLightings() {
-        Set<Lighting> lightings = cpuJPARepository.findAll()
-                .stream()
-                .map(Cpu::getLighting)
-                .collect(Collectors.toSet());
-
-        return lightings.stream()
-                .map(lighting -> {
-                    LightingDTO dto = new LightingDTO();
-                    dto.setId(lighting.getId());
-                    dto.setName(lighting.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
     }
 }

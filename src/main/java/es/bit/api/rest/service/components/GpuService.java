@@ -1,14 +1,10 @@
 package es.bit.api.rest.service.components;
 
-import es.bit.api.persistence.model.components.attributes.GpuChipsetSerie;
-import es.bit.api.persistence.model.components.attributes.Lighting;
-import es.bit.api.persistence.model.components.attributes.Manufacturer;
-import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import es.bit.api.persistence.model.components.Gpu;
+import es.bit.api.persistence.model.components.attributes.GpuChipsetSerie;
+import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import es.bit.api.persistence.model.components.enums.ChipsetBrands;
 import es.bit.api.persistence.repository.jpa.components.IGpuJpaRepository;
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
 import es.bit.api.rest.dto.components.GpuDTO;
 import es.bit.api.rest.mapper.components.GpuMapper;
 import jakarta.persistence.criteria.Join;
@@ -23,11 +19,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class GpuService implements GenericService<GpuDTO, Gpu, Integer> {
+public class GpuService extends GenericService<GpuDTO, Gpu, Integer> {
     private final IGpuJpaRepository gpuJPARepository;
 
 
@@ -144,59 +142,5 @@ public class GpuService implements GenericService<GpuDTO, Gpu, Integer> {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-    }
-
-    @Override
-    public Map<String, Double> getPriceRange() {
-        Double highestPrice = gpuJPARepository.findAll()
-                .stream()
-                .mapToDouble(Gpu::getPrice)
-                .max()
-                .orElse(0.0);
-
-        Double lowestPrice = gpuJPARepository.findAll()
-                .stream()
-                .mapToDouble(Gpu::getPrice)
-                .min()
-                .orElse(0.0);
-
-        Map<String, Double> priceRange = new HashMap<>();
-        priceRange.put("highestPrice", highestPrice);
-        priceRange.put("lowestPrice", lowestPrice);
-        return priceRange;
-    }
-
-    @Override
-    public Set<ManufacturerDTO> getManufacturers() {
-        Set<Manufacturer> manufacturers = gpuJPARepository.findAll()
-                .stream()
-                .map(Gpu::getManufacturer)
-                .collect(Collectors.toSet());
-
-        return manufacturers.stream()
-                .map(manufacturer -> {
-                    ManufacturerDTO dto = new ManufacturerDTO();
-                    dto.setId(manufacturer.getId());
-                    dto.setName(manufacturer.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<LightingDTO> getLightings() {
-        Set<Lighting> lightings = gpuJPARepository.findAll()
-                .stream()
-                .map(Gpu::getLighting)
-                .collect(Collectors.toSet());
-
-        return lightings.stream()
-                .map(lighting -> {
-                    LightingDTO dto = new LightingDTO();
-                    dto.setId(lighting.getId());
-                    dto.setName(lighting.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
     }
 }

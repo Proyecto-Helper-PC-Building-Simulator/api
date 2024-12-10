@@ -1,11 +1,7 @@
 package es.bit.api.rest.service.components;
 
-import es.bit.api.persistence.model.components.attributes.Lighting;
-import es.bit.api.persistence.model.components.attributes.Manufacturer;
 import es.bit.api.persistence.model.components.CaseFan;
 import es.bit.api.persistence.repository.jpa.components.ICaseFanJpaRepository;
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
 import es.bit.api.rest.dto.components.CaseFanDTO;
 import es.bit.api.rest.mapper.components.CaseFanMapper;
 import jakarta.persistence.criteria.Predicate;
@@ -18,11 +14,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class CaseFanService implements GenericService<CaseFanDTO, CaseFan, Integer> {
+public class CaseFanService extends GenericService<CaseFanDTO, CaseFan, Integer> {
     private final ICaseFanJpaRepository caseFanJPARepository;
 
 
@@ -109,59 +107,5 @@ public class CaseFanService implements GenericService<CaseFanDTO, CaseFan, Integ
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-    }
-
-    @Override
-    public Map<String, Double> getPriceRange() {
-        Double highestPrice = caseFanJPARepository.findAll()
-                .stream()
-                .mapToDouble(CaseFan::getPrice)
-                .max()
-                .orElse(0.0);
-
-        Double lowestPrice = caseFanJPARepository.findAll()
-                .stream()
-                .mapToDouble(CaseFan::getPrice)
-                .min()
-                .orElse(0.0);
-
-        Map<String, Double> priceRange = new HashMap<>();
-        priceRange.put("highestPrice", highestPrice);
-        priceRange.put("lowestPrice", lowestPrice);
-        return priceRange;
-    }
-
-    @Override
-    public Set<ManufacturerDTO> getManufacturers() {
-        Set<Manufacturer> manufacturers = caseFanJPARepository.findAll()
-                .stream()
-                .map(CaseFan::getManufacturer)
-                .collect(Collectors.toSet());
-
-        return manufacturers.stream()
-                .map(manufacturer -> {
-                    ManufacturerDTO dto = new ManufacturerDTO();
-                    dto.setId(manufacturer.getId());
-                    dto.setName(manufacturer.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<LightingDTO> getLightings() {
-        Set<Lighting> lightings = caseFanJPARepository.findAll()
-                .stream()
-                .map(CaseFan::getLighting)
-                .collect(Collectors.toSet());
-
-        return lightings.stream()
-                .map(lighting -> {
-                    LightingDTO dto = new LightingDTO();
-                    dto.setId(lighting.getId());
-                    dto.setName(lighting.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
     }
 }

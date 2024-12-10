@@ -1,32 +1,36 @@
 package es.bit.api.rest.service.components;
 
-import es.bit.api.persistence.model.components.attributes.Manufacturer;
 import es.bit.api.persistence.model.components.Component;
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
+import es.bit.api.persistence.model.components.attributes.Manufacturer;
+import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import jakarta.persistence.criteria.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @param <D> Component DTO
  * @param <C> Component
  * @param <I> Integer
  */
-public interface GenericService<D, C, I> {
-    Long count();
-    Long countFiltered(Map<String, String> filters);
-    List<D> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters);
-    D findById(I id);
-    D create(D dto);
-    void update(D dto);
-    void delete(D dto);
+public abstract class GenericService<D, C, I extends Serializable> {
+    @Autowired
+    private IGenericJpaRepository<C, I> repository;
 
-    default Specification<C> getSpecification(Map<String, String> filters) {
+    abstract public Long count();
+    abstract public Long countFiltered(Map<String, String> filters);
+    abstract public List<D> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters);
+    abstract public D findById(I id);
+    abstract public D create(D dto);
+    abstract public void update(D dto);
+    abstract public void delete(D dto);
+
+    public Specification<C> getSpecification(Map<String, String> filters) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -48,7 +52,7 @@ public interface GenericService<D, C, I> {
      * @param filters         A Map containing filter parameters.
      * @return A Predicate object representing the combined common predicates.
      */
-    default Predicate addCommonPredicates(CriteriaBuilder criteriaBuilder, Root<C> root, Map<String, String> filters) {
+    public Predicate addCommonPredicates(CriteriaBuilder criteriaBuilder, Root<C> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
 
         filters.forEach((key, value) -> {
@@ -91,9 +95,23 @@ public interface GenericService<D, C, I> {
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 
-    Map<String, Double> getPriceRange();
+    public Map<String, Object> getCommonFilters() {
+        Map<String, Object> filters = new HashMap<>();
 
-    Set<ManufacturerDTO> getManufacturers();
+        filters.put("manufacturers", repository.findDistinctManufacturers());
 
-    Set<LightingDTO> getLightings();
+        List<Object[]> priceRange = repository.findMinMaxPrice();
+        if (!priceRange.isEmpty()) {
+            filters.put("price", Map.of("min", priceRange.get(0)[0], "max", priceRange.get(0)[1]));
+        }
+
+        filters.put("lightings", repository.findDistinctLightings());
+
+        List<Object[]> levelRange = repository.findMinMaxLevel();
+        if (!levelRange.isEmpty()) {
+            filters.put("level", Map.of("min", levelRange.get(0)[0], "max", levelRange.get(0)[1]));
+        }
+
+        return filters;
+    }
 }

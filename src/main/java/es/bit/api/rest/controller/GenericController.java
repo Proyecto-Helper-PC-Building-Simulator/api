@@ -1,7 +1,5 @@
 package es.bit.api.rest.controller;
 
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
 import es.bit.api.rest.service.components.GenericService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,11 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public abstract class GenericController<D, C, I> {
+public abstract class GenericController<D, C, I extends Serializable> {
     protected final GenericService<D, C, I> genericService;
 
     @Autowired
@@ -98,22 +96,9 @@ public abstract class GenericController<D, C, I> {
         this.genericService.delete(entity);
     }
 
-    @GetMapping("/price-range")
-    @Operation(summary = "Get the highest and lowest price of a component type")
-    public Map<String, Double> getPriceRange() {
-        return genericService.getPriceRange();
-    }
-
-    @GetMapping("/manufacturers")
-    @Operation(summary = "Get a list of manufacturers without duplicates")
-    public Set<ManufacturerDTO> getManufacturers() {
-        return genericService.getManufacturers();
-    }
-
-    @GetMapping("/lightings")
-    @Operation(summary = "Get a list of lightings without duplicates")
-    public Set<LightingDTO> getLightings() {
-        return genericService.getLightings();
+    @GetMapping("/filters")
+    public Map<String, Object> getFilters() {
+        return genericService.getCommonFilters();
     }
 
 

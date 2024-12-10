@@ -1,12 +1,9 @@
 package es.bit.api.rest.service.components;
 
 import es.bit.api.persistence.model.components.attributes.ComponentType;
-import es.bit.api.persistence.model.components.attributes.Lighting;
 import es.bit.api.persistence.model.components.Component;
 import es.bit.api.persistence.repository.jpa.components.*;
 import es.bit.api.rest.dto.components.*;
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
 import es.bit.api.rest.mapper.components.attributes.ComponentTypeMapper;
 import es.bit.api.rest.mapper.components.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
-public class ComponentService implements GenericService<ComponentDTO, Component, Integer> {
+public class ComponentService extends GenericService<ComponentDTO, Component, Integer> {
     private final IComponentJpaRepository componentJPARepository;
     private final ICableJpaRepository cableJPARepository;
     private final ICaseFanJpaRepository caseFanJPARepository;
@@ -165,38 +160,5 @@ public class ComponentService implements GenericService<ComponentDTO, Component,
     public void delete(ComponentDTO componentDTO) {
         Component component = ComponentMapper.toBD(componentDTO);
         this.componentJPARepository.delete(component);
-    }
-
-    @Override
-    public Specification<Component> getSpecification(Map<String, String> filters) {
-        return GenericService.super.getSpecification(filters);
-    }
-
-    @Override
-    public Set<LightingDTO> getLightings() {
-        Set<Lighting> lightings = componentJPARepository.findAll()
-                .stream()
-                .map(Component::getLighting)
-                .collect(Collectors.toSet());
-
-        return lightings.stream()
-                .map(lighting -> {
-                    LightingDTO dto = new LightingDTO();
-                    dto.setId(lighting.getId());
-                    dto.setName(lighting.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
-    }
-
-
-    @Override
-    public Map<String, Double> getPriceRange() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<ManufacturerDTO> getManufacturers() {
-        return Collections.emptySet();
     }
 }

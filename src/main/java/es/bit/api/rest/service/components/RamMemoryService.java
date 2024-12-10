@@ -1,11 +1,7 @@
 package es.bit.api.rest.service.components;
 
-import es.bit.api.persistence.model.components.attributes.Lighting;
-import es.bit.api.persistence.model.components.attributes.Manufacturer;
 import es.bit.api.persistence.model.components.RamMemory;
 import es.bit.api.persistence.repository.jpa.components.IRamMemoryJpaRepository;
-import es.bit.api.rest.dto.components.attributes.LightingDTO;
-import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
 import es.bit.api.rest.dto.components.RamMemoryDTO;
 import es.bit.api.rest.mapper.components.RamMemoryMapper;
 import jakarta.persistence.criteria.Predicate;
@@ -18,11 +14,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class RamMemoryService implements GenericService<RamMemoryDTO, RamMemory, Integer> {
+public class RamMemoryService extends GenericService<RamMemoryDTO, RamMemory, Integer> {
     private final IRamMemoryJpaRepository ramMemoryJPARepository;
 
 
@@ -109,59 +107,5 @@ public class RamMemoryService implements GenericService<RamMemoryDTO, RamMemory,
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-    }
-
-    @Override
-    public Map<String, Double> getPriceRange() {
-        Double highestPrice = ramMemoryJPARepository.findAll()
-                .stream()
-                .mapToDouble(RamMemory::getPrice)
-                .max()
-                .orElse(0.0);
-
-        Double lowestPrice = ramMemoryJPARepository.findAll()
-                .stream()
-                .mapToDouble(RamMemory::getPrice)
-                .min()
-                .orElse(0.0);
-
-        Map<String, Double> priceRange = new HashMap<>();
-        priceRange.put("highestPrice", highestPrice);
-        priceRange.put("lowestPrice", lowestPrice);
-        return priceRange;
-    }
-
-    @Override
-    public Set<ManufacturerDTO> getManufacturers() {
-        Set<Manufacturer> manufacturers = ramMemoryJPARepository.findAll()
-                .stream()
-                .map(RamMemory::getManufacturer)
-                .collect(Collectors.toSet());
-
-        return manufacturers.stream()
-                .map(manufacturer -> {
-                    ManufacturerDTO dto = new ManufacturerDTO();
-                    dto.setId(manufacturer.getId());
-                    dto.setName(manufacturer.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<LightingDTO> getLightings() {
-        Set<Lighting> lightings = ramMemoryJPARepository.findAll()
-                .stream()
-                .map(RamMemory::getLighting)
-                .collect(Collectors.toSet());
-
-        return lightings.stream()
-                .map(lighting -> {
-                    LightingDTO dto = new LightingDTO();
-                    dto.setId(lighting.getId());
-                    dto.setName(lighting.getName());
-                    return dto;
-                })
-                .collect(Collectors.toSet());
     }
 }

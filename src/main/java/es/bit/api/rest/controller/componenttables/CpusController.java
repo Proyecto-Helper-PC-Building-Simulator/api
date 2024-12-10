@@ -38,9 +38,18 @@ public class CpusController extends GenericController<CpuDTO, Cpu, Integer> {
     }
 
     @Override
-    @Operation(summary = "Get all cpus paged")
+    @Operation(summary = "Retrieve CPUs with optional filters",
+            description = """
+           Available filters:
+           - `coresMin` and `coresMax`: Filter by number of cores (minimum and maximum).
+           - `frequencyMin` and `frequencyMax`: Filter by frequency (minimum and maximum).
+           - `wattageMin` and `wattageMax`: Filter by wattage (minimum and maximum).
+           - `serie`: Filter by CPU series name (partial match).
+           - `socket`: Filter by CPU socket name (partial match).
+           - `priceMin` and `priceMax`: Filter by price range.
+           - `level`: Filter by performance level.
+           """)
     @ApiResponse(responseCode = "200", description = "Cpus obtained correctly.")
-    @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
     public PagedResponse<CpuDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,

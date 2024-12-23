@@ -174,5 +174,5 @@ buildNumber.properties
 .history
 .ionide
 HELP.md
-/src/test/
+#/src/test/
 /**/MANIFEST.MF

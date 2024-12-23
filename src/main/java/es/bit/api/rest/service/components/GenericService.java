@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,25 +92,5 @@ public abstract class GenericService<D, C, I extends Serializable> {
         });
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-    }
-
-    public Map<String, Object> getCommonFilters() {
-        Map<String, Object> filters = new HashMap<>();
-
-        filters.put("manufacturers", repository.findDistinctManufacturers());
-
-        List<Object[]> priceRange = repository.findMinMaxPrice();
-        if (!priceRange.isEmpty()) {
-            filters.put("price", Map.of("min", priceRange.get(0)[0], "max", priceRange.get(0)[1]));
-        }
-
-        filters.put("lightings", repository.findDistinctLightings());
-
-        List<Object[]> levelRange = repository.findMinMaxLevel();
-        if (!levelRange.isEmpty()) {
-            filters.put("level", Map.of("min", levelRange.get(0)[0], "max", levelRange.get(0)[1]));
-        }
-
-        return filters;
     }
 }

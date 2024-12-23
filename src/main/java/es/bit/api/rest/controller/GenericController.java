@@ -96,11 +96,6 @@ public abstract class GenericController<D, C, I extends Serializable> {
         this.genericService.delete(entity);
     }
 
-    @GetMapping("/filters")
-    public Map<String, Object> getFilters() {
-        return genericService.getCommonFilters();
-    }
-
 
     protected void validateComponentType(D dto) {}
 }

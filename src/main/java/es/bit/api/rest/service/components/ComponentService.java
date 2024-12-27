@@ -1,11 +1,11 @@
 package es.bit.api.rest.service.components;
 
-import es.bit.api.persistence.model.components.attributes.ComponentType;
 import es.bit.api.persistence.model.components.Component;
-import es.bit.api.persistence.repository.jpa.components.*;
-import es.bit.api.rest.dto.components.*;
-import es.bit.api.rest.mapper.components.attributes.ComponentTypeMapper;
-import es.bit.api.rest.mapper.components.*;
+import es.bit.api.persistence.repository.jpa.components.IComponentJpaRepository;
+import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.rest.mapper.components.ComponentMapper;
+import es.bit.api.utils.handlers.ComponentHandler;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -14,36 +14,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ComponentService extends GenericService<ComponentDTO, Component, Integer> {
     private final IComponentJpaRepository componentJPARepository;
-    private final ICableJpaRepository cableJPARepository;
-    private final ICaseFanJpaRepository caseFanJPARepository;
-    private final ICaseJpaRepository caseJPARepository;
-    private final ICpuCoolerJpaRepository cpuCoolerJPARepository;
-    private final ICpuJpaRepository cpuJpaRepository;
-    private final IGpuJpaRepository gpuJPARepository;
-    private final IMotherboardJpaRepository motherboardJPARepository;
-    private final IPowerSupplyJpaRepository powerSupplyJPARepository;
-    private final IRamMemoryJpaRepository ramMemoryJPARepository;
-    private final IStorageJpaRepository storageJPARepository;
+    private final ComponentHandlerFactory handlerFactory;
 
 
     @Autowired
-    public ComponentService(IComponentJpaRepository componentJPARepository, ICableJpaRepository cableJPARepository, ICaseFanJpaRepository caseFanJPARepository, ICaseJpaRepository caseJPARepository, ICpuCoolerJpaRepository cpuCoolerJPARepository, ICpuJpaRepository cpuJpaRepository, IGpuJpaRepository gpuJPARepository, IMotherboardJpaRepository motherboardJPARepository, IPowerSupplyJpaRepository powerSupplyJPARepository, IRamMemoryJpaRepository ramMemoryJPARepository, IStorageJpaRepository storageJPARepository) {
+    public ComponentService(IComponentJpaRepository componentJPARepository, ComponentHandlerFactory handlerFactory) {
         this.componentJPARepository = componentJPARepository;
-        this.cableJPARepository = cableJPARepository;
-        this.caseFanJPARepository = caseFanJPARepository;
-        this.caseJPARepository = caseJPARepository;
-        this.cpuCoolerJPARepository = cpuCoolerJPARepository;
-        this.cpuJpaRepository = cpuJpaRepository;
-        this.gpuJPARepository = gpuJPARepository;
-        this.motherboardJPARepository = motherboardJPARepository;
-        this.powerSupplyJPARepository = powerSupplyJPARepository;
-        this.ramMemoryJPARepository = ramMemoryJPARepository;
-        this.storageJPARepository = storageJPARepository;
+        this.handlerFactory = handlerFactory;
     }
 
 
@@ -69,67 +54,15 @@ public class ComponentService extends GenericService<ComponentDTO, Component, In
     }
 
     public List<ComponentDTO> findComponentsByIds(List<Integer> ids) {
-        List<ComponentDTO> components = new ArrayList<>();
-        for (Integer id : ids) {
-            Optional<Component> componentOptional = componentJPARepository.findById(id);
-            componentOptional.ifPresent(component -> {
-                ComponentDTO componentDTO = ComponentMapper.toDTO(component);
-                componentDTO.setComponentTypeDTO(ComponentTypeMapper.toDTO(component.getComponentType()));
+        List<Component> components = componentJPARepository.findAllById(ids);
+        List<ComponentDTO> result = new ArrayList<>();
 
-                ComponentType componentType = component.getComponentType();
-                if (componentType != null) {
-                    switch (componentType.getName()) {
-                        case "Cable":
-                            CableDTO cableDTO = CableMapper.toDTO(cableJPARepository.findById(id), true);
-                            components.add(cableDTO);
-                            break;
-                        case "Case Fan":
-                            CaseFanDTO caseFanDTO = CaseFanMapper.toDTO(caseFanJPARepository.findById(id));
-                            components.add(caseFanDTO);
-                            break;
-                        case "Case":
-                            CaseDTO caseDTO = CaseMapper.toDTO(caseJPARepository.findById(id), true, true);
-                            components.add(caseDTO);
-                            break;
-                        case "CPU Cooler":
-                            CpuCoolerDTO cpuCoolerDTO = CpuCoolerMapper.toDTO(cpuCoolerJPARepository.findById(id), true);
-                            components.add(cpuCoolerDTO);
-                            break;
-                        case "CPU":
-                            CpuDTO cpuDTO = CpuMapper.toDTO(cpuJpaRepository.findById(id));
-                            components.add(cpuDTO);
-                            break;
-                        case "GPU":
-                            GpuDTO gpuDTO = GpuMapper.toDTO(gpuJPARepository.findById(id));
-                            components.add(gpuDTO);
-                            break;
-                        case "Motherboard":
-                            MotherboardDTO motherboardDTO = MotherboardMapper.toDTO(motherboardJPARepository.findById(id), true);
-                            components.add(motherboardDTO);
-                            break;
-                        case "Power Supply":
-                            PowerSupplyDTO powerSupplyDTO = PowerSupplyMapper.toDTO(powerSupplyJPARepository.findById(id));
-                            components.add(powerSupplyDTO);
-                            break;
-                        case "Memory":
-                            RamMemoryDTO ramMemoryDTO = RamMemoryMapper.toDTO(ramMemoryJPARepository.findById(id));
-                            components.add(ramMemoryDTO);
-                            break;
-                        case "Storage":
-                            StorageDTO storageDTO = StorageMapper.toDTO(storageJPARepository.findById(id));
-                            components.add(storageDTO);
-                            break;
-                        default:
-                            components.add(componentDTO);
-                            break;
-                    }
-                } else {
-                    components.add(componentDTO);
-                }
-            });
+        for (Component component : components) {
+            ComponentHandler handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
+            result.add(handler.handleComponent(component));
         }
 
-        return components;
+        return result;
     }
 
     @Cacheable("components")

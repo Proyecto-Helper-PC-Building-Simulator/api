@@ -2,10 +2,10 @@ package es.bit.api.rest.controller.components;
 
 import es.bit.api.persistence.model.components.Gpu;
 import es.bit.api.rest.controller.GenericController;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.dto.components.GpuDTO;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
+import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.GpuService;
+import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,7 +48,7 @@ public class GpusController extends GenericController<GpuDTO, Gpu, Integer> {
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam Map<String, String> filters
     ) {
-       return super.findAll(page, size, sortBy, sortDir, filters);
+       return super.findAll("gpus", page, size, sortBy, sortDir, filters);
     }
 
     @Operation(summary = "Get a gpu by ID")

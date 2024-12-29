@@ -47,7 +47,7 @@ public class ComponentsController extends GenericController<ComponentDTO, Compon
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(defaultValue = "") Map<String, String> filters
     ) {
-        return super.findAll(page, size, sortBy, sortDir, filters);
+        return super.findAll("components", page, size, sortBy, sortDir, filters);
     }
 
     @GetMapping("/multiple")

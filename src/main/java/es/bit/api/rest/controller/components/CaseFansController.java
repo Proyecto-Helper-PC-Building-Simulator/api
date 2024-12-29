@@ -35,6 +35,7 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
         return super.count();
     }
 
+    @Override
     @Operation(summary = "Get all case fans paged")
     @ApiResponse(responseCode = "200", description = "CaseFans obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
@@ -45,7 +46,7 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam Map<String, String> filters
     ) {
-        return super.findAll(page, size, sortBy, sortDir, filters);
+        return super.findAll("caseFans", page, size, sortBy, sortDir, filters);
     }
 
     @Operation(summary = "Get a case fan by ID")

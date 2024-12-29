@@ -56,8 +56,9 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
         return handler.toDTO(component.get());
     }
 
-    @Cacheable(value = "components", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<D> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
+    @Cacheable(value = "components", key = "#componentType + '-' + #page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
+    public List<D> findAll(String componentType, int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
+        System.out.println(componentType);
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
         Page<C> cpuPage = this.repository.findAll(getSpecification(filters), pageable);
         List<D> result = new ArrayList<>();

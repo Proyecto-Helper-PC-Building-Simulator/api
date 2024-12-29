@@ -29,12 +29,13 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
         return this.genericService.count();
     }
 
-    @GetMapping("")
+
     @Operation(summary = "Get all entities paged")
     @ApiResponse(responseCode = "200", description = "Entities obtained correctly.")
     @ApiResponse(responseCode = "204", description = "Entities not found")
     @ApiResponse(responseCode = "404", description = "Error getting the selected page.")
     public PagedResponse<D> findAll(
+            String componentType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -51,10 +52,22 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page does not exist.");
         }
 
-        List<D> content = this.genericService.findAll(page, size, sortBy, sortDir, filters);
+        List<D> content = this.genericService.findAll(componentType, page, size, sortBy, sortDir, filters);
 
         return new PagedResponse<>(content, page, size, totalElements, totalPages);
     }
+
+    @GetMapping("")
+    @Operation(summary = "Get all cables paged")
+    @ApiResponse(responseCode = "200", description = "Cables obtained correctly.")
+    @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
+    public abstract PagedResponse<D> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
+    );
 
     @GetMapping("/{id}")
     @Operation(summary = "Get an entity by ID")

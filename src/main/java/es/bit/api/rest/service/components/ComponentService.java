@@ -22,11 +22,11 @@ import java.util.Optional;
 @Service
 public class ComponentService extends GenericService<ComponentDTO, Component, Integer> {
     private final IComponentJpaRepository componentJPARepository;
-    private final ComponentHandlerFactory handlerFactory;
+    private final ComponentHandlerFactory<Component, ComponentDTO> handlerFactory;
 
 
     @Autowired
-    public ComponentService(IComponentJpaRepository componentJPARepository, ComponentHandlerFactory handlerFactory) {
+    public ComponentService(IComponentJpaRepository componentJPARepository, ComponentHandlerFactory<Component, ComponentDTO> handlerFactory) {
         this.componentJPARepository = componentJPARepository;
         this.handlerFactory = handlerFactory;
     }
@@ -58,8 +58,8 @@ public class ComponentService extends GenericService<ComponentDTO, Component, In
         List<ComponentDTO> result = new ArrayList<>();
 
         for (Component component : components) {
-            ComponentHandler handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
-            result.add(handler.handleComponent(component));
+            ComponentHandler<Component, ComponentDTO> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
+            result.add(handler.toDTO(component));
         }
 
         return result;

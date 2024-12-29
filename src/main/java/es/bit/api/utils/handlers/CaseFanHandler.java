@@ -1,14 +1,13 @@
 package es.bit.api.utils.handlers;
 
 import es.bit.api.persistence.model.components.CaseFan;
-import es.bit.api.persistence.model.components.Component;
 import es.bit.api.persistence.repository.jpa.components.ICaseFanJpaRepository;
-import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.rest.dto.components.CaseFanDTO;
 import es.bit.api.rest.mapper.components.CaseFanMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CaseFanHandler implements ComponentHandler {
+public class CaseFanHandler implements ComponentHandler<CaseFan, CaseFanDTO> {
     private final ICaseFanJpaRepository caseFanJpaRepository;
 
 
@@ -18,7 +17,7 @@ public class CaseFanHandler implements ComponentHandler {
 
 
     @Override
-    public ComponentDTO handleComponent(Component component) {
+    public CaseFanDTO handleComponent(CaseFan component) {
         CaseFan caseFan = caseFanJpaRepository.findById(component.getComponentId()).orElseThrow(() -> new IllegalArgumentException("Case Fan not found"));
         return CaseFanMapper.toDTO(caseFan);
     }

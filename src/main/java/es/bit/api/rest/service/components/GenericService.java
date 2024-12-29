@@ -3,31 +3,95 @@ package es.bit.api.rest.service.components;
 import es.bit.api.persistence.model.components.Component;
 import es.bit.api.persistence.model.components.attributes.Manufacturer;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
+import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.utils.handlers.ComponentHandler;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @param <D> Component DTO
  * @param <C> Component
  * @param <I> Integer
  */
-public abstract class GenericService<D, C, I extends Serializable> {
-    @Autowired
-    private IGenericJpaRepository<C, I> repository;
+public abstract class GenericService<D extends ComponentDTO, C extends Component, I extends Serializable> {
+    protected IGenericJpaRepository<C, I> repository;
+    protected final ComponentHandlerFactory<C, D> handlerFactory;
 
-    abstract public Long count();
-    abstract public Long countFiltered(Map<String, String> filters);
-    abstract public List<D> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters);
-    abstract public D findById(I id);
-    abstract public D create(D dto);
-    abstract public void update(D dto);
-    abstract public void delete(D dto);
+
+    public GenericService(ComponentHandlerFactory<C, D> handlerFactory, IGenericJpaRepository<C, I> repository) {
+        this.handlerFactory = handlerFactory;
+        this.repository = repository;
+    }
+
+
+    public Long count() {
+        return this.repository.count();
+    }
+
+    public Long countFiltered(Map<String, String> filters) {
+        return this.repository.count(getSpecification(filters));
+    }
+
+    public D findById(I id) {
+        Optional<C> component = this.repository.findById(id);
+
+        if (component.isEmpty()) {
+            return null;
+        }
+
+        ComponentHandler<C, D> handler = handlerFactory.getHandler(component.get().getComponentType().getNameIdentifier());
+
+        return handler.toDTO(component.get());
+    }
+
+    @Cacheable(value = "components", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
+    public List<D> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
+        Page<C> cpuPage = this.repository.findAll(getSpecification(filters), pageable);
+        List<D> result = new ArrayList<>();
+
+        for (C component : cpuPage.getContent()) {
+            ComponentHandler<C, D> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
+            result.add(handler.toDTO(component));
+        }
+
+        return result;
+    }
+
+    public D create(D dto) {
+        ComponentHandler<C, D> handler = handlerFactory.getHandler(dto.getComponentTypeDTO().getNameIdentifier());
+        C component = handler.toEntity(dto);
+        component = this.repository.save(component);
+
+        return handler.toDTO(component);
+    }
+
+    public void update(D dto) {
+        ComponentHandler<C, D> handler = handlerFactory.getHandler(dto.getComponentTypeDTO().getNameIdentifier());
+        C component = handler.toEntity(dto);
+
+        this.repository.save(component);
+    }
+
+    public void delete(D dto) {
+        ComponentHandler<C, D> handler = handlerFactory.getHandler(dto.getComponentTypeDTO().getNameIdentifier());
+        C component = handler.toEntity(dto);
+
+        this.repository.delete(component);
+    }
+
 
     public Specification<C> getSpecification(Map<String, String> filters) {
         return (root, query, criteriaBuilder) -> {

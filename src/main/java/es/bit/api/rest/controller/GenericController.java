@@ -1,5 +1,7 @@
 package es.bit.api.rest.controller;
 
+import es.bit.api.persistence.model.components.Component;
+import es.bit.api.rest.dto.components.ComponentDTO;
 import es.bit.api.rest.service.components.GenericService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public abstract class GenericController<D, C, I extends Serializable> {
+public abstract class GenericController<D extends ComponentDTO, C extends Component, I extends Serializable> {
     protected final GenericService<D, C, I> genericService;
 
     @Autowired

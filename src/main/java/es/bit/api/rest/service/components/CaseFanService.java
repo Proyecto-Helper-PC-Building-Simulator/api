@@ -1,84 +1,26 @@
 package es.bit.api.rest.service.components;
 
 import es.bit.api.persistence.model.components.CaseFan;
-import es.bit.api.persistence.repository.jpa.components.ICaseFanJpaRepository;
+import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.CaseFanDTO;
-import es.bit.api.rest.mapper.components.CaseFanMapper;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class CaseFanService extends GenericService<CaseFanDTO, CaseFan, Integer> {
-    private final ICaseFanJpaRepository caseFanJPARepository;
-
-
-    @Autowired
-    public CaseFanService(ICaseFanJpaRepository caseFanJPARepository) {
-        this.caseFanJPARepository = caseFanJPARepository;
+    public CaseFanService(ComponentHandlerFactory<CaseFan, CaseFanDTO> handlerFactory, IGenericJpaRepository<CaseFan, Integer> repository) {
+        super(handlerFactory, repository);
     }
 
 
-    @Override
-    public Long count() {
-        return this.caseFanJPARepository.count();
-    }
-
-    @Cacheable(value = "caseFans", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
     public Long countFiltered(Map<String, String> filters) {
-        return caseFanJPARepository.count(getSpecification(filters));
-    }
-
-    @Override
-    public CaseFanDTO findById(Integer id) {
-        Optional<CaseFan> caseFan = this.caseFanJPARepository.findById(id);
-
-        if (caseFan.isEmpty()) {
-            return null;
-        }
-
-        return CaseFanMapper.toDTO(caseFan);
-    }
-
-    @Override
-    @Cacheable(value = "caseFans", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<CaseFanDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<CaseFan> caseFanPage = this.caseFanJPARepository.findAll(getSpecification(filters), pageable);
-        return CaseFanMapper.toDTO(caseFanPage.getContent());
-    }
-
-    @Override
-    public CaseFanDTO create(CaseFanDTO caseFanDTO) {
-        CaseFan caseFan = CaseFanMapper.toBD(caseFanDTO);
-        caseFan = this.caseFanJPARepository.save(caseFan);
-
-        return CaseFanMapper.toDTO(caseFan);
-    }
-
-    @Override
-    public void update(CaseFanDTO caseFanDTO) {
-        CaseFan caseFan = CaseFanMapper.toBD(caseFanDTO);
-        this.caseFanJPARepository.save(caseFan);
-
-        CaseFanMapper.toDTO(caseFan);
-    }
-
-    @Override
-    public void delete(CaseFanDTO caseFanDTO) {
-        CaseFan caseFan = CaseFanMapper.toBD(caseFanDTO);
-        this.caseFanJPARepository.delete(caseFan);
+        return this.repository.count(getSpecification(filters));
     }
 
 

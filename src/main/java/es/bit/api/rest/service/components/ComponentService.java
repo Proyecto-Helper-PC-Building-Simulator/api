@@ -3,6 +3,7 @@ package es.bit.api.rest.service.components;
 import es.bit.api.persistence.model.components.Component;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandler;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,11 +4,11 @@ import es.bit.api.persistence.model.components.Cpu;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.CpuDTO;
 import es.bit.api.rest.service.components.CpuService;
-import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +38,7 @@ public class CpusController extends GenericController<CpuDTO, Cpu, Integer> {
            - `level`: Filter by performance level.
            """)
     @ApiResponse(responseCode = "200", description = "Cpus obtained correctly.")
-    public PagedResponse<CpuDTO> findAll(
+    public Page<CpuDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,

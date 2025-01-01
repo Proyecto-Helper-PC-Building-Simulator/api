@@ -6,6 +6,7 @@ import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import es.bit.api.persistence.model.components.enums.ChipsetBrands;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.GpuDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -21,12 +22,6 @@ import java.util.Map;
 public class GpuService extends GenericService<GpuDTO, Gpu, Integer> {
     public GpuService(ComponentHandlerFactory<Gpu, GpuDTO> handlerFactory, IGenericJpaRepository<Gpu, Integer> repository) {
         super(handlerFactory, repository);
-    }
-
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.repository.count(getSpecification(filters));
     }
 
 

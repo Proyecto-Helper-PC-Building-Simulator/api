@@ -8,6 +8,7 @@ import es.bit.api.persistence.model.components.attributes.MotherboardFormFactor;
 import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.MotherboardDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -23,12 +24,6 @@ import java.util.Map;
 public class MotherboardService extends GenericService<MotherboardDTO, Motherboard, Integer> {
     public MotherboardService(ComponentHandlerFactory<Motherboard, MotherboardDTO> handlerFactory, IGenericJpaRepository<Motherboard, Integer> repository) {
         super(handlerFactory, repository);
-    }
-
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.repository.count(getSpecification(filters));
     }
 
 

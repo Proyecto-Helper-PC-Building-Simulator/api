@@ -2,17 +2,19 @@ package es.bit.api.rest.controller;
 
 import es.bit.api.persistence.model.components.Component;
 import es.bit.api.rest.dto.components.ComponentDTO;
-import es.bit.api.rest.service.components.GenericService;
-import es.bit.api.utils.PagedResponse;
+import es.bit.api.rest.service.GenericService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 public abstract class GenericController<D extends ComponentDTO, C extends Component, I extends Serializable> {
@@ -24,18 +26,11 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
     }
 
 
-    @GetMapping("/count")
-    @Operation(summary = "Get the total number of entities")
-    public Long count() {
-        return this.genericService.count();
-    }
-
-
     @Operation(summary = "Get all entities paged")
     @ApiResponse(responseCode = "200", description = "Entities obtained correctly.")
     @ApiResponse(responseCode = "204", description = "Entities not found")
     @ApiResponse(responseCode = "404", description = "Error getting the selected page.")
-    public PagedResponse<D> findAll(
+    public Page<D> findAll(
             String componentType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
@@ -43,26 +38,17 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam Map<String, String> filters
     ) {
-        long totalElements = this.genericService.countFiltered(filters);
-        if (totalElements == 0) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No results found for the given filters.");
-        }
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        int totalPages = (int) Math.ceil((double) totalElements / size);
-        if (page >= totalPages) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page does not exist.");
-        }
-
-        List<D> content = this.genericService.findAll(componentType, page, size, sortBy, sortDir, filters);
-
-        return new PagedResponse<>(content, page, size, totalElements, totalPages);
+        return this.genericService.findAll(componentType, pageable, filters);
     }
 
     @GetMapping("")
     @Operation(summary = "Get all cables paged")
     @ApiResponse(responseCode = "200", description = "Cables obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public abstract PagedResponse<D> findAll(
+    public abstract Page<D> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,

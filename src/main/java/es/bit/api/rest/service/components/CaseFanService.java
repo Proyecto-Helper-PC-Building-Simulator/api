@@ -3,6 +3,7 @@ package es.bit.api.rest.service.components;
 import es.bit.api.persistence.model.components.CaseFan;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.CaseFanDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,11 +17,6 @@ import java.util.Map;
 public class CaseFanService extends GenericService<CaseFanDTO, CaseFan, Integer> {
     public CaseFanService(ComponentHandlerFactory<CaseFan, CaseFanDTO> handlerFactory, IGenericJpaRepository<CaseFan, Integer> repository) {
         super(handlerFactory, repository);
-    }
-
-
-    public Long countFiltered(Map<String, String> filters) {
-        return this.repository.count(getSpecification(filters));
     }
 
 

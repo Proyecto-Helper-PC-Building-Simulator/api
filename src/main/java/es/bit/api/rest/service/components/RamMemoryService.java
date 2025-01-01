@@ -3,6 +3,7 @@ package es.bit.api.rest.service.components;
 import es.bit.api.persistence.model.components.RamMemory;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.RamMemoryDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,12 +17,6 @@ import java.util.Map;
 public class RamMemoryService extends GenericService<RamMemoryDTO, RamMemory, Integer> {
     public RamMemoryService(ComponentHandlerFactory<RamMemory, RamMemoryDTO> handlerFactory, IGenericJpaRepository<RamMemory, Integer> repository) {
         super(handlerFactory, repository);
-    }
-
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.repository.count(getSpecification(filters));
     }
 
 

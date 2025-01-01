@@ -4,6 +4,7 @@ import es.bit.api.persistence.model.components.Storage;
 import es.bit.api.persistence.model.components.enums.StorageTypes;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.StorageDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;

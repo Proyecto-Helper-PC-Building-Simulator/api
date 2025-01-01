@@ -1,4 +1,4 @@
-package es.bit.api.rest.service.components;
+package es.bit.api.rest.service;
 
 import es.bit.api.persistence.model.components.Component;
 import es.bit.api.persistence.model.components.attributes.Manufacturer;
@@ -9,9 +9,7 @@ import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.*;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.io.Serializable;
@@ -36,14 +34,6 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
     }
 
 
-    public Long count() {
-        return this.repository.count();
-    }
-
-    public Long countFiltered(Map<String, String> filters) {
-        return this.repository.count(getSpecification(filters));
-    }
-
     public D findById(I id) {
         Optional<C> component = this.repository.findById(id);
 
@@ -56,19 +46,12 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
         return handler.toDTO(component.get());
     }
 
-    @Cacheable(value = "components", key = "#componentType + '-' + #page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<D> findAll(String componentType, int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        System.out.println(componentType);
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<C> cpuPage = this.repository.findAll(getSpecification(filters), pageable);
-        List<D> result = new ArrayList<>();
-
-        for (C component : cpuPage.getContent()) {
+    @Cacheable(value = "components", key = "#componentType + '-' + #pageable + '-' + #filters")
+    public Page<D> findAll(String componentType, Pageable pageable, Map<String, String> filters) {
+        return this.repository.findAll(getSpecification(filters), pageable).map(component -> {
             ComponentHandler<C, D> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
-            result.add(handler.toDTO(component));
-        }
-
-        return result;
+            return handler.toDTO(component);
+        });
     }
 
     public D create(D dto) {

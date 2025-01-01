@@ -4,11 +4,11 @@ import es.bit.api.persistence.model.components.RamMemory;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.RamMemoryDTO;
 import es.bit.api.rest.service.components.RamMemoryService;
-import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +29,7 @@ public class RamMemoriesController extends GenericController<RamMemoryDTO, RamMe
     @Operation(summary = "Get all ram memories paged")
     @ApiResponse(responseCode = "200", description = "Ram memories obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<RamMemoryDTO> findAll(
+    public Page<RamMemoryDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,

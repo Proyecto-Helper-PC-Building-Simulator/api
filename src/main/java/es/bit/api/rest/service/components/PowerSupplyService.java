@@ -5,6 +5,7 @@ import es.bit.api.persistence.model.components.attributes.PowerSupplyFormFactor;
 import es.bit.api.persistence.model.components.enums.PowerSupplyTypes;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.PowerSupplyDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -20,12 +21,6 @@ import java.util.Map;
 public class PowerSupplyService extends GenericService<PowerSupplyDTO, PowerSupply, Integer> {
     public PowerSupplyService(ComponentHandlerFactory<PowerSupply, PowerSupplyDTO> handlerFactory, IGenericJpaRepository<PowerSupply, Integer> repository) {
         super(handlerFactory, repository);
-    }
-
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.repository.count(getSpecification(filters));
     }
 
 

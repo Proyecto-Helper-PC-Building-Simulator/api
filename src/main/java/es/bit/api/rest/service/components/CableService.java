@@ -5,6 +5,7 @@ import es.bit.api.persistence.model.components.attributes.CableColor;
 import es.bit.api.persistence.model.components.attributes.CableType;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.CableDTO;
+import es.bit.api.rest.service.GenericService;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;

@@ -11,8 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -60,14 +60,10 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
     @Operation(summary = "Get an entity by ID")
     @ApiResponse(responseCode = "200", description = "Entity found.")
     @ApiResponse(responseCode = "404", description = "Entity not found.")
-    public D findById(@PathVariable I id) {
-        D entity = this.genericService.findById(id);
-
-        if (entity == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
-        }
-
-        return entity;
+    public ResponseEntity<D> findById(@PathVariable I id) {
+        return this.genericService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("")
@@ -90,11 +86,13 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete an entity by ID")
     @ApiResponse(responseCode = "204", description = "Entity deleted correctly.")
-    public void delete(@PathVariable I id) {
-        D entity = this.genericService.findById(id);
-        if (entity == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
+    public ResponseEntity<Void> delete(@PathVariable I id) {
+        if (genericService.findById(id).isPresent()) {
+            genericService.delete(id);
+
+            return ResponseEntity.noContent().build();
         }
-        this.genericService.delete(entity);
+
+        return ResponseEntity.notFound().build();
     }
 }

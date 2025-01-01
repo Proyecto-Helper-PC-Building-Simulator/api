@@ -34,16 +34,13 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
     }
 
 
-    public D findById(I id) {
-        Optional<C> component = this.repository.findById(id);
+    public Optional<D> findById(I id) {
+        return this.repository.findById(id)
+                .map(component -> {
+                    ComponentHandler<C, D> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
 
-        if (component.isEmpty()) {
-            return null;
-        }
-
-        ComponentHandler<C, D> handler = handlerFactory.getHandler(component.get().getComponentType().getNameIdentifier());
-
-        return handler.toDTO(component.get());
+                    return handler.toDTO(component);
+                });
     }
 
     @Cacheable(value = "components", key = "#componentType + '-' + #pageable + '-' + #filters")
@@ -69,11 +66,8 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
         this.repository.save(component);
     }
 
-    public void delete(D dto) {
-        ComponentHandler<C, D> handler = handlerFactory.getHandler(dto.getComponentTypeDTO().getNameIdentifier());
-        C component = handler.toEntity(dto);
-
-        this.repository.delete(component);
+    public void delete(I id) {
+        this.repository.deleteById(id);
     }
 
 

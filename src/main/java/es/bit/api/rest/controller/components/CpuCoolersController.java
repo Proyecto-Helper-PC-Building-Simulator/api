@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.CpuCooler;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.CpuCoolerDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.CpuCoolerService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/cpu_coolers")
 @Tag(name = "Cpu Coolers Controller", description = "Related operations with cpu coolers")
 public class CpuCoolersController extends GenericController<CpuCoolerDTO, CpuCooler, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public CpuCoolersController(CpuCoolerService cpuCoolerService, ComponentTypeService componentTypeService) {
+    public CpuCoolersController(CpuCoolerService cpuCoolerService) {
         super(cpuCoolerService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -65,8 +59,6 @@ public class CpuCoolersController extends GenericController<CpuCoolerDTO, CpuCoo
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Cpu cooler name is duplicated.")
     public CpuCoolerDTO create(@RequestBody CpuCoolerDTO cpuCooler) {
-        validateComponentType(cpuCooler);
-
         return super.create(cpuCooler);
     }
 
@@ -79,8 +71,6 @@ public class CpuCoolersController extends GenericController<CpuCoolerDTO, CpuCoo
         if (id != cpuCooler.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(cpuCooler);
 
         super.update(id, cpuCooler);
     }
@@ -96,15 +86,5 @@ public class CpuCoolersController extends GenericController<CpuCoolerDTO, CpuCoo
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(CpuCoolerDTO cpuCooler) {
-        ComponentTypeDTO componentType = componentTypeService.findById(cpuCooler.getComponentTypeDTO().getId());
-
-        if (!"/cpu_coolers".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

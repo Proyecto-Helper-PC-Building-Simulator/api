@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.Case;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.CaseDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.CaseService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/cases")
 @Tag(name = "Cases Controller", description = "Related operations with cases")
 public class CasesController extends GenericController<CaseDTO, Case, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public CasesController(CaseService caseService, ComponentTypeService componentTypeService) {
+    public CasesController(CaseService caseService) {
         super(caseService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -65,8 +59,6 @@ public class CasesController extends GenericController<CaseDTO, Case, Integer> {
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Case name is duplicated.")
     public CaseDTO create(@RequestBody CaseDTO caseObject) {
-        validateComponentType(caseObject);
-
         return super.create(caseObject);
     }
 
@@ -79,8 +71,6 @@ public class CasesController extends GenericController<CaseDTO, Case, Integer> {
         if (id != caseObject.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(caseObject);
 
         super.update(id, caseObject);
     }
@@ -99,15 +89,5 @@ public class CasesController extends GenericController<CaseDTO, Case, Integer> {
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(CaseDTO caseObject) {
-        ComponentTypeDTO componentType = componentTypeService.findById(caseObject.getComponentTypeDTO().getId());
-
-        if (!"/cases".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

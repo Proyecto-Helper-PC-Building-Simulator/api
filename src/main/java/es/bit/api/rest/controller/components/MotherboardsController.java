@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.Motherboard;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.MotherboardDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.MotherboardService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/motherboards")
 @Tag(name = "Motherboards Controller", description = "Related operations with motherboards")
 public class MotherboardsController extends GenericController<MotherboardDTO, Motherboard, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public MotherboardsController(MotherboardService motherboardService, ComponentTypeService componentTypeService) {
+    public MotherboardsController(MotherboardService motherboardService) {
         super(motherboardService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -65,8 +59,6 @@ public class MotherboardsController extends GenericController<MotherboardDTO, Mo
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Motherboard name is duplicated.")
     public MotherboardDTO create(@RequestBody MotherboardDTO motherboard) {
-        validateComponentType(motherboard);
-
         return super.create(motherboard);
     }
 
@@ -79,8 +71,6 @@ public class MotherboardsController extends GenericController<MotherboardDTO, Mo
         if (id != motherboard.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(motherboard);
 
         super.update(id, motherboard);
     }
@@ -96,15 +86,5 @@ public class MotherboardsController extends GenericController<MotherboardDTO, Mo
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(MotherboardDTO motherboard) {
-        ComponentTypeDTO componentType = componentTypeService.findById(motherboard.getComponentTypeDTO().getId());
-
-        if (!"/motherboards".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

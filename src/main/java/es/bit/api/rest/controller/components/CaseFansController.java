@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.CaseFan;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.CaseFanDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.CaseFanService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,12 +19,9 @@ import java.util.Map;
 @RequestMapping("/case_fans")
 @Tag(name = "Case Fans Controller", description = "Related operations with case fans")
 public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, Integer> {
-    private final ComponentTypeService componentTypeService;
-
     @Autowired
-    public CaseFansController(CaseFanService caseFanService, ComponentTypeService componentTypeService) {
+    public CaseFansController(CaseFanService caseFanService) {
         super(caseFanService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -69,8 +64,6 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Case fan name is duplicated.")
     public CaseFanDTO create(@RequestBody CaseFanDTO caseFan) {
-        validateComponentType(caseFan);
-
         return super.create(caseFan);
     }
 
@@ -83,8 +76,6 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
         if (id != caseFan.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(caseFan);
 
         super.update(id, caseFan);
     }
@@ -100,15 +91,5 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(CaseFanDTO caseFan) {
-        ComponentTypeDTO componentType = componentTypeService.findById(caseFan.getComponentTypeDTO().getId());
-
-        if (!"/case_fans".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

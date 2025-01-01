@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.Gpu;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.GpuDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.GpuService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/gpus")
 @Tag(name = "Gpus Controller", description = "Related operations with gpus")
 public class GpusController extends GenericController<GpuDTO, Gpu, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public GpusController(GpuService gpuService, ComponentTypeService componentTypeService) {
+    public GpusController(GpuService gpuService) {
         super(gpuService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -65,8 +59,6 @@ public class GpusController extends GenericController<GpuDTO, Gpu, Integer> {
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Gpu name is duplicated.")
     public GpuDTO create(@RequestBody GpuDTO gpu) {
-        validateComponentType(gpu);
-
         return super.create(gpu);
     }
 
@@ -79,8 +71,6 @@ public class GpusController extends GenericController<GpuDTO, Gpu, Integer> {
         if (id != gpu.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(gpu);
 
         super.update(id, gpu);
     }
@@ -96,15 +86,5 @@ public class GpusController extends GenericController<GpuDTO, Gpu, Integer> {
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(GpuDTO gpu) {
-        ComponentTypeDTO componentType = componentTypeService.findById(gpu.getComponentTypeDTO().getId());
-
-        if (!"/gpus".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

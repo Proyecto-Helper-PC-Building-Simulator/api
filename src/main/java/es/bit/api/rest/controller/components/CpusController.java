@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.Cpu;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.CpuDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.CpuService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/cpus")
 @Tag(name = "Cpus Controller", description = "Related operations with cpus")
 public class CpusController extends GenericController<CpuDTO, Cpu, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public CpusController(CpuService cpuService, ComponentTypeService componentTypeService) {
+    public CpusController(CpuService cpuService) {
         super(cpuService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -74,8 +68,6 @@ public class CpusController extends GenericController<CpuDTO, Cpu, Integer> {
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Cpu name is duplicated.")
     public CpuDTO create(@RequestBody CpuDTO cpu) {
-        validateComponentType(cpu);
-
         return super.create(cpu);
     }
 
@@ -88,8 +80,6 @@ public class CpusController extends GenericController<CpuDTO, Cpu, Integer> {
         if (id != cpu.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(cpu);
 
         super.update(id, cpu);
     }
@@ -105,15 +95,5 @@ public class CpusController extends GenericController<CpuDTO, Cpu, Integer> {
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(CpuDTO cpu) {
-        ComponentTypeDTO componentType = componentTypeService.findById(cpu.getComponentTypeDTO().getId());
-
-        if (!"/cpus".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

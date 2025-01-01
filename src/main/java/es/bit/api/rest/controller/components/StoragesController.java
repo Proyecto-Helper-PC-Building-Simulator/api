@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.Storage;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.StorageDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.StorageService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/storages")
 @Tag(name = "Storages Controller", description = "Related operations with storages")
 public class StoragesController extends GenericController<StorageDTO, Storage, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public StoragesController(StorageService storageService, ComponentTypeService componentTypeService) {
+    public StoragesController(StorageService storageService) {
         super(storageService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -65,8 +59,6 @@ public class StoragesController extends GenericController<StorageDTO, Storage, I
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Storage name is duplicated.")
     public StorageDTO create(@RequestBody StorageDTO storage) {
-        validateComponentType(storage);
-
         return super.create(storage);
     }
 
@@ -79,8 +71,6 @@ public class StoragesController extends GenericController<StorageDTO, Storage, I
         if (id != storage.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(storage);
 
         super.update(id, storage);
     }
@@ -96,15 +86,5 @@ public class StoragesController extends GenericController<StorageDTO, Storage, I
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(StorageDTO storage) {
-        ComponentTypeDTO componentType = componentTypeService.findById(storage.getComponentTypeDTO().getId());
-
-        if (!"/storages".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

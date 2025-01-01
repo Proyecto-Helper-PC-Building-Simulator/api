@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.PowerSupply;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.PowerSupplyDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.PowerSupplyService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/power_supplies")
 @Tag(name = "Power Supplies Controller", description = "Related operations with power supplies")
 public class PowerSuppliesController extends GenericController<PowerSupplyDTO, PowerSupply, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public PowerSuppliesController(PowerSupplyService powerSupplyService, ComponentTypeService componentTypeService) {
+    public PowerSuppliesController(PowerSupplyService powerSupplyService) {
         super(powerSupplyService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -65,8 +59,6 @@ public class PowerSuppliesController extends GenericController<PowerSupplyDTO, P
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Power supply name is duplicated.")
     public PowerSupplyDTO create(@RequestBody PowerSupplyDTO powerSupply) {
-        validateComponentType(powerSupply);
-
         return super.create(powerSupply);
     }
 
@@ -79,8 +71,6 @@ public class PowerSuppliesController extends GenericController<PowerSupplyDTO, P
         if (id != powerSupply.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(powerSupply);
 
         super.update(id, powerSupply);
     }
@@ -96,15 +86,5 @@ public class PowerSuppliesController extends GenericController<PowerSupplyDTO, P
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(PowerSupplyDTO powerSupply) {
-        ComponentTypeDTO componentType = componentTypeService.findById(powerSupply.getComponentTypeDTO().getId());
-
-        if (!"/power_supplies".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

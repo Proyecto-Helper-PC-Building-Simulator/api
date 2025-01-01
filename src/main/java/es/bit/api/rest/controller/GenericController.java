@@ -23,6 +23,7 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
         this.genericService = genericService;
     }
 
+
     @GetMapping("/count")
     @Operation(summary = "Get the total number of entities")
     public Long count() {
@@ -110,7 +111,4 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
         }
         this.genericService.delete(entity);
     }
-
-
-    protected void validateComponentType(D dto) {}
 }

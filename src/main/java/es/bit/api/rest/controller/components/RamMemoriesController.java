@@ -3,9 +3,7 @@ package es.bit.api.rest.controller.components;
 import es.bit.api.persistence.model.components.RamMemory;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.RamMemoryDTO;
-import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.service.components.RamMemoryService;
-import es.bit.api.rest.service.components.attributes.ComponentTypeService;
 import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +19,9 @@ import java.util.Map;
 @RequestMapping("/ram_memories")
 @Tag(name = "Ram Memories Controller", description = "Related operations with ram memories")
 public class RamMemoriesController extends GenericController<RamMemoryDTO, RamMemory, Integer> {
-    private final ComponentTypeService componentTypeService;
-
-
     @Autowired
-    public RamMemoriesController(RamMemoryService ramMemoryService, ComponentTypeService componentTypeService) {
+    public RamMemoriesController(RamMemoryService ramMemoryService) {
         super(ramMemoryService);
-        this.componentTypeService = componentTypeService;
     }
 
 
@@ -65,8 +59,6 @@ public class RamMemoriesController extends GenericController<RamMemoryDTO, RamMe
     @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
     @ApiResponse(responseCode = "500", description = "Ram memory name is duplicated.")
     public RamMemoryDTO create(@RequestBody RamMemoryDTO ramMemory) {
-        validateComponentType(ramMemory);
-
         return super.create(ramMemory);
     }
 
@@ -79,8 +71,6 @@ public class RamMemoriesController extends GenericController<RamMemoryDTO, RamMe
         if (id != ramMemory.getComponentId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
         }
-
-        validateComponentType(ramMemory);
 
         super.update(id, ramMemory);
     }
@@ -96,15 +86,5 @@ public class RamMemoriesController extends GenericController<RamMemoryDTO, RamMe
         }
 
         super.delete(id);
-    }
-
-
-    @Override
-    protected void validateComponentType(RamMemoryDTO ramMemory) {
-        ComponentTypeDTO componentType = componentTypeService.findById(ramMemory.getComponentTypeDTO().getId());
-
-        if (!"/ram_memories".equals(componentType.getApiName())) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
     }
 }

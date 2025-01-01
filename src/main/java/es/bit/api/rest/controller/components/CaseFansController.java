@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -25,11 +25,6 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
     }
 
 
-    @Operation(summary = "Get the total number of case fans")
-    public Long count() {
-        return super.count();
-    }
-
     @Override
     @Operation(summary = "Get all case fans paged")
     @ApiResponse(responseCode = "200", description = "CaseFans obtained correctly.")
@@ -42,54 +37,5 @@ public class CaseFansController extends GenericController<CaseFanDTO, CaseFan, I
             @RequestParam Map<String, String> filters
     ) {
         return super.findAll("caseFans", page, size, sortBy, sortDir, filters);
-    }
-
-    @Operation(summary = "Get a case fan by ID")
-    @ApiResponse(responseCode = "200", description = "Case fan found.")
-    @ApiResponse(responseCode = "404", description = "Case fan not found.")
-    public CaseFanDTO findById(@PathVariable int id) {
-        CaseFanDTO caseFan = super.findById(id);
-
-        if (caseFan == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
-        }
-
-        return caseFan;
-    }
-
-    @PostMapping("")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    @Operation(summary = "Create a new case fan")
-    @ApiResponse(responseCode = "201", description = "Case fan created.")
-    @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Case fan name is duplicated.")
-    public CaseFanDTO create(@RequestBody CaseFanDTO caseFan) {
-        return super.create(caseFan);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
-    @Operation(summary = "Update a case fan by ID")
-    @ApiResponse(responseCode = "204", description = "Case fan updated correctly.")
-    @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Case fan name is duplicated.")
-    public void update(@PathVariable int id, @RequestBody CaseFanDTO caseFan) {
-        if (id != caseFan.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
-
-        super.update(id, caseFan);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
-    @Operation(summary = "Delete a case fan by ID")
-    @ApiResponse(responseCode = "204", description = "Case fan deleted correctly.")
-    @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Case fan cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody CaseFanDTO caseFan) {
-        if (id != caseFan.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
-        }
-
-        super.delete(id);
     }
 }

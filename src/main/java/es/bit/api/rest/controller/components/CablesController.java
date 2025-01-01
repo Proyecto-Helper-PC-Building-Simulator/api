@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -26,12 +26,6 @@ public class CablesController extends GenericController<CableDTO, Cable, Integer
 
 
     @Override
-    @Operation(summary = "Get the total number of cables")
-    public Long count() {
-        return super.count();
-    }
-
-    @Override
     @Operation(summary = "Get all cables paged")
     @ApiResponse(responseCode = "200", description = "Cables obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
@@ -43,52 +37,5 @@ public class CablesController extends GenericController<CableDTO, Cable, Integer
             @RequestParam Map<String, String> filters
     ) {
         return super.findAll("cables", page, size, sortBy, sortDir, filters);
-    }
-
-    @Operation(summary = "Get a cable by ID")
-    @ApiResponse(responseCode = "200", description = "Cable found.")
-    @ApiResponse(responseCode = "404", description = "Cable not found.")
-    public CableDTO findById(@PathVariable int id) {
-        return super.findById(id);
-    }
-
-    @Override
-    @PostMapping("")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    @Operation(summary = "Create a new cable")
-    @ApiResponse(responseCode = "201", description = "Cable created.")
-    @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Cable name is duplicated.")
-    public CableDTO create(@RequestBody CableDTO cable) {
-        return super.create(cable);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
-    @Operation(summary = "Update a cable by ID")
-    @ApiResponse(responseCode = "204", description = "Cable updated correctly.")
-    @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Cable name is duplicated.")
-    public void update(@PathVariable int id, @RequestBody CableDTO cable) {
-        if (id != cable.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
-
-        super.update(id, cable);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
-    @Operation(summary = "Delete a cable by ID")
-    @ApiResponse(responseCode = "204", description = "Cable deleted correctly.")
-    @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Cable cannot be deleted due to foreign keys.")
-    public void delete(
-            @PathVariable int id,
-            @RequestBody CableDTO cable
-    ) {
-        if (id != cable.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
-        }
-
-        super.delete(id);
     }
 }

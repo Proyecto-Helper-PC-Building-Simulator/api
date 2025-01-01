@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -26,12 +26,6 @@ public class MotherboardsController extends GenericController<MotherboardDTO, Mo
 
 
     @Override
-    @Operation(summary = "Get the total number of motherboards")
-    public Long count() {
-        return super.count();
-    }
-
-    @Override
     @Operation(summary = "Get all motherboards paged")
     @ApiResponse(responseCode = "200", description = "Motherboards obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
@@ -43,48 +37,5 @@ public class MotherboardsController extends GenericController<MotherboardDTO, Mo
             @RequestParam Map<String, String> filters
     ) {
         return super.findAll("motherboards", page, size, sortBy, sortDir, filters);
-    }
-
-    @Operation(summary = "Get a motherboard by ID")
-    @ApiResponse(responseCode = "200", description = "Motherboard found.")
-    @ApiResponse(responseCode = "404", description = "Motherboard not found.")
-    public MotherboardDTO findById(@PathVariable int id) {
-        return super.findById(id);
-    }
-
-    @Override
-    @ResponseStatus(code = HttpStatus.CREATED)
-    @Operation(summary = "Create a new motherboard")
-    @ApiResponse(responseCode = "201", description = "Motherboard created.")
-    @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Motherboard name is duplicated.")
-    public MotherboardDTO create(@RequestBody MotherboardDTO motherboard) {
-        return super.create(motherboard);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
-    @Operation(summary = "Update a motherboard by ID")
-    @ApiResponse(responseCode = "204", description = "Motherboard updated correctly.")
-    @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Motherboard name is duplicated.")
-    public void update(@PathVariable int id, @RequestBody MotherboardDTO motherboard) {
-        if (id != motherboard.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
-
-        super.update(id, motherboard);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
-    @Operation(summary = "Delete a motherboard by ID")
-    @ApiResponse(responseCode = "204", description = "Motherboard deleted correctly.")
-    @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Motherboard cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody MotherboardDTO motherboard) {
-        if (id != motherboard.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
-        }
-
-        super.delete(id);
     }
 }

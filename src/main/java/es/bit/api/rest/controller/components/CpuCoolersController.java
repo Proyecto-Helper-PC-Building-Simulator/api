@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -26,12 +26,6 @@ public class CpuCoolersController extends GenericController<CpuCoolerDTO, CpuCoo
 
 
     @Override
-    @Operation(summary = "Get the total number of cpu coolers")
-    public Long count() {
-        return super.count();
-    }
-
-    @Override
     @Operation(summary = "Get all cpu coolers paged")
     @ApiResponse(responseCode = "200", description = "CpuCoolers obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
@@ -43,48 +37,5 @@ public class CpuCoolersController extends GenericController<CpuCoolerDTO, CpuCoo
             @RequestParam Map<String, String> filters
     ) {
         return super.findAll("cpuCoolers", page, size, sortBy, sortDir, filters);
-    }
-
-    @Operation(summary = "Get a cpu cooler by ID")
-    @ApiResponse(responseCode = "200", description = "Cpu cooler found.")
-    @ApiResponse(responseCode = "404", description = "Cpu cooler not found.")
-    public CpuCoolerDTO findById(@PathVariable int id) {
-        return super.findById(id);
-    }
-
-    @Override
-    @ResponseStatus(code = HttpStatus.CREATED)
-    @Operation(summary = "Create a new cpu cooler")
-    @ApiResponse(responseCode = "201", description = "Cpu cooler created.")
-    @ApiResponse(responseCode = "412", description = "Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Cpu cooler name is duplicated.")
-    public CpuCoolerDTO create(@RequestBody CpuCoolerDTO cpuCooler) {
-        return super.create(cpuCooler);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
-    @Operation(summary = "Update a cpu cooler by ID")
-    @ApiResponse(responseCode = "204", description = "Cpu cooler updated correctly.")
-    @ApiResponse(responseCode = "412", description = "Component ID or Component Type ID not valid.")
-    @ApiResponse(responseCode = "500", description = "Cpu cooler name is duplicated.")
-    public void update(@PathVariable int id, @RequestBody CpuCoolerDTO cpuCooler) {
-        if (id != cpuCooler.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
-
-        super.update(id, cpuCooler);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
-    @Operation(summary = "Delete a cpu cooler by ID")
-    @ApiResponse(responseCode = "204", description = "Cpu cooler deleted correctly.")
-    @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Cpu cooler cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody CpuCoolerDTO cpuCooler) {
-        if (id != cpuCooler.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
-        }
-
-        super.delete(id);
     }
 }

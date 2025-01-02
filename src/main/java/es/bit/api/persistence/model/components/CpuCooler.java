@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.persistence.model.components.attributes.CpuSocket;
 import es.bit.api.persistence.model.components.enums.CoolerTypes;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "cpu_coolers")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -26,60 +30,4 @@ public class CpuCooler extends Component {
             inverseJoinColumns = @JoinColumn(name = "cpu_socket_id")
     )
     private List<CpuSocket> cpuSockets = new ArrayList<>();
-
-
-    public CpuCooler() {
-    }
-
-
-    public Float getAirFlow() {
-        return airFlow;
-    }
-
-    public void setAirFlow(Float air_flow) {
-        this.airFlow = air_flow;
-    }
-
-    public Integer getHeight() {
-        return height;
-    }
-
-    public void setHeight(Integer height) {
-        this.height = height;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public CoolerTypes getType() {
-        return type;
-    }
-
-    public void setType(CoolerTypes type) {
-        this.type = type;
-    }
-
-    public List<CpuSocket> getCpuSockets() {
-        return cpuSockets;
-    }
-
-    public void setCpuSockets(List<CpuSocket> cpuSockets) {
-        this.cpuSockets = cpuSockets;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

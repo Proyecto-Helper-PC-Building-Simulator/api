@@ -5,10 +5,14 @@ import es.bit.api.rest.dto.components.attributes.CaseFanSizeDTO;
 import es.bit.api.rest.dto.components.attributes.CaseSizeDTO;
 import es.bit.api.rest.dto.components.attributes.MotherboardFormFactorDTO;
 import es.bit.api.rest.dto.components.attributes.PowerSupplyFormFactorDTO;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CaseDTO extends ComponentDTO {
     private Integer maxPsuLength;
@@ -18,76 +22,4 @@ public class CaseDTO extends ComponentDTO {
     private CaseFanSizeDTO caseFanSize;
     private List<MotherboardFormFactorDTO> motherboardFormFactors = new ArrayList<>();
     private List<PowerSupplyFormFactorDTO> powerSupplyFormFactors = new ArrayList<>();
-
-
-    public CaseDTO() {
-    }
-
-
-    public Integer getMaxPsuLength() {
-        return maxPsuLength;
-    }
-
-    public void setMaxPsuLength(Integer maxPsuLength) {
-        this.maxPsuLength = maxPsuLength;
-    }
-
-    public Integer getMaxGpuLength() {
-        return maxGpuLength;
-    }
-
-    public void setMaxGpuLength(Integer maxGpuLength) {
-        this.maxGpuLength = maxGpuLength;
-    }
-
-    public Integer getMaxCpuFanHeight() {
-        return maxCpuFanHeight;
-    }
-
-    public void setMaxCpuFanHeight(Integer maxCpuFanHeight) {
-        this.maxCpuFanHeight = maxCpuFanHeight;
-    }
-
-    public CaseSizeDTO getCaseSize() {
-        return caseSize;
-    }
-
-    public void setCaseSize(CaseSizeDTO caseSize) {
-        this.caseSize = caseSize;
-    }
-
-    public CaseFanSizeDTO getCaseFanSize() {
-        return caseFanSize;
-    }
-
-    public void setCaseFanSize(CaseFanSizeDTO caseFanSize) {
-        this.caseFanSize = caseFanSize;
-    }
-
-    public List<MotherboardFormFactorDTO> getMotherboardFormFactors() {
-        return motherboardFormFactors;
-    }
-
-    public void setMotherboardFormFactors(List<MotherboardFormFactorDTO> motherboardFormFactors) {
-        this.motherboardFormFactors = motherboardFormFactors;
-    }
-
-    public List<PowerSupplyFormFactorDTO> getPowerSupplyFormFactors() {
-        return powerSupplyFormFactors;
-    }
-
-    public void setPowerSupplyFormFactors(List<PowerSupplyFormFactorDTO> powerSupplyFormFactors) {
-        this.powerSupplyFormFactors = powerSupplyFormFactors;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

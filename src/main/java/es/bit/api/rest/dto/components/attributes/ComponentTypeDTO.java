@@ -8,8 +8,4 @@ import lombok.Setter;
 public class ComponentTypeDTO extends GenericAttributeDTO {
     private String apiName;
     private String nameIdentifier;
-
-
-    public ComponentTypeDTO() {}
-
 }

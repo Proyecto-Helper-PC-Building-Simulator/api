@@ -6,5 +6,4 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "motherboard_chipsets")
 public class MotherboardChipset extends GenericAttribute {
-    public MotherboardChipset() {}
 }

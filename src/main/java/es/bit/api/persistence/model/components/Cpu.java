@@ -5,13 +5,11 @@ import es.bit.api.persistence.model.components.attributes.CpuSerie;
 import es.bit.api.persistence.model.components.attributes.CpuSocket;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Setter
 @Getter
-@NoArgsConstructor
+@Entity
 @Table(name = "cpus")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Cpu extends Component {

@@ -5,6 +5,7 @@ import es.bit.api.rest.dto.components.ComponentDTO;
 import es.bit.api.rest.service.GenericService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -70,16 +71,22 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new entity")
     @ApiResponse(responseCode = "201", description = "Entity created.")
-    public D create(@RequestBody D dto) {
-        return this.genericService.create(dto);
+    public ResponseEntity<D> create(@RequestBody D dto) {
+        return ResponseEntity.ok(this.genericService.save(dto));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update an entity by ID")
     @ApiResponse(responseCode = "204", description = "Entity updated correctly.")
-    public void update(@PathVariable I id, @RequestBody D dto) {
-        this.genericService.update(dto);
+    public ResponseEntity<D> update(@PathVariable I id, @RequestBody D dto) {
+        try {
+            D updatedDto = this.genericService.update(id, dto);
+
+            return ResponseEntity.ok(updatedDto);
+        } catch (EntityNotFoundException exception) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

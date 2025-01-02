@@ -6,6 +6,7 @@ import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.ComponentDTO;
 import es.bit.api.utils.handlers.ComponentHandler;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -51,19 +52,17 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
         });
     }
 
-    public D create(D dto) {
+    public D save(D dto) {
         ComponentHandler<C, D> handler = handlerFactory.getHandler(dto.getComponentTypeDTO().getNameIdentifier());
         C component = handler.toEntity(dto);
-        component = this.repository.save(component);
 
-        return handler.toDTO(component);
+        return handler.toDTO(this.repository.save(component));
     }
 
-    public void update(D dto) {
-        ComponentHandler<C, D> handler = handlerFactory.getHandler(dto.getComponentTypeDTO().getNameIdentifier());
-        C component = handler.toEntity(dto);
-
-        this.repository.save(component);
+    public D update(I id, D dto) {
+        return repository.findById(id)
+                .map(componentExistent -> this.save(dto))
+                .orElseThrow(() -> new EntityNotFoundException("Component not found with ID: " + id));
     }
 
     public void delete(I id) {

@@ -4,13 +4,16 @@ import es.bit.api.persistence.model.components.Component;
 import es.bit.api.rest.controller.GenericController;
 import es.bit.api.rest.dto.components.ComponentDTO;
 import es.bit.api.rest.service.components.ComponentService;
-import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -31,23 +34,17 @@ public class ComponentsController extends GenericController<ComponentDTO, Compon
 
 
     @Override
-    @Operation(summary = "Get the total number of components")
-    public Long count() {
-        return super.count();
-    }
-
-    @Override
     @Operation(summary = "Get all components paged")
     @ApiResponse(responseCode = "200", description = "Components obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public PagedResponse<ComponentDTO> findAll(
+    public Page<ComponentDTO> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(defaultValue = "") Map<String, String> filters
     ) {
-        return super.findAll(page, size, sortBy, sortDir, filters);
+        return super.findAll("components", page, size, sortBy, sortDir, filters);
     }
 
     @GetMapping("/multiple")
@@ -62,47 +59,5 @@ public class ComponentsController extends GenericController<ComponentDTO, Compon
         }
 
         return components;
-    }
-
-    @Operation(summary = "Get a component by ID")
-    @ApiResponse(responseCode = "200", description = "Component found.")
-    @ApiResponse(responseCode = "404", description = "Component not found.")
-    public ComponentDTO findById(@PathVariable int id) {
-        return super.findById(id);
-    }
-
-    @Override
-    @ResponseStatus(code = HttpStatus.CREATED)
-    @Operation(summary = "Create a new component")
-    @ApiResponse(responseCode = "201", description = "Component created.")
-    @ApiResponse(responseCode = "500", description = "Component name is duplicated.")
-    public ComponentDTO create(@RequestBody ComponentDTO component) {
-        return super.create(component);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
-    @Operation(summary = "Update a component by ID")
-    @ApiResponse(responseCode = "204", description = "Component updated correctly.")
-    @ApiResponse(responseCode = "412", description = "Error in update query.")
-    @ApiResponse(responseCode = "500", description = "Component name is duplicated.")
-    public void update(@PathVariable int id, @RequestBody ComponentDTO component) {
-        if (id != component.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in update query.");
-        }
-
-        super.update(id, component);
-    }
-
-    @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
-    @Operation(summary = "Delete a component by ID")
-    @ApiResponse(responseCode = "204", description = "Component deleted correctly.")
-    @ApiResponse(responseCode = "412", description = "Error in delete query.")
-    @ApiResponse(responseCode = "500", description = "Component cannot be deleted due to foreign keys.")
-    public void delete(@PathVariable int id, @RequestBody ComponentDTO component) {
-        if (id != component.getComponentId()) {
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Error in delete query.");
-        }
-
-        super.delete(id);
     }
 }

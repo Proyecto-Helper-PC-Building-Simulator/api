@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.persistence.model.components.attributes.CableColor;
 import es.bit.api.persistence.model.components.attributes.CableType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "cables")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,36 +27,4 @@ public class Cable extends Component {
             inverseJoinColumns = @JoinColumn(name = "cable_color_id")
     )
     private List<CableColor> cableColors = new ArrayList<>();
-
-
-    public Cable() {
-        // Empty constructor
-    }
-
-
-    public void setCableType(CableType cableType) {
-        this.cableType = cableType;
-    }
-
-    public void setCableColors(List<CableColor> motherboardFormFactors) {
-        this.cableColors = motherboardFormFactors;
-    }
-
-    public CableType getCableType() {
-        return cableType;
-    }
-
-    public List<CableColor> getCableColors() {
-        return cableColors;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

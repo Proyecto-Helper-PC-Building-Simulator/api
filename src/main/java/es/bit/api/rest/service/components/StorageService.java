@@ -2,84 +2,22 @@ package es.bit.api.rest.service.components;
 
 import es.bit.api.persistence.model.components.Storage;
 import es.bit.api.persistence.model.components.enums.StorageTypes;
-import es.bit.api.persistence.repository.jpa.components.IStorageJpaRepository;
+import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.StorageDTO;
-import es.bit.api.rest.mapper.components.StorageMapper;
+import es.bit.api.rest.service.GenericService;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class StorageService extends GenericService<StorageDTO, Storage, Integer> {
-    private final IStorageJpaRepository storageJPARepository;
-
-
-    @Autowired
-    public StorageService(IStorageJpaRepository storageJPARepository) {
-        this.storageJPARepository = storageJPARepository;
-    }
-
-
-    @Override
-    public Long count() {
-        return this.storageJPARepository.count();
-    }
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.storageJPARepository.count(getSpecification(filters));
-    }
-
-    @Override
-    public StorageDTO findById(Integer id) {
-        Optional<Storage> storage = this.storageJPARepository.findById(id);
-
-        if (storage.isEmpty()) {
-            return null;
-        }
-
-        return StorageMapper.toDTO(storage);
-    }
-
-    @Override
-    @Cacheable(value = "storages", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<StorageDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<Storage> storagePage = this.storageJPARepository.findAll(getSpecification(filters), pageable);
-        return StorageMapper.toDTO(storagePage.getContent());
-    }
-
-    @Override
-    public StorageDTO create(StorageDTO storageDTO) {
-        Storage storage = StorageMapper.toBD(storageDTO);
-        storage = this.storageJPARepository.save(storage);
-
-        return StorageMapper.toDTO(storage);
-    }
-
-    @Override
-    public void update(StorageDTO storageDTO) {
-        Storage storage = StorageMapper.toBD(storageDTO);
-        this.storageJPARepository.save(storage);
-
-        StorageMapper.toDTO(storage);
-    }
-
-    @Override
-    public void delete(StorageDTO storageDTO) {
-        Storage storage = StorageMapper.toBD(storageDTO);
-        this.storageJPARepository.delete(storage);
+    public StorageService(ComponentHandlerFactory<Storage, StorageDTO> handlerFactory, IGenericJpaRepository<Storage, Integer> repository) {
+        super(handlerFactory, repository);
     }
 
 

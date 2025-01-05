@@ -2,8 +2,15 @@ package es.bit.api.persistence.model.components;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.persistence.model.components.enums.StorageTypes;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "storages")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -13,44 +20,4 @@ public class Storage extends Component {
 
     @Enumerated(EnumType.STRING)
     private StorageTypes type;
-
-
-    public Storage() {
-    }
-
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public Integer getTransferSpeed() {
-        return transferSpeed;
-    }
-
-    public void setTransferSpeed(Integer transferSpeed) {
-        this.transferSpeed = transferSpeed;
-    }
-
-    public StorageTypes getType() {
-        return type;
-    }
-
-    public void setType(StorageTypes storageTypes) {
-        this.type = storageTypes;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

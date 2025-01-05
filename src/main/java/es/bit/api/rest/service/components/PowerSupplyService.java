@@ -3,86 +3,24 @@ package es.bit.api.rest.service.components;
 import es.bit.api.persistence.model.components.PowerSupply;
 import es.bit.api.persistence.model.components.attributes.PowerSupplyFormFactor;
 import es.bit.api.persistence.model.components.enums.PowerSupplyTypes;
-import es.bit.api.persistence.repository.jpa.components.IPowerSupplyJpaRepository;
+import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.PowerSupplyDTO;
-import es.bit.api.rest.mapper.components.PowerSupplyMapper;
+import es.bit.api.rest.service.GenericService;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class PowerSupplyService extends GenericService<PowerSupplyDTO, PowerSupply, Integer> {
-    private final IPowerSupplyJpaRepository powerSupplyJPARepository;
-
-
-    @Autowired
-    public PowerSupplyService(IPowerSupplyJpaRepository powerSupplyJPARepository) {
-        this.powerSupplyJPARepository = powerSupplyJPARepository;
-    }
-
-
-    @Override
-    public Long count() {
-        return this.powerSupplyJPARepository.count();
-    }
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.powerSupplyJPARepository.count(getSpecification(filters));
-    }
-
-    @Override
-    public PowerSupplyDTO findById(Integer id) {
-        Optional<PowerSupply> powerSupply = this.powerSupplyJPARepository.findById(id);
-
-        if (powerSupply.isEmpty()) {
-            return null;
-        }
-
-        return PowerSupplyMapper.toDTO(powerSupply);
-    }
-
-    @Override
-    @Cacheable(value = "powerSupplies", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<PowerSupplyDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<PowerSupply> powerSupplyPage = this.powerSupplyJPARepository.findAll(getSpecification(filters), pageable);
-        return PowerSupplyMapper.toDTO(powerSupplyPage.getContent());
-    }
-
-    @Override
-    public PowerSupplyDTO create(PowerSupplyDTO powerSupplyDTO) {
-        PowerSupply powerSupply = PowerSupplyMapper.toBD(powerSupplyDTO);
-        powerSupply = this.powerSupplyJPARepository.save(powerSupply);
-
-        return PowerSupplyMapper.toDTO(powerSupply);
-    }
-
-    @Override
-    public void update(PowerSupplyDTO powerSupplyDTO) {
-        PowerSupply powerSupply = PowerSupplyMapper.toBD(powerSupplyDTO);
-        this.powerSupplyJPARepository.save(powerSupply);
-
-        PowerSupplyMapper.toDTO(powerSupply);
-    }
-
-    @Override
-    public void delete(PowerSupplyDTO powerSupplyDTO) {
-        PowerSupply powerSupply = PowerSupplyMapper.toBD(powerSupplyDTO);
-        this.powerSupplyJPARepository.delete(powerSupply);
+    public PowerSupplyService(ComponentHandlerFactory<PowerSupply, PowerSupplyDTO> handlerFactory, IGenericJpaRepository<PowerSupply, Integer> repository) {
+        super(handlerFactory, repository);
     }
 
 

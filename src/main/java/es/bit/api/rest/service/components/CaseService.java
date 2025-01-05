@@ -6,84 +6,24 @@ import es.bit.api.persistence.model.components.attributes.CableColor;
 import es.bit.api.persistence.model.components.attributes.CaseFanSize;
 import es.bit.api.persistence.model.components.attributes.CaseSize;
 import es.bit.api.persistence.model.components.attributes.MotherboardFormFactor;
-import es.bit.api.persistence.repository.jpa.components.ICaseJpaRepository;
+import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.CaseDTO;
-import es.bit.api.rest.mapper.components.CaseMapper;
+import es.bit.api.rest.service.GenericService;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class CaseService extends GenericService<CaseDTO, Case, Integer> {
-    private final ICaseJpaRepository caseObjectJPARepository;
-
-
-    @Autowired
-    public CaseService(ICaseJpaRepository caseObjectJPARepository) {
-        this.caseObjectJPARepository = caseObjectJPARepository;
-    }
-
-
-    @Override
-    public Long count() {
-        return this.caseObjectJPARepository.count();
-    }
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.caseObjectJPARepository.count(getSpecification(filters));
-    }
-
-    @Override
-    public CaseDTO findById(Integer id) {
-        Optional<Case> caseObject = this.caseObjectJPARepository.findById(id);
-
-        if (caseObject.isEmpty()) {
-            return null;
-        }
-
-        return CaseMapper.toDTO(caseObject, true, true);
-    }
-
-    @Override
-    @Cacheable(value = "cases", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<CaseDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<Case> cpuPage = this.caseObjectJPARepository.findAll(getSpecification(filters), pageable);
-        return CaseMapper.toDTO(cpuPage.getContent(), true, true);
-    }
-
-    @Override
-    public CaseDTO create(CaseDTO caseObjectDTO) {
-        Case caseObject = CaseMapper.toBD(caseObjectDTO, true, true);
-        caseObject = this.caseObjectJPARepository.save(caseObject);
-
-        return CaseMapper.toDTO(caseObject, true, true);
-    }
-
-    @Override
-    public void update(CaseDTO caseObjectDTO) {
-        Case caseObject = CaseMapper.toBD(caseObjectDTO, true, true);
-        this.caseObjectJPARepository.save(caseObject);
-    }
-
-    @Override
-    public void delete(CaseDTO caseObjectDTO) {
-        Case caseObject = CaseMapper.toBD(caseObjectDTO, false, false);
-        this.caseObjectJPARepository.delete(caseObject);
+    public CaseService(ComponentHandlerFactory<Case, CaseDTO> handlerFactory, IGenericJpaRepository<Case, Integer> repository) {
+        super(handlerFactory, repository);
     }
 
 

@@ -5,10 +5,14 @@ import es.bit.api.rest.dto.components.attributes.CpuSocketDTO;
 import es.bit.api.rest.dto.components.attributes.MotherboardChipsetDTO;
 import es.bit.api.rest.dto.components.attributes.MotherboardFormFactorDTO;
 import es.bit.api.rest.dto.components.attributes.MultiGpuTypeDTO;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MotherboardDTO extends ComponentDTO {
     private Integer maxRamSpeed;
@@ -16,60 +20,4 @@ public class MotherboardDTO extends ComponentDTO {
     private MotherboardFormFactorDTO motherboardFormFactor;
     private CpuSocketDTO cpuSocket;
     private List<MultiGpuTypeDTO> multiGpuTypes = new ArrayList<>();
-
-
-    public MotherboardDTO() {
-    }
-
-
-    public Integer getMaxRamSpeed() {
-        return maxRamSpeed;
-    }
-
-    public void setMaxRamSpeed(Integer maxRamSpeed) {
-        this.maxRamSpeed = maxRamSpeed;
-    }
-
-    public MotherboardChipsetDTO getMotherboardChipset() {
-        return motherboardChipset;
-    }
-
-    public void setMotherboardChipset(MotherboardChipsetDTO motherboardChipset) {
-        this.motherboardChipset = motherboardChipset;
-    }
-
-    public MotherboardFormFactorDTO getMotherboardFormFactor() {
-        return motherboardFormFactor;
-    }
-
-    public void setMotherboardFormFactor(MotherboardFormFactorDTO motherboardFormFactor) {
-        this.motherboardFormFactor = motherboardFormFactor;
-    }
-
-    public CpuSocketDTO getCpuSocket() {
-        return cpuSocket;
-    }
-
-    public void setCpuSocket(CpuSocketDTO cpuSocket) {
-        this.cpuSocket = cpuSocket;
-    }
-
-    public List<MultiGpuTypeDTO> getMultiGpuTypes() {
-        return multiGpuTypes;
-    }
-
-    public void setMultiGpuTypes(List<MultiGpuTypeDTO> multiGpuTypes) {
-        this.multiGpuTypes = multiGpuTypes;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

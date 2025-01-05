@@ -1,19 +1,24 @@
 package es.bit.api.rest.controller;
 
-import es.bit.api.rest.service.components.GenericService;
-import es.bit.api.utils.PagedResponse;
+import es.bit.api.persistence.model.components.Component;
+import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.rest.service.GenericService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
-public abstract class GenericController<D, C, I extends Serializable> {
+public abstract class GenericController<D extends ComponentDTO, C extends Component, I extends Serializable> {
     protected final GenericService<D, C, I> genericService;
 
     @Autowired
@@ -21,81 +26,80 @@ public abstract class GenericController<D, C, I extends Serializable> {
         this.genericService = genericService;
     }
 
-    @GetMapping("/count")
-    @Operation(summary = "Get the total number of entities")
-    public Long count() {
-        return this.genericService.count();
-    }
 
-    @GetMapping("")
     @Operation(summary = "Get all entities paged")
     @ApiResponse(responseCode = "200", description = "Entities obtained correctly.")
     @ApiResponse(responseCode = "204", description = "Entities not found")
     @ApiResponse(responseCode = "404", description = "Error getting the selected page.")
-    public PagedResponse<D> findAll(
+    public Page<D> findAll(
+            String componentType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam Map<String, String> filters
     ) {
-        long totalElements = this.genericService.countFiltered(filters);
-        if (totalElements == 0) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No results found for the given filters.");
-        }
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        int totalPages = (int) Math.ceil((double) totalElements / size);
-        if (page >= totalPages) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page does not exist.");
-        }
-
-        List<D> content = this.genericService.findAll(page, size, sortBy, sortDir, filters);
-
-        return new PagedResponse<>(content, page, size, totalElements, totalPages);
+        return this.genericService.findAll(componentType, pageable, filters);
     }
+
+    @GetMapping("")
+    @Operation(summary = "Get all cables paged")
+    @ApiResponse(responseCode = "200", description = "Cables obtained correctly.")
+    @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
+    public abstract Page<D> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam Map<String, String> filters
+    );
 
     @GetMapping("/{id}")
     @Operation(summary = "Get an entity by ID")
     @ApiResponse(responseCode = "200", description = "Entity found.")
     @ApiResponse(responseCode = "404", description = "Entity not found.")
-    public D findById(@PathVariable I id) {
-        D entity = this.genericService.findById(id);
-
-        if (entity == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
-        }
-
-        return entity;
+    public ResponseEntity<D> findById(@PathVariable I id) {
+        return this.genericService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("")
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new entity")
     @ApiResponse(responseCode = "201", description = "Entity created.")
-    public D create(@RequestBody D dto) {
-        return this.genericService.create(dto);
+    public ResponseEntity<D> create(@RequestBody D dto) {
+        return ResponseEntity.ok(this.genericService.save(dto));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity updated.")
     @Operation(summary = "Update an entity by ID")
     @ApiResponse(responseCode = "204", description = "Entity updated correctly.")
-    public void update(@PathVariable I id, @RequestBody D dto) {
-        this.genericService.update(dto);
+    public ResponseEntity<D> update(@PathVariable I id, @RequestBody D dto) {
+        try {
+            D updatedDto = this.genericService.update(id, dto);
+
+            return ResponseEntity.ok(updatedDto);
+        } catch (EntityNotFoundException exception) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Entity deleted.")
     @Operation(summary = "Delete an entity by ID")
     @ApiResponse(responseCode = "204", description = "Entity deleted correctly.")
-    public void delete(@PathVariable I id) {
-        D entity = this.genericService.findById(id);
-        if (entity == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found.");
+    public ResponseEntity<Void> delete(@PathVariable I id) {
+        if (genericService.findById(id).isPresent()) {
+            genericService.delete(id);
+
+            return ResponseEntity.noContent().build();
         }
-        this.genericService.delete(entity);
+
+        return ResponseEntity.notFound().build();
     }
-
-
-    protected void validateComponentType(D dto) {}
 }

@@ -4,86 +4,24 @@ import es.bit.api.persistence.model.components.Gpu;
 import es.bit.api.persistence.model.components.attributes.GpuChipsetSerie;
 import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import es.bit.api.persistence.model.components.enums.ChipsetBrands;
-import es.bit.api.persistence.repository.jpa.components.IGpuJpaRepository;
+import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.GpuDTO;
-import es.bit.api.rest.mapper.components.GpuMapper;
+import es.bit.api.rest.service.GenericService;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class GpuService extends GenericService<GpuDTO, Gpu, Integer> {
-    private final IGpuJpaRepository gpuJPARepository;
-
-
-    @Autowired
-    public GpuService(IGpuJpaRepository gpuJPARepository) {
-        this.gpuJPARepository = gpuJPARepository;
-    }
-
-
-    @Override
-    public Long count() {
-        return this.gpuJPARepository.count();
-    }
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.gpuJPARepository.count(getSpecification(filters));
-    }
-
-    @Override
-    @Cacheable(value = "gpus", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<GpuDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<Gpu> cpuPage = this.gpuJPARepository.findAll(getSpecification(filters), pageable);
-        return GpuMapper.toDTO(cpuPage.getContent());
-    }
-
-    @Override
-    public GpuDTO findById(Integer id) {
-        Optional<Gpu> gpu = this.gpuJPARepository.findById(id);
-
-        if (gpu.isEmpty()) {
-            return null;
-        }
-
-        return GpuMapper.toDTO(gpu);
-    }
-
-    @Override
-    public GpuDTO create(GpuDTO gpuDTO) {
-        Gpu gpu = GpuMapper.toBD(gpuDTO);
-        gpu = this.gpuJPARepository.save(gpu);
-
-        return GpuMapper.toDTO(gpu);
-    }
-
-    @Override
-    public void update(GpuDTO gpuDTO) {
-        Gpu gpu = GpuMapper.toBD(gpuDTO);
-        this.gpuJPARepository.save(gpu);
-
-        GpuMapper.toDTO(gpu);
-    }
-
-    @Override
-    public void delete(GpuDTO gpuDTO) {
-        Gpu gpu = GpuMapper.toBD(gpuDTO);
-        this.gpuJPARepository.delete(gpu);
+    public GpuService(ComponentHandlerFactory<Gpu, GpuDTO> handlerFactory, IGenericJpaRepository<Gpu, Integer> repository) {
+        super(handlerFactory, repository);
     }
 
 

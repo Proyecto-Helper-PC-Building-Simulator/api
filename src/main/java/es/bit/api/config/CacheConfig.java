@@ -11,31 +11,6 @@ import org.springframework.context.annotation.Configuration;
 public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager(
-                "components",
-                "cpus",
-                "gpus",
-                "motherboards",
-                "powerSupplies",
-                "ramMemories",
-                "storages",
-                "cpuCoolers",
-                "cases",
-                "caseFans",
-                "cables",
-                "cableColors",
-                "cableTypes",
-                "caseFanSizes",
-                "caseSizes",
-                "componentTypes",
-                "cpuSeries",
-                "cpuSockets",
-                "gpuChipsetSeries",
-                "lightings",
-                "manufacturers",
-                "motherboardChipsets",
-                "motherboardFormFactors",
-                "multiGpuTypes",
-                "powerSupplyFormFactors");
+        return new ConcurrentMapCacheManager("components");
     }
 }

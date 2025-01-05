@@ -1,12 +1,19 @@
 package es.bit.api.persistence.model.components;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import es.bit.api.persistence.model.components.attributes.*;
+import es.bit.api.persistence.model.components.attributes.CpuSocket;
+import es.bit.api.persistence.model.components.attributes.MotherboardChipset;
+import es.bit.api.persistence.model.components.attributes.MotherboardFormFactor;
+import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "motherboards")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,60 +39,4 @@ public class Motherboard extends Component {
             inverseJoinColumns = @JoinColumn(name = "multi_gpu_id")
     )
     private List<MultiGpuType> multiGpuTypes = new ArrayList<>();
-
-
-    public Motherboard() {
-    }
-
-
-    public Integer getMaxRamSpeed() {
-        return maxRamSpeed;
-    }
-
-    public void setMaxRamSpeed(Integer maxRamSpeed) {
-        this.maxRamSpeed = maxRamSpeed;
-    }
-
-    public MotherboardChipset getMotherboardChipset() {
-        return motherboardChipset;
-    }
-
-    public void setMotherboardChipset(MotherboardChipset motherboardChipset) {
-        this.motherboardChipset = motherboardChipset;
-    }
-
-    public MotherboardFormFactor getMotherboardFormFactor() {
-        return motherboardFormFactor;
-    }
-
-    public void setMotherboardFormFactor(MotherboardFormFactor motherboardFormFactor) {
-        this.motherboardFormFactor = motherboardFormFactor;
-    }
-
-    public CpuSocket getCpuSocket() {
-        return cpuSocket;
-    }
-
-    public void setCpuSocket(CpuSocket cpuSocket) {
-        this.cpuSocket = cpuSocket;
-    }
-
-    public List<MultiGpuType> getMultiGpuTypes() {
-        return multiGpuTypes;
-    }
-
-    public void setMultiGpuTypes(List<MultiGpuType> multiGpuTypes) {
-        this.multiGpuTypes = multiGpuTypes;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

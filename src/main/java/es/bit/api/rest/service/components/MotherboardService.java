@@ -8,82 +8,22 @@ import es.bit.api.persistence.model.components.attributes.MotherboardFormFactor;
 import es.bit.api.persistence.model.components.attributes.MultiGpuType;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.MotherboardDTO;
-import es.bit.api.rest.mapper.components.MotherboardMapper;
+import es.bit.api.rest.service.GenericService;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class MotherboardService extends GenericService<MotherboardDTO, Motherboard, Integer> {
-    private final IGenericJpaRepository<Motherboard, Integer> motherboardJPARepository;
-
-
-    @Autowired
-    public MotherboardService(IGenericJpaRepository<Motherboard, Integer> motherboardJPARepository) {
-        this.motherboardJPARepository = motherboardJPARepository;
-    }
-
-
-    @Override
-    public Long count() {
-        return this.motherboardJPARepository.count();
-    }
-
-    @Override
-    public Long countFiltered(Map<String, String> filters) {
-        return this.motherboardJPARepository.count(getSpecification(filters));
-    }
-
-    @Override
-    public MotherboardDTO findById(Integer id) {
-        Optional<Motherboard> motherboard = this.motherboardJPARepository.findById(id);
-
-        if (motherboard.isEmpty()) {
-            return null;
-        }
-
-        return MotherboardMapper.toDTO(motherboard, true);
-    }
-
-    @Override
-    @Cacheable(value = "motherboards", key = "#page + '-' + #size + '-' + #sortBy + '-' + #sortDir + '-' + #filters")
-    public List<MotherboardDTO> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortBy);
-        Page<Motherboard> motherboardPage = this.motherboardJPARepository.findAll(getSpecification(filters), pageable);
-        return MotherboardMapper.toDTO(motherboardPage.getContent(), true);
-    }
-
-    @Override
-    public MotherboardDTO create(MotherboardDTO motherboardDTO) {
-        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO, true);
-        motherboard = this.motherboardJPARepository.save(motherboard);
-
-        return MotherboardMapper.toDTO(motherboard, true);
-    }
-
-    @Override
-    public void update(MotherboardDTO motherboardDTO) {
-        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO, true);
-        this.motherboardJPARepository.save(motherboard);
-    }
-
-    @Override
-    public void delete(MotherboardDTO motherboardDTO) {
-        Motherboard motherboard = MotherboardMapper.toBD(motherboardDTO, false);
-        this.motherboardJPARepository.delete(motherboard);
+    public MotherboardService(ComponentHandlerFactory<Motherboard, MotherboardDTO> handlerFactory, IGenericJpaRepository<Motherboard, Integer> repository) {
+        super(handlerFactory, repository);
     }
 
 

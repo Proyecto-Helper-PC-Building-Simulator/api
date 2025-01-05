@@ -1,33 +1,74 @@
-package es.bit.api.rest.service.components;
+package es.bit.api.rest.service;
 
 import es.bit.api.persistence.model.components.Component;
 import es.bit.api.persistence.model.components.attributes.Manufacturer;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
+import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.utils.handlers.ComponentHandler;
+import es.bit.api.utils.handlers.ComponentHandlerFactory;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @param <D> Component DTO
  * @param <C> Component
  * @param <I> Integer
  */
-public abstract class GenericService<D, C, I extends Serializable> {
-    @Autowired
-    private IGenericJpaRepository<C, I> repository;
+public abstract class GenericService<D extends ComponentDTO, C extends Component, I extends Serializable> {
+    protected IGenericJpaRepository<C, I> repository;
+    protected final ComponentHandlerFactory<C, D> handlerFactory;
 
-    abstract public Long count();
-    abstract public Long countFiltered(Map<String, String> filters);
-    abstract public List<D> findAll(int page, int size, String sortBy, String sortDir, Map<String, String> filters);
-    abstract public D findById(I id);
-    abstract public D create(D dto);
-    abstract public void update(D dto);
-    abstract public void delete(D dto);
+
+    public GenericService(ComponentHandlerFactory<C, D> handlerFactory, IGenericJpaRepository<C, I> repository) {
+        this.handlerFactory = handlerFactory;
+        this.repository = repository;
+    }
+
+
+    public Optional<D> findById(I id) {
+        return this.repository.findById(id)
+                .map(component -> {
+                    ComponentHandler<C, D> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
+
+                    return handler.toDTO(component);
+                });
+    }
+
+    @Cacheable(value = "components", key = "#componentType + '-' + #pageable + '-' + #filters")
+    public Page<D> findAll(String componentType, Pageable pageable, Map<String, String> filters) {
+        return this.repository.findAll(getSpecification(filters), pageable).map(component -> {
+            ComponentHandler<C, D> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
+            return handler.toDTO(component);
+        });
+    }
+
+    public D save(D dto) {
+        ComponentHandler<C, D> handler = handlerFactory.getHandler(dto.getComponentTypeDTO().getNameIdentifier());
+        C component = handler.toEntity(dto);
+
+        return handler.toDTO(this.repository.save(component));
+    }
+
+    public D update(I id, D dto) {
+        return repository.findById(id)
+                .map(componentExistent -> this.save(dto))
+                .orElseThrow(() -> new EntityNotFoundException("Component not found with ID: " + id));
+    }
+
+    public void delete(I id) {
+        this.repository.deleteById(id);
+    }
+
 
     public Specification<C> getSpecification(Map<String, String> filters) {
         return (root, query, criteriaBuilder) -> {

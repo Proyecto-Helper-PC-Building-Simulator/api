@@ -6,5 +6,4 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "manufacturers")
 public class Manufacturer extends GenericAttribute {
-    public Manufacturer() {}
 }

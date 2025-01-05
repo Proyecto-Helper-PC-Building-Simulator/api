@@ -4,9 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.dto.components.attributes.LightingDTO;
 import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Setter
+@Getter
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ComponentDTO {
     private int componentId;
@@ -16,67 +22,6 @@ public class ComponentDTO {
     private ManufacturerDTO manufacturerDTO;
     private LightingDTO lightingDTO;
     private ComponentTypeDTO componentTypeDTO;
-
-
-    public ComponentDTO() {
-    }
-
-
-    public int getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(int componentId) {
-        this.componentId = componentId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public ManufacturerDTO getManufacturerDTO() {
-        return manufacturerDTO;
-    }
-
-    public void setManufacturerDTO(ManufacturerDTO manufacturer) {
-        this.manufacturerDTO = manufacturer;
-    }
-
-    public LightingDTO getLightingDTO() {
-        return lightingDTO;
-    }
-
-    public void setLightingDTO(LightingDTO lighting) {
-        this.lightingDTO = lighting;
-    }
-
-    public ComponentTypeDTO getComponentTypeDTO() {
-        return componentTypeDTO;
-    }
-
-    public void setComponentTypeDTO(ComponentTypeDTO componentTypeDTO) {
-        this.componentTypeDTO = componentTypeDTO;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
 
 
     @Override

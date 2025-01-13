@@ -1,15 +1,15 @@
 package es.bit.api.rest.controller;
 
+import es.bit.api.exceptions.ResourceNotFoundException;
 import es.bit.api.persistence.model.components.Component;
 import es.bit.api.rest.dto.components.ComponentDTO;
 import es.bit.api.rest.service.GenericService;
+import es.bit.api.utils.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
     @ApiResponse(responseCode = "200", description = "Entities obtained correctly.")
     @ApiResponse(responseCode = "204", description = "Entities not found")
     @ApiResponse(responseCode = "404", description = "Error getting the selected page.")
-    public Page<D> findAll(
+    public ResponseEntity<?> findAll(
             String componentType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
@@ -40,16 +40,22 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
             @RequestParam Map<String, String> filters
     ) {
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+        PagedResponse<?> pageRequest = this.genericService.findAll(componentType, PageRequest.of(page, size, sort), filters);
 
-        return this.genericService.findAll(componentType, pageable, filters);
+        if (!pageRequest.isHasContent() && pageRequest.getTotalPages() == 0) {
+            throw new ResourceNotFoundException("No results for the actual filters");
+        } else if (page >= pageRequest.getTotalPages()) {
+            throw new ResourceNotFoundException("The page does not exist");
+        }
+
+        return ResponseEntity.ok(pageRequest);
     }
 
     @GetMapping("")
     @Operation(summary = "Get all cables paged")
     @ApiResponse(responseCode = "200", description = "Cables obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public abstract Page<D> findAll(
+    public abstract ResponseEntity<?> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -64,7 +70,7 @@ public abstract class GenericController<D extends ComponentDTO, C extends Compon
     public ResponseEntity<D> findById(@PathVariable I id) {
         return this.genericService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("The object with the ID %s does not exist".formatted(id)));
     }
 
     @PostMapping("")

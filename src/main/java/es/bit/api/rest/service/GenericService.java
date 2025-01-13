@@ -4,6 +4,7 @@ import es.bit.api.persistence.model.components.Component;
 import es.bit.api.persistence.model.components.attributes.Manufacturer;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.utils.PagedResponse;
 import es.bit.api.utils.handlers.ComponentHandler;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.EntityNotFoundException;
@@ -45,11 +46,13 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
     }
 
     @Cacheable(value = "components", key = "#componentType + '-' + #pageable + '-' + #filters")
-    public Page<D> findAll(String componentType, Pageable pageable, Map<String, String> filters) {
-        return this.repository.findAll(getSpecification(filters), pageable).map(component -> {
+    public PagedResponse<D> findAll(String componentType, Pageable pageable, Map<String, String> filters) {
+        Page<D> page = this.repository.findAll(getSpecification(filters), pageable).map(component -> {
             ComponentHandler<C, D> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
             return handler.toDTO(component);
         });
+
+        return PagedResponse.toCustomPageResponse(page);
     }
 
     public D save(D dto) {

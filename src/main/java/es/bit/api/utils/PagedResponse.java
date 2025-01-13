@@ -1,5 +1,8 @@
 package es.bit.api.utils;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -9,87 +12,33 @@ import java.util.List;
  *
  * @param <T> Type of elements contained in the paged response.
  */
+@Getter
+@Setter
 public class PagedResponse<T> {
     private List<T> content;
+    private boolean last;
+    private boolean empty;
+    private boolean hasContent;
     private int page;
     private int size;
+    private int number;
     private Sort.Direction sortDirection = Sort.Direction.ASC;
     private String sortBy = "componentId";
     private long totalElements;
     private int totalPages;
 
 
-    /**
-     * PagedResponse constructor.
-     *
-     * @param content List of elements present in the current page.
-     * @param page Number of the actual page.
-     * @param size Size of the actual page.
-     * @param totalElements Total number of elements on all pages.
-     * @param totalPages Total number of pages available.
-     */
-    public PagedResponse(List<T> content, int page, int size, long totalElements, int totalPages) {
-        this.content = content;
-        this.page = page;
-        this.size = size;
-        this.totalElements = totalElements;
-        this.totalPages = totalPages;
-    }
+    public static <T> PagedResponse<T> toCustomPageResponse(Page<T> page) {
+        PagedResponse<T> response = new PagedResponse<>();
+        response.setContent(page.getContent());
+        response.setLast(page.isLast());
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setSize(page.getSize());
+        response.setNumber(page.getNumber());
+        response.setEmpty(page.isEmpty());
+        response.setHasContent(page.hasContent());
 
-
-    public List<T> getContent() {
-        return content;
-    }
-
-    public void setContent(List<T> content) {
-        this.content = content;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public long getTotalElements() {
-        return totalElements;
-    }
-
-    public void setTotalElements(long totalElements) {
-        this.totalElements = totalElements;
-    }
-
-    public int getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public Sort.Direction getSortDirection() {
-        return sortDirection;
-    }
-
-    public void setSortDirection(Sort.Direction sortDirection) {
-        this.sortDirection = sortDirection;
-    }
-
-    public String getSortBy() {
-        return sortBy;
-    }
-
-    public void setSortBy(String sortBy) {
-        this.sortBy = sortBy;
+        return response;
     }
 }

@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import es.bit.api.rest.dto.components.attributes.ComponentTypeDTO;
 import es.bit.api.rest.dto.components.attributes.LightingDTO;
 import es.bit.api.rest.dto.components.attributes.ManufacturerDTO;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
 @Setter
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ComponentDTO {
     private int componentId;

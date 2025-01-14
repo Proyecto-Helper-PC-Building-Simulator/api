@@ -5,9 +5,7 @@ import es.bit.api.persistence.model.components.attributes.ComponentType;
 import es.bit.api.persistence.model.components.attributes.Lighting;
 import es.bit.api.persistence.model.components.attributes.Manufacturer;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -15,9 +13,11 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "components")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor
 public class Component {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

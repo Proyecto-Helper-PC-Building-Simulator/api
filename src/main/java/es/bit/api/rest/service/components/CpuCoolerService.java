@@ -3,10 +3,8 @@ package es.bit.api.rest.service.components;
 import es.bit.api.persistence.model.components.CpuCooler;
 import es.bit.api.persistence.model.components.attributes.CpuSocket;
 import es.bit.api.persistence.model.components.enums.CoolerTypes;
-import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.CpuCoolerDTO;
 import es.bit.api.rest.service.GenericService;
-import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -19,10 +17,6 @@ import java.util.Map;
 
 @Service
 public class CpuCoolerService extends GenericService<CpuCoolerDTO, CpuCooler, Integer> {
-    public CpuCoolerService(ComponentHandlerFactory<CpuCooler, CpuCoolerDTO> handlerFactory, IGenericJpaRepository<CpuCooler, Integer> repository) {
-        super(handlerFactory, repository);
-    }
-
 
     @Override
     public Specification<CpuCooler> getSpecification(Map<String, String> filters) {

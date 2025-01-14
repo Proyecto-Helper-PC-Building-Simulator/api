@@ -6,10 +6,8 @@ import es.bit.api.persistence.model.components.attributes.CableColor;
 import es.bit.api.persistence.model.components.attributes.CaseFanSize;
 import es.bit.api.persistence.model.components.attributes.CaseSize;
 import es.bit.api.persistence.model.components.attributes.MotherboardFormFactor;
-import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.CaseDTO;
 import es.bit.api.rest.service.GenericService;
-import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -22,10 +20,6 @@ import java.util.Map;
 
 @Service
 public class CaseService extends GenericService<CaseDTO, Case, Integer> {
-    public CaseService(ComponentHandlerFactory<Case, CaseDTO> handlerFactory, IGenericJpaRepository<Case, Integer> repository) {
-        super(handlerFactory, repository);
-    }
-
 
     @Override
     public Specification<Case> getSpecification(Map<String, String> filters) {

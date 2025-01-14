@@ -5,9 +5,9 @@ import es.bit.api.persistence.model.components.attributes.ComponentType;
 import es.bit.api.persistence.repository.jpa.components.IComponentJpaRepository;
 import es.bit.api.rest.dto.components.ComponentDTO;
 import es.bit.api.rest.service.components.ComponentService;
+import es.bit.api.utils.PagedResponse;
 import es.bit.api.utils.handlers.ComponentHandler;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +15,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Optional;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class GenericServiceTest {
@@ -38,6 +45,7 @@ public class GenericServiceTest {
     private static Component mockComponent;
     private static ComponentDTO mockComponentDTO;
     private static ComponentHandler<Component, ComponentDTO> handlerMock;
+    private Map<String, String> filters;
 
 
     @BeforeEach
@@ -45,7 +53,7 @@ public class GenericServiceTest {
         ReflectionTestUtils.setField(componentService, "repository", repository);
         ReflectionTestUtils.setField(componentService, "handlerFactory", handlerFactory);
 
-        handlerMock = Mockito.mock(ComponentHandler.class);
+        handlerMock = mock(ComponentHandler.class);
 
         ComponentType componentType = ComponentType.builder().nameIdentifier("Cable").build();
         mockComponent = Component.builder()
@@ -58,6 +66,9 @@ public class GenericServiceTest {
                 .componentId(1)
                 .name("Component 1")
                 .build();
+
+        filters = new HashMap<>();
+        filters.put("name", "Test");
     }
 
 
@@ -66,46 +77,88 @@ public class GenericServiceTest {
         int componentId = 1;
         String componentName = "Component 1";
 
-        Mockito.when(handlerMock.toDTO(mockComponent)).thenReturn(mockComponentDTO);
-        Mockito.when(repository.findById(componentId)).thenReturn(Optional.of(mockComponent));
-        Mockito.when(handlerFactory.getHandler(Mockito.anyString())).thenReturn(handlerMock);
+        when(handlerMock.toDTO(mockComponent)).thenReturn(mockComponentDTO);
+        when(repository.findById(componentId)).thenReturn(Optional.of(mockComponent));
+        when(handlerFactory.getHandler(Mockito.anyString())).thenReturn(handlerMock);
 
         Optional<ComponentDTO> componentResponse = componentService.findById(componentId);
 
-        Assertions.assertTrue(componentResponse.isPresent());
-        Assertions.assertEquals(componentId, componentResponse.get().getComponentId());
-        Assertions.assertEquals(componentName, componentResponse.get().getName());
+        assertTrue(componentResponse.isPresent());
+        assertEquals(componentId, componentResponse.get().getComponentId());
+        assertEquals(componentName, componentResponse.get().getName());
     }
 
     @Test
     void getComponentById_nonExistentId_shouldReturnEmpty() {
         int nonExistentId = -1;
 
-        Mockito.when(repository.findById(nonExistentId)).thenReturn(Optional.empty());
+        when(repository.findById(nonExistentId)).thenReturn(Optional.empty());
 
         Optional<ComponentDTO> componentResponse = componentService.findById(nonExistentId);
 
-        Assertions.assertTrue(componentResponse.isEmpty());
+        assertTrue(componentResponse.isEmpty());
     }
 
 
     @Test
-    void findAll() {
+    void getAllComponents_noFilters_shouldReturnPagedResponse() {
+        Pageable pageable = mock(Pageable.class);
+        List<Component> componentList = new ArrayList<>();
+        componentList.add(mockComponent);
+        Page<Component> page = new PageImpl<>(componentList, pageable, componentList.size());
 
+        when(repository.findAll(Mockito.any(Specification.class), Mockito.eq(pageable))).thenReturn(page);
+        when(handlerFactory.getHandler(Mockito.anyString())).thenReturn(handler);
+        when(handler.toDTO(Mockito.any())).thenReturn(mockComponentDTO);
+
+        PagedResponse<ComponentDTO> response = componentService.findAll("Cable", pageable, filters);
+
+        assertNotNull(response);
+        assertEquals(response.getContent().get(0).getComponentId(), mockComponent.getComponentId());
+
+        verify(repository).findAll(Mockito.any(Specification.class), eq(pageable));
+        verify(handlerFactory).getHandler(anyString());
+        verify(handler).toDTO(mockComponent);
     }
 
-    void save() {
+    @Test
+    void getAllComponents_withFilters_shouldReturnFilteredResults() {
+        Pageable pageable = mock(Pageable.class);
+        List<Component> componentList = new ArrayList<>();
+        componentList.add(mockComponent);
+        Page<Component> page = new PageImpl<>(componentList, pageable, componentList.size());
+
+        when(repository.findAll(Mockito.any(Specification.class), Mockito.eq(pageable))).thenReturn(page);
+        when(handlerFactory.getHandler(Mockito.anyString())).thenReturn(handler);
+        when(handler.toDTO(Mockito.any())).thenReturn(mockComponentDTO);
+
+        filters.put("name", "Component");
+
+        PagedResponse<ComponentDTO> response = componentService.findAll("Cable", pageable, filters);
+
+        assertNotNull(response);
+        assertFalse(response.getContent().isEmpty());
+
+        verify(repository).findAll(Mockito.any(Specification.class), eq(pageable));
+        verify(handlerFactory).getHandler("Cable");
+        verify(handler).toDTO(mockComponent);
     }
 
-    void update() {
-    }
+    @Test
+    void getAllComponents_withFilters_noResults_shouldReturnEmptyPagedResponse() {
+        Pageable pageable = mock(Pageable.class);
+        List<Component> componentList = new ArrayList<>();
+        Page<Component> page = new PageImpl<>(componentList, pageable, 0);
 
-    void delete() {
-    }
+        when(repository.findAll(Mockito.any(Specification.class), Mockito.eq(pageable))).thenReturn(page);
 
-    void getSpecification() {
-    }
+        filters.put("name", "NonExistentComponent");
 
-    void addCommonPredicates() {
+        PagedResponse<ComponentDTO> response = componentService.findAll("Cable", pageable, filters);
+
+        assertNotNull(response);
+        assertTrue(response.getContent().isEmpty());
+
+        verify(repository).findAll(Mockito.any(Specification.class), eq(pageable));
     }
 }

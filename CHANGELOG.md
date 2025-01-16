@@ -9,3 +9,11 @@
 
 ### Changed
 - Limitation of which methods can be executed. Only `GET` methods will be available.
+
+## [1.2.0] - 16-01-2024
+### Added
+- Provisional endpoint to obtain component filters
+
+### Changed
+- Improved information returned with pagination
+- Reduced boilerplate code

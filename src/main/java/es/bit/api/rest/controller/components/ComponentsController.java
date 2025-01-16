@@ -51,13 +51,13 @@ public class ComponentsController extends GenericController<ComponentDTO, Compon
     @Operation(summary = "Get multiple components by IDs")
     @ApiResponse(responseCode = "200", description = "Components found.")
     @ApiResponse(responseCode = "404", description = "Component not found.")
-    public List<ComponentDTO> findMultipleComponentsByIds(@RequestParam List<Integer> ids) {
+    public ResponseEntity<?> findMultipleComponentsByIds(@RequestParam List<Integer> ids) {
         List<ComponentDTO> components = componentService.findComponentsByIds(ids);
 
         if (components.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No components found for the provided IDs.");
         }
 
-        return components;
+        return ResponseEntity.ok(components);
     }
 }

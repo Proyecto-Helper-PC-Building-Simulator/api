@@ -1,13 +1,15 @@
 package es.bit.api.rest.service;
 
 import es.bit.api.persistence.model.components.Component;
-import es.bit.api.persistence.model.components.attributes.Manufacturer;
+import es.bit.api.persistence.model.components.attributes.GenericAttribute;
 import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.ComponentDTO;
+import es.bit.api.utils.PagedResponse;
 import es.bit.api.utils.handlers.ComponentHandler;
 import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,14 +27,11 @@ import java.util.Optional;
  * @param <I> Integer
  */
 public abstract class GenericService<D extends ComponentDTO, C extends Component, I extends Serializable> {
+    @Autowired
     protected IGenericJpaRepository<C, I> repository;
-    protected final ComponentHandlerFactory<C, D> handlerFactory;
 
-
-    public GenericService(ComponentHandlerFactory<C, D> handlerFactory, IGenericJpaRepository<C, I> repository) {
-        this.handlerFactory = handlerFactory;
-        this.repository = repository;
-    }
+    @Autowired
+    protected ComponentHandlerFactory<C, D> handlerFactory;
 
 
     public Optional<D> findById(I id) {
@@ -45,11 +44,13 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
     }
 
     @Cacheable(value = "components", key = "#componentType + '-' + #pageable + '-' + #filters")
-    public Page<D> findAll(String componentType, Pageable pageable, Map<String, String> filters) {
-        return this.repository.findAll(getSpecification(filters), pageable).map(component -> {
+    public PagedResponse<D> findAll(String componentType, Pageable pageable, Map<String, String> filters) {
+        Page<D> page = this.repository.findAll(getSpecification(filters), pageable).map(component -> {
             ComponentHandler<C, D> handler = handlerFactory.getHandler(component.getComponentType().getNameIdentifier());
             return handler.toDTO(component);
         });
+
+        return PagedResponse.toCustomPageResponse(page);
     }
 
     public D save(D dto) {
@@ -97,7 +98,7 @@ public abstract class GenericService<D extends ComponentDTO, C extends Component
 
         filters.forEach((key, value) -> {
             // TODO: Change Manufacturer for parent class (to implement)
-            Join<Component, Manufacturer> componentJoin;
+            Join<Component, GenericAttribute> componentJoin;
 
             switch (key) {
                 case "name":

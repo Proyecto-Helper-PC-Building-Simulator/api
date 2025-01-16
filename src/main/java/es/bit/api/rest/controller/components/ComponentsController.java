@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +37,7 @@ public class ComponentsController extends GenericController<ComponentDTO, Compon
     @Operation(summary = "Get all components paged")
     @ApiResponse(responseCode = "200", description = "Components obtained correctly.")
     @ApiResponse(responseCode = "412", description = "Error getting the selected page.")
-    public Page<ComponentDTO> findAll(
+    public ResponseEntity<?> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -51,13 +51,13 @@ public class ComponentsController extends GenericController<ComponentDTO, Compon
     @Operation(summary = "Get multiple components by IDs")
     @ApiResponse(responseCode = "200", description = "Components found.")
     @ApiResponse(responseCode = "404", description = "Component not found.")
-    public List<ComponentDTO> findMultipleComponentsByIds(@RequestParam List<Integer> ids) {
+    public ResponseEntity<?> findMultipleComponentsByIds(@RequestParam List<Integer> ids) {
         List<ComponentDTO> components = componentService.findComponentsByIds(ids);
 
         if (components.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No components found for the provided IDs.");
         }
 
-        return components;
+        return ResponseEntity.ok(components);
     }
 }

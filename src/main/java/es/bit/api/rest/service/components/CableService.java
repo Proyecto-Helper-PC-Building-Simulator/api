@@ -3,10 +3,8 @@ package es.bit.api.rest.service.components;
 import es.bit.api.persistence.model.components.Cable;
 import es.bit.api.persistence.model.components.attributes.CableColor;
 import es.bit.api.persistence.model.components.attributes.CableType;
-import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.CableDTO;
 import es.bit.api.rest.service.GenericService;
-import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -19,10 +17,6 @@ import java.util.Map;
 
 @Service
 public class CableService extends GenericService<CableDTO, Cable, Integer> {
-    public CableService(ComponentHandlerFactory<Cable, CableDTO> handlerFactory, IGenericJpaRepository<Cable, Integer> repository) {
-        super(handlerFactory, repository);
-    }
-
 
     @Override
     public Specification<Cable> getSpecification(Map<String, String> filters) {

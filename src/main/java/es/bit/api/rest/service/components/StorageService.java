@@ -2,10 +2,8 @@ package es.bit.api.rest.service.components;
 
 import es.bit.api.persistence.model.components.Storage;
 import es.bit.api.persistence.model.components.enums.StorageTypes;
-import es.bit.api.persistence.repository.jpa.IGenericJpaRepository;
 import es.bit.api.rest.dto.components.StorageDTO;
 import es.bit.api.rest.service.GenericService;
-import es.bit.api.utils.handlers.ComponentHandlerFactory;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -16,10 +14,6 @@ import java.util.Map;
 
 @Service
 public class StorageService extends GenericService<StorageDTO, Storage, Integer> {
-    public StorageService(ComponentHandlerFactory<Storage, StorageDTO> handlerFactory, IGenericJpaRepository<Storage, Integer> repository) {
-        super(handlerFactory, repository);
-    }
-
 
     @Override
     public Specification<Storage> getSpecification(Map<String, String> filters) {

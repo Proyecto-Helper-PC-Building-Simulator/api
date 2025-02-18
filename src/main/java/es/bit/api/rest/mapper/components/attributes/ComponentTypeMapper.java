@@ -15,6 +15,7 @@ public class ComponentTypeMapper {
             componentTypeDTO.setId(componentType.getId());
             componentTypeDTO.setName(componentType.getName());
             componentTypeDTO.setApiName(componentType.getApiName());
+            componentTypeDTO.setNameIdentifier(componentType.getNameIdentifier());
         }
 
         return componentTypeDTO;
@@ -48,6 +49,7 @@ public class ComponentTypeMapper {
             componentType.setId(componentTypeDTO.getId());
             componentType.setName(componentTypeDTO.getName());
             componentType.setApiName(componentTypeDTO.getApiName());
+            componentType.setNameIdentifier(componentTypeDTO.getNameIdentifier());
         }
 
         return componentType;

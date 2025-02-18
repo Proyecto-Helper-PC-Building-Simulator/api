@@ -3,6 +3,8 @@ package es.bit.api.rest.service;
 import es.bit.api.persistence.repository.jpa.components.IComponentJpaRepository;
 import es.bit.api.persistence.repository.jpa.components.ICpuJpaRepository;
 import es.bit.api.persistence.repository.jpa.components.attributes.IComponentTypeJPARepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,17 +14,20 @@ import java.util.Map;
 
 @Service
 public class FilterService {
-    private final IComponentJpaRepository componentRepository;
-    private final ICpuJpaRepository cpuRepository;
-    private final IComponentTypeJPARepository componentTypeRepository;
+    @Autowired
+    private IComponentJpaRepository componentRepository;
+
+    @Autowired
+    private ICpuJpaRepository cpuRepository;
+
+    @Autowired
+    private IComponentTypeJPARepository componentTypeRepository;
 
 
-    public FilterService(IComponentJpaRepository componentRepository, IComponentTypeJPARepository componentTypeRepository, ICpuJpaRepository cpuRepository) {
-        this.componentRepository = componentRepository;
-        this.componentTypeRepository = componentTypeRepository;
-        this.cpuRepository = cpuRepository;
+    @Cacheable("component_types")
+    public List<?> findAllComponentTypes() {
+        return this.componentTypeRepository.findAll();
     }
-
 
     public Map<String, Object> getFiltersForComponentType(String componentType) {
         // TODO: Implement custom exception
